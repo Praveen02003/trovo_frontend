@@ -1,0 +1,14 @@
+.hover-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff !important;
+    border-radius: 5px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.pagination .page-link {
+    margin: 0 2px;
+    border-radius: 4px;
+}

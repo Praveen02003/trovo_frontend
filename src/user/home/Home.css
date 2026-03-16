@@ -1,0 +1,39 @@
+/* Center-focused Overlays (Darker in the middle for text readability) */
+.hero-center-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(8, 8, 8, 0.7) 0%, rgba(8, 8, 8, 0.3) 100%);
+    z-index: 1;
+}
+
+.hero-center-overlay-magenta {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(15, 0, 15, 0.7) 0%, rgba(15, 0, 15, 0.3) 100%);
+    z-index: 1;
+}
+
+/* Glass Caption Center Logic */
+.glass-caption-center {
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 60px !important;
+    border-radius: 40px;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    /* Perfect Center */
+    bottom: auto !important;
+    width: 90%;
+    max-width: 800px;
+}
+
+.max-w-600 {
+    max-width: 600px;
+}
+
+/* Keep your existing button and glow styles... */

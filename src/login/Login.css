@@ -1,0 +1,41 @@
+.login-wrapper {
+    background: #f5f6fa;
+}
+
+/* left side brand */
+.brand-section {
+    background: linear-gradient(135deg, #ff7a18, #ffb347);
+}
+
+.brand-section h1 {
+    font-size: 3rem;
+}
+
+/* login card */
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    border-radius: 10px;
+    background: white;
+}
+
+/* input style */
+.login-card .form-control {
+    height: 45px;
+    border-radius: 8px;
+}
+
+/* trovo button */
+.btn-trovo {
+    background: #ff7a18;
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.btn-trovo:hover {
+    background: #ff5c00;
+}
