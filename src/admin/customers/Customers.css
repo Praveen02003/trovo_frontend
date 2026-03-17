@@ -1,0 +1,15 @@
+/* Prevent the table from collapsing or hiding the dropdown menu */
+.card.overflow-hidden {
+    overflow: visible !important;
+    /* Allow dropdown to float outside card */
+}
+
+.table-responsive {
+    overflow: visible !important;
+    /* Prevents the 'cut-off' effect */
+}
+
+.dropdown-menu {
+    z-index: 1050;
+    /* Ensure it stays above other table rows */
+}

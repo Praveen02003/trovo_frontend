@@ -19,7 +19,7 @@ export const Sidebar = () => {
                     <Link to={'/admindashboard'} className=
                         {location.pathname === "/admindashboard" ? "nav-link text-white bg-primary rounded shadow-sm"
                             : "nav-link text-white-50"}>
-                        <i className="bi bi-speedometer2 me-3"></i>Dashboard
+                        <i className="bi bi-speedometer2 me-3 text-white"></i>Dashboard
                     </Link>
                 </li>
 
@@ -27,40 +27,52 @@ export const Sidebar = () => {
                     <Link to={'/allproduct'} className=
                         {location.pathname === "/allproduct" ? "nav-link text-white bg-primary rounded shadow-sm"
                             : "nav-link text-white-50"}>
-                        <i className="bi bi-box-seam me-3"></i>All Products
+                        <i className="bi bi-box-seam me-3 text-white"></i>All Products
                     </Link>
                 </li>
                 <li className="nav-item">
-                    <Link to={'/addproduct'} className=
-                        {location.pathname === "/addproduct" ? "nav-link text-white bg-primary rounded shadow-sm"
+                    <Link to={'/allbrands'} className=
+                        {location.pathname === "/allbrands" ? "nav-link text-white bg-primary rounded shadow-sm"
                             : "nav-link text-white-50"}>
-                        <i className="bi bi-box-seam me-3"></i>Add Product
+                        <i className="bi bi-patch-check me-2 text-white"></i>All Brands
+                    </Link>
+                </li>
+                <li className="nav-item">
+                    <Link to={'/allcategories'} className=
+                        {location.pathname === "/allcategories" ? "nav-link text-white bg-primary rounded shadow-sm"
+                            : "nav-link text-white-50"}>
+                        <i className="bi bi-grid-fill me-2 text-white"></i>All Categories
+                    </Link>
+                </li>
+
+                <li className="nav-item">
+                    <Link className=
+                        {location.pathname === "/customers" ? "nav-link text-white bg-primary rounded shadow-sm"
+                            : "nav-link text-white-50"} to={'/customers'}>
+                        <i className="bi bi-people me-3 text-white"></i>Customers
                     </Link>
                 </li>
 
                 <li className="nav-item">
                     <Link className="nav-link text-white-50">
-                        <i className="bi bi-bag-check me-3"></i>Orders
+                        <i className="bi bi-bag-check me-3 text-white"></i>Orders
                     </Link>
                 </li>
 
-                <li className="nav-item">
-                    <Link className="nav-link text-white-50">
-                        <i className="bi bi-people me-3"></i>Customers
-                    </Link>
-                </li>
 
                 <hr className="text-secondary" />
 
-                <li className="nav-item">
+                {/* <li className="nav-item">
                     <Link className="nav-link text-white-50">
                         <i className="bi bi-graph-up me-3"></i>Reports
                     </Link>
-                </li>
+                </li> */}
 
                 <li className="nav-item">
-                    <Link className="nav-link text-white-50">
-                        <i className="bi bi-gear me-3"></i>Settings
+                    <Link to={'/myprofile/1'} className=
+                        {location.pathname === "/myprofile/1" ? "nav-link text-white bg-primary rounded shadow-sm"
+                            : "nav-link text-white-50"}>
+                        <i className="bi bi-gear me-3 text-white"></i>Settings
                     </Link>
                 </li>
             </ul>

@@ -11,8 +11,12 @@ import { Adminhome } from './admin/home/Adminhome.js';
 import { Allproducts } from './admin/products/Allproducts.js';
 import { Orders } from './admin/orders/Orders.js';
 import { Vieweachorder } from './admin/vieweachorder/Vieweachorder.js';
-import { Addproduct } from './admin/add/Addproduct.js';
 import { Editproduct } from './admin/edit/Editproduct.js';
+import { Customers } from './admin/customers/Customers.js';
+import { Vieweachcustomer } from './admin/vieweachcustomer/Vieweachcustomer.js';
+import { Profile } from './admin/profile/Profile.js';
+import { Allbrands } from './admin/brand/Allbrands.js';
+import { Allcategories } from './admin/category/Allcategory.js';
 export const maincontext = createContext();
 
 function App() {
@@ -44,15 +48,42 @@ function App() {
   const [allproducts, Setallproducts] = useState([]);
   const [allcategories, Setallcategories] = useState([]);
   const [allbrands, Setallbrands] = useState([]);
+  const [allcustomers, Setallcustomers] = useState([]);
 
   //pagination
   const [page, Setpage] = useState(1);
+  const [status, Setstatus] = useState("");
+  const [search, Setsearch] = useState("");
+  const [category, Setcategory] = useState("");
 
   // Editproduct
   const [eachproduct, Seteachproduct] = useState({})
+  const [eachcustomer, Seteachcustomer] = useState({})
 
   // add product
   const [addproduct, Setaddproduct] = useState({})
+
+  // add brand
+  const [addbrand, Setaddbrand] = useState("")
+  const [editbranddata, Seteditbranddata] = useState({})
+
+  // add category
+  const [addcategory, Setaddcategory] = useState("")
+  const [addcategoryimage, Setaddcategoryimage] = useState("")
+  const [editcategorydata, Seteditcategorydata] = useState({});
+
+  // Profile
+  const [userprofile, Setuserprofile] = useState({})
+
+  // Admindashboard
+  const [customerscount, Setcustomerscount] = useState(0)
+  const [productscount, Setproductscount] = useState(0)
+  const [activeproductscount, Setactiveproductscount] = useState(0)
+  const [inactiveproductscount, Setinactiveproductscount] = useState(0)
+  const [brandscount, Setbrandscount] = useState(0)
+  const [categoriescount, Setcategoriescount] = useState(0)
+  const [activecustomerscont, Setactivecustomerscont] = useState(0)
+  const [blockedcustomerscont, Setblockedcustomerscont] = useState(0)
 
 
 
@@ -97,15 +128,58 @@ function App() {
 
       page,
       Setpage,
+      status,
+      Setstatus,
+      search,
+      Setsearch,
+      category,
+      Setcategory,
 
       eachproduct,
       Seteachproduct,
+      eachcustomer,
+      Seteachcustomer,
 
       allbrands,
       Setallbrands,
 
       addproduct,
-      Setaddproduct
+      Setaddproduct,
+
+      addbrand,
+      Setaddbrand,
+      editbranddata,
+      Seteditbranddata,
+
+      addcategory,
+      Setaddcategory,
+      addcategoryimage,
+      Setaddcategoryimage,
+      editcategorydata,
+      Seteditcategorydata,
+
+      allcustomers,
+      Setallcustomers,
+
+      userprofile,
+      Setuserprofile,
+
+      customerscount,
+      Setcustomerscount,
+      productscount,
+      Setproductscount,
+      activeproductscount,
+      Setactiveproductscount,
+      inactiveproductscount,
+      Setinactiveproductscount,
+      brandscount,
+      Setbrandscount,
+      categoriescount,
+      Setcategoriescount,
+      activecustomerscont,
+      Setactivecustomerscont,
+      blockedcustomerscont,
+      Setblockedcustomerscont
 
     }}>
 
@@ -121,8 +195,12 @@ function App() {
 
           <Route path='/admindashboard' element={<Adminhome />} />
           <Route path='/allproduct' element={<Allproducts />} />
-          <Route path='/addproduct/' element={<Addproduct />} />
           <Route path='/editproduct/:id' element={<Editproduct />} />
+          <Route path='/customers' element={< Customers />} />
+          <Route path='/vieweachcustomer/:id' element={< Vieweachcustomer />} />
+          <Route path='/myprofile/:id' element={< Profile />} />
+          <Route path='/allbrands' element={< Allbrands />} />
+          <Route path='/allcategories' element={< Allcategories />} />
           <Route path='/orders' element={<Orders />} />
           <Route path='/vieworder' element={<Vieweachorder />} />
 
