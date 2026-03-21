@@ -8,15 +8,30 @@ import { maincontext } from "../../App";
 import { Link } from "react-router-dom";
 import { Blockcustomer } from "../../function/Blockcustomer";
 import { Closetoast } from "../../function/Closetoast";
+import { Getloginuser } from "../../function/Getloginuser";
 
 export const Customers = () => {
     const {
-        page, Setpage, status, Setstatus, search, Setsearch,
-        allcustomers, Setallcustomers, showtoast, Setshowtoast,
-        toastcolor, Settoastcolor, toastmessage, Settoastmessage
+        page,
+        Setpage,
+        status,
+        Setstatus,
+        search,
+        Setsearch,
+        allcustomers,
+        Setallcustomers,
+        showtoast,
+        Setshowtoast,
+        toastcolor,
+        Settoastcolor,
+        toastmessage,
+        Settoastmessage,
+        loginuser,
+        Setloginuser,
     } = useContext(maincontext);
 
     useEffect(() => {
+        Setloginuser(Getloginuser())
         Getallcustomers(Setallcustomers, page, status, search);
     }, [page, status, search]);
 
@@ -37,10 +52,10 @@ export const Customers = () => {
                             </div>
                             <div className="ms-auto d-flex align-items-center gap-3">
                                 <div className="text-end d-none d-sm-block">
-                                    <p className="m-0 small fw-bold">Alex Rivera</p>
-                                    <p className="m-0 text-muted" style={{ fontSize: '0.7rem' }}>Super Admin</p>
+                                    <p className="m-0 small fw-bold">{loginuser.name}</p>
+                                    <p className="m-0 text-muted extra-small" style={{ fontSize: '0.7rem' }}>Super Admin</p>
                                 </div>
-                                <img src="https://ui-avatars.com" alt="Profile" className="rounded-circle border border-2 border-white shadow-sm" width="40" height="40" />
+                                <img src={`http://localhost:5000/images/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="40" height="40" />
                             </div>
                         </div>
                     </nav>

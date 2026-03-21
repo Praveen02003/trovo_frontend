@@ -11,3 +11,52 @@
 .max-w-500 {
     max-width: 400px;
 }
+
+/* Modern table */
+.modern-table th {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6c757d;
+    border-bottom: none;
+}
+
+.modern-table td {
+    border: none;
+    vertical-align: middle;
+}
+
+.modern-table tbody tr {
+    background-color: #f8f9fa;
+    margin-bottom: 8px;
+    border-radius: 12px;
+}
+
+.modern-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    padding: 0.3em 0.7em;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.status-completed {
+    background-color: #d4edda;
+    color: #28a745;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-shipped {
+    background-color: #fff4e5;
+    color: #ffb700;
+}
+
+.btn-rounded-pill {
+    border-radius: 50px;
+}

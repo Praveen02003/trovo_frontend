@@ -5,6 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { maincontext } from '../../App';
 import { Getloginuser } from '../../function/Getloginuser';
 import { Getwishlistdata } from '../../function/Getwishlistdata';
+import { Getcartdata } from '../../function/Getcartdata';
 
 export const Navbar = () => {
     const {
@@ -14,6 +15,10 @@ export const Navbar = () => {
         Setwishlistids,
         wishlistdata,
         Setwishlistdata,
+        cartids,
+        Setcartids,
+        cartdata,
+        Setcartdata,
     } = useContext(maincontext);
     const location = useLocation();
 
@@ -21,6 +26,7 @@ export const Navbar = () => {
         // 1. Get the user object safely
         Setloginuser(Getloginuser());
         Getwishlistdata(Setwishlistids, Setwishlistdata);
+        Getcartdata(Setcartids, Setcartdata);
     }, [])
 
     return (
@@ -39,7 +45,7 @@ export const Navbar = () => {
                     <ul className="navbar-nav mx-auto neo-links">
                         {/* 2. Admin Link - Safe check */}
                         {loginuser?.role === "admin" && (
-                            <li className="nav-item"><a className="nav-link text-primary" href="/admin">Admin</a></li>
+                            <li className="nav-item"><a className="nav-link text-primary" href="/admindashboard">Admin</a></li>
                         )}
 
                         <li className="nav-item"><a className={location.pathname === "/" ? 'nav-link active' : "nav-link"} href="/">Home</a></li>
@@ -58,12 +64,12 @@ export const Navbar = () => {
                     {loginuser && (
                         <div className="d-flex align-items-center">
                             <div className="d-flex gap-3 align-items-center pe-3 border-end border-white border-opacity-10 me-3">
-                                <div className="neo-icon-btn position-relative">
-                                    <i className="bi bi-heart"></i>
-                                    <span className="neo-badge">5</span>
-                                </div>
-                                <Link className="neo-icon-btn position-relative" to={`/wishlist/${loginuser.user_id}`}>
+                                <Link className="neo-icon-btn position-relative" to={`/cart/${loginuser.user_id}`}>
                                     <i className="bi bi-bag"></i>
+                                    <span className="neo-badge border-0">{cartids.length}</span>
+                                </Link>
+                                <Link className="neo-icon-btn position-relative" to={`/wishlist/${loginuser.user_id}`}>
+                                    <i className="bi bi-heart"></i>
                                     <span className="neo-badge bg-primary border-0">{wishlistids.length}</span>
                                 </Link>
                             </div>

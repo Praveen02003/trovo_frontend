@@ -26,6 +26,7 @@ import { Viewproduct } from './user/viewproduct/Viewproduct.js';
 import { Orderhistory } from './user/orderhistory/Orderhistory.js';
 import { Myorder } from './user/myorders/Myorder.js';
 import { Userprofile } from './user/profile/Userprofile.js';
+import { Viewparticularorder } from './user/viewparticularorder/Viewparticularorder.js';
 export const maincontext = createContext();
 
 function App() {
@@ -93,6 +94,9 @@ function App() {
   const [categoriescount, Setcategoriescount] = useState(0)
   const [activecustomerscont, Setactivecustomerscont] = useState(0)
   const [blockedcustomerscont, Setblockedcustomerscont] = useState(0)
+  const [orderscount, Setorderscount] = useState(0)
+  const [totalrevenue, Settotalrevenue] = useState(0);
+  const [recenttransactions, Setrecenttransactions] = useState([]);
 
   //user
 
@@ -102,6 +106,8 @@ function App() {
   const [particularproduct, Setparticularproduct] = useState({});
   const [wishlistids, Setwishlistids] = useState([]);
   const [wishlistdata, Setwishlistdata] = useState([]);
+  const [cartids, Setcartids] = useState([]);
+  const [cartdata, Setcartdata] = useState([]);
   const [getcategories, Setgetcategories] = useState([]);
 
   return (
@@ -186,6 +192,8 @@ function App() {
 
       customerscount,
       Setcustomerscount,
+      orderscount,
+      Setorderscount,
       productscount,
       Setproductscount,
       activeproductscount,
@@ -200,6 +208,10 @@ function App() {
       Setactivecustomerscont,
       blockedcustomerscont,
       Setblockedcustomerscont,
+      totalrevenue,
+      Settotalrevenue,
+      recenttransactions,
+      Setrecenttransactions,
 
       getactiveproducts,
       Setgetactiveproducts,
@@ -214,6 +226,11 @@ function App() {
       Setwishlistids,
       wishlistdata,
       Setwishlistdata,
+
+      cartids,
+      Setcartids,
+      cartdata,
+      Setcartdata,
 
       getcategories,
       Setgetcategories,
@@ -239,21 +256,25 @@ function App() {
           <Route path='/allbrands' element={< Allbrands />} />
           <Route path='/allcategories' element={< Allcategories />} />
           <Route path='/orders' element={<Orders />} />
-          <Route path='/vieworder' element={<Vieweachorder />} />
+          <Route path='/vieworder/:id' element={<Vieweachorder />} />
 
           {/* User routes */}
           <Route path='/' element={<Home />} />
           <Route path='/shop' element={<Product />} />
           <Route path='/offer' element={<Offer />} />
-          <Route path='/cart' element={<Cart />} />
-          <Route path='/checkout' element={<Checkout />} />
-          <Route path='/payment' element={<Payment />} />
 
           <Route path='/viewproduct/:id' element={<Viewproduct />} />
           <Route path='/history/:id' element={<Orderhistory />} />
           <Route path='/trackorder/:id' element={<Myorder />} />
           <Route path='/userprofile/:id' element={<Userprofile />} />
           <Route path='/wishlist/:id' element={<Wishlist />} />
+          <Route path='/cart/:id' element={<Cart />} />
+          <Route path='/checkout/:id' element={<Checkout />} />
+          <Route path='/payment/:id' element={<Payment />} />
+          <Route path="/orderdetails/:orderId" element={<Viewparticularorder />} />
+
+
+
 
 
 

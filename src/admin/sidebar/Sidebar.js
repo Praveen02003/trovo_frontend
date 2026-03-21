@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { Logout } from "../../function/Logout";
 
 export const Sidebar = () => {
     const location = useLocation();
@@ -54,26 +55,36 @@ export const Sidebar = () => {
                 </li>
 
                 <li className="nav-item">
-                    <Link className="nav-link text-white-50">
+                    <Link to={'/orders'} className=
+                        {location.pathname === "/orders" ? "nav-link text-white bg-primary rounded shadow-sm"
+                            : "nav-link text-white-50"}>
                         <i className="bi bi-bag-check me-3 text-white"></i>Orders
                     </Link>
                 </li>
 
 
                 <hr className="text-secondary" />
-
-                {/* <li className="nav-item">
-                    <Link className="nav-link text-white-50">
-                        <i className="bi bi-graph-up me-3"></i>Reports
+                <li className="nav-item">
+                    <Link to={'/'} className=
+                        {location.pathname === "/" ? "nav-link text-white bg-primary rounded shadow-sm"
+                            : "nav-link text-white-50"}>
+                        <i className="bi bi-speedometer2 me-3 text-white"></i>UserDashboard
                     </Link>
-                </li> */}
-
+                </li>
                 <li className="nav-item">
                     <Link to={'/myprofile/1'} className=
                         {location.pathname === "/myprofile/1" ? "nav-link text-white bg-primary rounded shadow-sm"
                             : "nav-link text-white-50"}>
                         <i className="bi bi-gear me-3 text-white"></i>Settings
                     </Link>
+                </li>
+                <li className="nav-item">
+                    <button className="nav-link text-white-50" onClick={() => {
+                        Logout();
+                    }}>
+                        <i className="bi bi-power me-3 text-white"></i>
+                            Sign Out
+                    </button>
                 </li>
             </ul>
         </div>

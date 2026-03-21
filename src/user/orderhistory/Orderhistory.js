@@ -1,125 +1,181 @@
-import React from 'react';
-import { Navbar } from '../navbar/Navbar'; // Adjust path
-import '../orderhistory/Orderhistory.css'
-export const Orderhistory = () => {
-    // Mock data for the orders
-    const orders = [
-        { id: 'TRV-99201', date: 'Oct 12, 2023', total: '₹4,599', status: 'Delivered', items: 2, img: 'https://images.unsplash.com' },
-        { id: 'TRV-88154', date: 'Sep 28, 2023', total: '₹1,250', status: 'Shipped', items: 1, img: 'https://images.unsplash.com' },
-        { id: 'TRV-77102', date: 'Aug 15, 2023', total: '₹2,679', status: 'Cancelled', items: 3, img: 'https://images.unsplash.com' }
-    ];
+import React, { useEffect, useState, useContext } from 'react';
+import { useNavigate } from "react-router-dom";
+import { Navbar } from '../navbar/Navbar';
+import '../orderhistory/Orderhistory.css';
+import api from '../../axios/Axios';
+import { maincontext } from '../../App';
+import { Getloginuser } from '../../function/Getloginuser';
 
-    const getStatusClass = (status) => {
-        switch (status) {
-            case 'Delivered': return 'bg-success-subtle text-success border-success-subtle';
-            case 'Shipped': return 'bg-primary-subtle text-primary border-primary-subtle';
-            case 'Cancelled': return 'bg-danger-subtle text-danger border-danger-subtle';
-            default: return 'bg-secondary-subtle text-secondary';
+export const Orderhistory = () => {
+    const { loginuser, Setloginuser } = useContext(maincontext);
+    const navigate = useNavigate();
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const user = Getloginuser();
+        Setloginuser(user);
+        if (user?.user_id) fetchOrders(user.user_id);
+    }, []);
+
+    const fetchOrders = async (userId) => {
+        try {
+            const res = await api.get(`/getorders/${userId}`);
+            const grouped = {};
+
+            // Check if res.data is an array before processing
+            const data = Array.isArray(res.data) ? res.data : [];
+
+            data.forEach(row => {
+                if (!grouped[row.order_id]) {
+                    grouped[row.order_id] = {
+                        order_id: row.order_id,
+                        total_amount: row.total_amount,
+                        order_status: row.order_status,
+                        created_at: row.created_at,
+                        items: []
+                    };
+                }
+                grouped[row.order_id].items.push({
+                    product_name: row.product_name,
+                    image: row.image,
+                    quantity: row.quantity,
+                    price: row.price
+                });
+            });
+            setOrders(Object.values(grouped).reverse()); // Newest first
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
     };
 
+    const getStatusStyles = (status) => {
+        switch (status) {
+            case 'Placed': return { bg: '#fff4e5', color: '#b76e00' };
+            case 'Shipped': return { bg: '#e5f6fd', color: '#014361' };
+            case 'Delivered': return { bg: '#edf7ed', color: '#1e4620' };
+            default: return { bg: '#f5f5f5', color: '#616161' };
+        }
+    };
+
+    if (loading) return (
+        <div className="d-flex justify-content-center align-items-center vh-100 bg-white">
+            <div className="spinner-border text-dark" role="status"></div>
+        </div>
+    );
+
     return (
-        <div className="bg-light min-vh-100">
+        <div className="bg-light min-vh-100 pb-5">
             <Navbar />
 
-            <div className="container py-4">
+            <div className="container py-5">
                 <div className="row justify-content-center">
-                    <div className="col-lg-10">
+                    <div className="col-lg-10 col-xl-9">
 
-                        {/* Header */}
-                        <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+                        <div className="d-flex align-items-end justify-content-between mb-4">
                             <div>
-                                <h3 className="fw-bold mb-1">Order History</h3>
-                                <p className="text-muted small mb-0">Track and manage your orders</p>
+                                <h2 className="fw-bold mb-1">Your Orders</h2>
+                                <p className="text-muted mb-0 small uppercase tracking-wider">Review your past purchases and tracking</p>
                             </div>
-
-                            <select className="form-select mt-3 mt-md-0 w-auto shadow-sm">
-                                <option>Last 3 months</option>
-                                <option>2023</option>
-                                <option>2022</option>
-                            </select>
+                            <button onClick={() => navigate('/')} className="btn btn-link text-dark text-decoration-none fw-bold p-0">
+                                <i className="bi bi-arrow-left me-2"></i>Back to Shop
+                            </button>
                         </div>
 
-                        {/* Orders */}
-                        <div className="d-grid gap-3">
-                            {orders.map((order) => (
-                                <div key={order.id} className="card border-0 shadow-sm rounded-4">
+                        {orders.length === 0 ? (
+                            <div className="card border-0 shadow-sm p-5 text-center rounded-4">
+                                <i className="bi bi-bag-x text-muted display-4 mb-3"></i>
+                                <h5>No orders found yet</h5>
+                                <button onClick={() => navigate('/')} className="btn btn-dark mt-3 px-4 rounded-pill">Start Shopping</button>
+                            </div>
+                        ) : (
+                            <div className="d-grid gap-4">
+                                {orders.map(order => {
+                                    const status = getStatusStyles(order.order_status);
+                                    return (
+                                        <div key={order.order_id} className="card border-0 shadow-sm rounded-4 overflow-hidden order-card-hover">
 
-                                    {/* Header */}
-                                    <div className="card-header bg-white border-0 pb-0">
-                                        <div className="row text-center text-md-start">
-                                            <div className="col-md-3">
-                                                <small className="text-muted d-block">Order ID</small>
-                                                <strong>#{order.id}</strong>
+                                            {/* HEADER SECTION */}
+                                            <div className="bg-white px-4 py-3 border-bottom border-light">
+                                                <div className="row align-items-center">
+                                                    <div className="col-6 col-md-3">
+                                                        <label className="text-muted tiny-label d-block text-uppercase">Order ID</label>
+                                                        <span className="fw-bold">#{order.order_id}</span>
+                                                    </div>
+                                                    <div className="col-6 col-md-3">
+                                                        <label className="text-muted tiny-label d-block text-uppercase">Date Placed</label>
+                                                        <span className="fw-medium">{new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                                    </div>
+                                                    <div className="col-6 col-md-3 mt-3 mt-md-0">
+                                                        <label className="text-muted tiny-label d-block text-uppercase">Total Amount</label>
+                                                        <span className="fw-bold text-dark">₹{Number(order.total_amount).toLocaleString()}</span>
+                                                    </div>
+                                                    <div className="col-6 col-md-3 mt-3 mt-md-0 text-md-end">
+                                                        <span className="px-3 py-1 rounded-pill small fw-bold" style={{ backgroundColor: status.bg, color: status.color, fontSize: '0.75rem' }}>
+                                                            {order.order_status.toUpperCase()}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            <div className="col-md-3">
-                                                <small className="text-muted d-block">Date</small>
-                                                <span>{order.date}</span>
-                                            </div>
-
-                                            <div className="col-md-3">
-                                                <small className="text-muted d-block">Total</small>
-                                                <strong className="text-primary">{order.total}</strong>
-                                            </div>
-
-                                            <div className="col-md-3 text-md-end mt-2 mt-md-0">
-                                                <span className={`badge rounded-pill px-3 py-2 ${getStatusClass(order.status)}`}>
-                                                    {order.status}
-                                                </span>
+                                            {/* BODY SECTION */}
+                                            <div className="card-body p-4 bg-white">
+                                                <div className="row align-items-center">
+                                                    <div className="col-md-8">
+                                                        <div className="d-flex align-items-center">
+                                                            {/* Stacked Images for multiple items */}
+                                                            <div className="position-relative me-4" style={{ height: '70px', width: '85px' }}>
+                                                                {order.items.slice(0, 3).map((item, idx) => (
+                                                                    <img
+                                                                        key={idx}
+                                                                        src={`http://localhost:5000/images/${item.image}`}
+                                                                        className="rounded shadow-sm border bg-white position-absolute"
+                                                                        style={{
+                                                                            width: '60px',
+                                                                            height: '60px',
+                                                                            objectFit: 'cover',
+                                                                            left: `${idx * 12}px`,
+                                                                            zIndex: 3 - idx,
+                                                                            top: `${idx * 2}px`
+                                                                        }}
+                                                                        alt="Product"
+                                                                    />
+                                                                ))}
+                                                            </div>
+                                                            <div>
+                                                                <h6 className="mb-1 fw-bold text-truncate" style={{ maxWidth: '250px' }}>
+                                                                    {order.items[0].product_name}
+                                                                    {order.items.length > 1 && <span className="text-muted small"> +{order.items.length - 1} more</span>}
+                                                                </h6>
+                                                                <p className="text-muted small mb-0">Total items: {order.items.reduce((acc, curr) => acc + curr.quantity, 0)}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-4 text-md-end mt-3 mt-md-0">
+                                                        <button
+                                                            className="btn btn-outline-dark btn-sm rounded-pill px-4 me-2 fw-bold"
+                                                            onClick={() => navigate(`/orderdetails/${order.order_id}`)}
+                                                        >
+                                                            View Details
+                                                        </button>
+                                                        <button className="btn btn-dark btn-sm rounded-pill px-4 fw-bold shadow-sm"
+                                                            onClick={() => navigate(`/orderdetails/${order.order_id}`)}
+                                                        >
+                                                            Invoice
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    {/* Body */}
-                                    <div className="card-body pt-3">
-                                        <div className="d-flex align-items-center flex-wrap gap-3">
-
-                                            <img
-                                                src={order.img}
-                                                className="rounded-3 border order-img"
-                                                alt="product"
-                                            />
-
-                                            <div className="flex-grow-1">
-                                                <h6 className="fw-bold mb-1">
-                                                    Items ({order.items})
-                                                </h6>
-                                                <p className="text-muted small mb-0">
-                                                    Standard delivery • 3–5 days
-                                                </p>
-                                            </div>
-
-                                            {/* Desktop Buttons */}
-                                            <div className="d-none d-md-flex gap-2">
-                                                <button className="btn btn-outline-secondary btn-sm rounded-pill">
-                                                    View
-                                                </button>
-                                                <button className="btn btn-dark btn-sm rounded-pill">
-                                                    Reorder
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {/* Mobile Buttons */}
-                                        <div className="d-flex d-md-none gap-2 mt-3">
-                                            <button className="btn btn-outline-secondary w-100 btn-sm">
-                                                View
-                                            </button>
-                                            <button className="btn btn-dark w-100 btn-sm">
-                                                Reorder
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            ))}
-                        </div>
-
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
         </div>
     );
 };
-

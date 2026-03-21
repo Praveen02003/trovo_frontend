@@ -13,9 +13,12 @@ import { Closetoast } from "../../function/Closetoast";
 import { Addcategory } from "../../function/Addcategory";
 import { Createproduct } from "../../function/Createproduct";
 import { Getallbrands } from "../../function/Getallbrands";
+import { Getloginuser } from "../../function/Getloginuser";
 
 export const Allproducts = () => {
   const {
+    loginuser,
+    Setloginuser,
     allbrands,
     Setallbrands,
     allproducts,
@@ -45,6 +48,7 @@ export const Allproducts = () => {
   } = useContext(maincontext);
 
   useEffect(() => {
+    Setloginuser(Getloginuser())
     Getallproducts(Setallproducts, page, search, category);
     Getallcategories(Setallcategories);
     Getallbrands(Setallbrands)
@@ -62,10 +66,10 @@ export const Allproducts = () => {
               <h5 className="fw-bold m-0"><i className="bi bi-box-seam me-2 text-primary"></i>Inventory Management</h5>
               <div className="ms-auto d-flex align-items-center gap-3">
                 <div className="text-end d-none d-sm-block">
-                  <p className="m-0 small fw-bold">Alex Rivera</p>
+                  <p className="m-0 small fw-bold">{loginuser.name}</p>
                   <p className="m-0 text-muted extra-small" style={{ fontSize: '0.7rem' }}>Super Admin</p>
                 </div>
-                <img src="https://ui-avatars.com" alt="Profile" className="rounded-circle border shadow-sm" width="40" height="40" />
+                <img src={`http://localhost:5000/images/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="40" height="40" />
               </div>
             </div>
           </nav>

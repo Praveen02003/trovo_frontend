@@ -1,19 +1,163 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Navbar } from '../navbar/Navbar'; // Adjust path accordingly
-import '../viewproduct/Viewproduct.css'
 import { useParams } from 'react-router-dom';
-import { Getparticularproduct } from '../../function/Getparticularproduct';
+import { Navbar } from '../navbar/Navbar';
+import '../viewproduct/Viewproduct.css';
+
+// Context & Functions
 import { maincontext } from '../../App';
+import { Getparticularproduct } from '../../function/Getparticularproduct';
+import { Getcartdata } from '../../function/Getcartdata';
+import { Getwishlistdata } from '../../function/Getwishlistdata';
+import { Addtocart } from '../../function/Addtocart';
+import { Removefromcart } from '../../function/Removefromcart';
+import { Addtowishlist } from '../../function/Addtowishlist';
+import { Removefromwishlist } from '../../function/Removefromwishlist';
+import { Updatecartquantity } from '../../function/Updatecartquantity';
+
 export const Viewproduct = () => {
-    const {
-        particularproduct,
-        Setparticularproduct
-    } = useContext(maincontext);
-    const [quantity, setQuantity] = useState(1);
+
     const { id } = useParams();
+    const [quantity, setQuantity] = useState(1);
+
+    const {
+        particularproduct, Setparticularproduct,
+        loginuser,
+        cartids, Setcartids,
+        cartdata, Setcartdata,
+        wishlistids, Setwishlistids, Setwishlistdata,
+        Settoastmessage, Setshowtoast, Settoastcolor
+    } = useContext(maincontext);
+
+    // =========================
+    // FETCH DATA
+    // =========================
     useEffect(() => {
         Getparticularproduct(id, Setparticularproduct);
-    }, [])
+
+        if (loginuser?.user_id) {
+            Getcartdata(Setcartids, Setcartdata);
+            Getwishlistdata(Setwishlistids, Setwishlistdata);
+        }
+    }, [id, loginuser?.user_id]);
+
+    const prodId = particularproduct?.product_id;
+
+    const isInCart = cartids.includes(prodId);
+    const isInWishlist = wishlistids.includes(prodId);
+
+    // =========================
+    // AUTO SYNC QUANTITY
+    // =========================
+    useEffect(() => {
+        if (!prodId) return;
+
+        const existingItem = cartdata.find(
+            item => item.product_id === prodId
+        );
+
+        if (existingItem) {
+            setQuantity(existingItem.quantity || 1);
+        } else {
+            setQuantity(1);
+        }
+
+    }, [cartdata, prodId]);
+
+    // =========================
+    // CART TOGGLE
+    // =========================
+    const handleCartToggle = () => {
+
+        if (!loginuser?.user_id) {
+            Settoastcolor("danger");
+            Settoastmessage("Please login to manage your cart");
+            Setshowtoast(true);
+            return;
+        }
+
+        if (!prodId) return;
+
+        if (isInCart) {
+
+            // REMOVE
+            Setcartids(prev => prev.filter(id => id !== prodId));
+            Setcartdata(prev => prev.filter(item => item.product_id !== prodId));
+
+            Removefromcart(
+                loginuser.user_id,
+                prodId,
+                Setcartids,
+                Settoastmessage,
+                Setshowtoast,
+                Settoastcolor,
+                Setcartdata
+            );
+
+        } else {
+
+            // ADD WITH QUANTITY
+            Setcartids(prev => [...prev, prodId]);
+
+            Setcartdata(prev => [
+                ...prev,
+                { ...particularproduct, quantity }
+            ]);
+
+            Addtocart(
+                loginuser.user_id,
+                prodId,
+                quantity,
+                Setcartids,
+                Setcartdata,
+                Settoastmessage,
+                Setshowtoast,
+                Settoastcolor
+            );
+        }
+    };
+
+    // =========================
+    // WISHLIST TOGGLE
+    // =========================
+    const handleWishlistToggle = () => {
+
+        if (!loginuser?.user_id) {
+            Settoastcolor("danger");
+            Settoastmessage("Please login to manage your wishlist");
+            Setshowtoast(true);
+            return;
+        }
+
+        if (!prodId) return;
+
+        if (isInWishlist) {
+
+            Setwishlistids(prev => prev.filter(id => id !== prodId));
+            Setwishlistdata(prev => prev.filter(item => item.product_id !== prodId));
+
+            Removefromwishlist(
+                loginuser.user_id,
+                prodId,
+                Setwishlistids,
+                Settoastmessage,
+                Setshowtoast,
+                Settoastcolor
+            );
+
+        } else {
+
+            Setwishlistids(prev => [...prev, prodId]);
+
+            Addtowishlist(
+                loginuser.user_id,
+                prodId,
+                Setwishlistids,
+                Settoastmessage,
+                Setshowtoast,
+                Settoastcolor
+            );
+        }
+    };
 
     return (
         <div className="bg-light min-vh-100">
@@ -22,76 +166,66 @@ export const Viewproduct = () => {
             <div className="container py-4">
                 <div className="row g-4">
 
-                    {/* LEFT SIDE */}
+                    {/* LEFT */}
                     <div className="col-lg-7">
                         <div className="sticky-top" style={{ top: '100px' }}>
-
-                            {/* Main Image */}
-                            <div className="card border-0 shadow-sm rounded-4 mb-3">
+                            <div className="card border-0 shadow-sm rounded-4">
                                 <img
-                                    src={`http://localhost:5000/images/${particularproduct.image}`}
+                                    src={`http://localhost:5000/images/${particularproduct?.image}`}
                                     className="card-img-top rounded-4"
-                                    alt="Product"
+                                    alt={particularproduct?.product_name}
                                 />
-                            </div>
-
-                            {/* Thumbnails */}
-                            <div className="row g-2">
-                                {[1, 2, 3, 4].map(i => (
-                                    <div className="col-3" key={i}>
-                                        <div className="card border cursor-pointer hover-shadow text-center p-2">
-                                            <small className="text-muted">Thumb {i}</small>
-                                        </div>
-                                    </div>
-                                ))}
                             </div>
                         </div>
                     </div>
 
-                    {/* RIGHT SIDE */}
+                    {/* RIGHT */}
                     <div className="col-lg-5">
                         <div className="ps-lg-3">
 
-                            {/* Breadcrumb */}
-                            <nav className="mb-2">
-                                <ol className="breadcrumb small">
-                                    <li className="breadcrumb-item">
-                                        <a href="#" className="text-muted text-decoration-none">Shop</a>
-                                    </li>
-                                    <li className="breadcrumb-item active text-primary">{particularproduct.category_name}</li>
-                                </ol>
-                            </nav>
+                            <h2 className="fw-bold mb-2">
+                                {particularproduct?.product_name}
+                            </h2>
 
-                            {/* Title */}
-                            <h2 className="fw-bold mb-2">{particularproduct.product_name}</h2>
+                            <h3 className="text-primary fw-bold mb-3">
+                                ₹{particularproduct?.price}
+                            </h3>
 
-                            {/* Rating */}
-                            <div className="d-flex align-items-center mb-3">
-                                <div className="text-warning me-2">
-                                    <i className="bi bi-star-fill"></i>
-                                    <i className="bi bi-star-fill"></i>
-                                    <i className="bi bi-star-fill"></i>
-                                    <i className="bi bi-star-fill"></i>
-                                    <i className="bi bi-star-half"></i>
-                                </div>
-                                <small className="text-muted">(128 Reviews)</small>
-                            </div>
-
-                            {/* Price */}
-                            <h3 className="text-primary fw-bold mb-3">₹{particularproduct.price}</h3>
-
-                            {/* Description */}
-                            <p className="text-muted leading-relaxed mb-4">
-                                {particularproduct.description}
+                            <p className="text-muted mb-4">
+                                {particularproduct?.description}
                             </p>
 
-                            {/* Quantity + Buttons */}
+                            {/* ACTIONS */}
                             <div className="d-flex gap-2 mb-4">
 
+                                {/* QUANTITY */}
                                 <div className="input-group" style={{ width: "120px" }}>
+
                                     <button
                                         className="btn btn-outline-secondary"
-                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                        onClick={() => {
+                                            const newQty = Math.max(1, quantity - 1);
+                                            setQuantity(newQty);
+
+                                            if (isInCart) {
+                                                Setcartdata(prev =>
+                                                    prev.map(item =>
+                                                        item.product_id === prodId
+                                                            ? { ...item, quantity: newQty }
+                                                            : item
+                                                    )
+                                                );
+
+                                                Updatecartquantity(
+                                                    loginuser.user_id,
+                                                    prodId,
+                                                    newQty,
+                                                    Settoastmessage,
+                                                    Setshowtoast,
+                                                    Settoastcolor
+                                                );
+                                            }
+                                        }}
                                     >-</button>
 
                                     <input
@@ -102,43 +236,95 @@ export const Viewproduct = () => {
 
                                     <button
                                         className="btn btn-outline-secondary"
-                                        onClick={() => setQuantity(quantity + 1)}
+                                        onClick={() => {
+                                            const newQty = quantity + 1;
+                                            setQuantity(newQty);
+
+                                            if (isInCart) {
+                                                Setcartdata(prev =>
+                                                    prev.map(item =>
+                                                        item.product_id === prodId
+                                                            ? { ...item, quantity: newQty }
+                                                            : item
+                                                    )
+                                                );
+
+                                                Updatecartquantity(
+                                                    loginuser.user_id,
+                                                    prodId,
+                                                    newQty,
+                                                    Settoastmessage,
+                                                    Setshowtoast,
+                                                    Settoastcolor
+                                                );
+                                            }
+                                        }}
                                     >+</button>
+
                                 </div>
 
-                                <button className="btn btn-primary flex-grow-1 fw-bold">
-                                    Add to Cart
+                                {/* CART */}
+                                <button
+                                    className={`btn flex-grow-1 fw-bold ${isInCart ? 'btn-danger' : 'btn-primary'}`}
+                                    onClick={handleCartToggle}
+                                >
+                                    {isInCart ? "Remove From Cart" : "Add to Cart"}
                                 </button>
 
-                                <button className="btn btn-outline-dark">
-                                    <i className="bi bi-heart"></i>
+                                {/* WISHLIST */}
+                                <button
+                                    className={`btn ${isInWishlist ? 'btn-danger' : 'btn-outline-dark'}`}
+                                    onClick={handleWishlistToggle}
+                                >
+                                    <i className={`bi ${isInWishlist ? 'bi-heart-fill' : 'bi-heart'}`}></i>
                                 </button>
+
                             </div>
 
-                            {/* Accordion */}
-                            <div className="accordion" id="productDetails">
-                                <div className="accordion-item">
-                                    <h2 className="accordion-header">
-                                        <button
-                                            className="accordion-button collapsed"
-                                            data-bs-toggle="collapse"
-                                            data-bs-target="#desc"
-                                        >
-                                            Features & Specifications
-                                        </button>
-                                    </h2>
+                            {/* ✅ EXTRA CONTENT SECTION */}
+                            <div className="mt-4">
 
-                                    <div id="desc" className="accordion-collapse collapse">
-                                        <div className="accordion-body">
-                                            <ul className="mb-0">
-                                                <li>Bluetooth 5.2 connectivity</li>
-                                                <li>Active Noise Cancellation</li>
-                                                <li>High-fidelity audio drivers</li>
-                                                <li>Quick charge support</li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                {/* DELIVERY */}
+                                <div className="border rounded-3 p-3 mb-3 bg-white">
+                                    <h6 className="fw-bold mb-2">
+                                        <i className="bi bi-truck me-2 text-primary"></i>
+                                        Delivery Information
+                                    </h6>
+                                    <p className="text-muted small mb-1">
+                                        Free delivery available
+                                    </p>
+                                    <p className="text-muted small mb-0">
+                                        Delivery in 3-5 days
+                                    </p>
                                 </div>
+
+                                {/* OFFERS */}
+                                <div className="border rounded-3 p-3 mb-3 bg-white">
+                                    <h6 className="fw-bold mb-2">
+                                        <i className="bi bi-tag-fill me-2 text-success"></i>
+                                        Offers
+                                    </h6>
+                                    <ul className="small text-muted mb-0 ps-3">
+                                        <li>10% discount on prepaid orders</li>
+                                        <li>Free shipping on all products</li>
+                                    </ul>
+                                </div>
+
+                                {/* DETAILS */}
+                                <div className="border rounded-3 p-3 bg-white">
+                                    <h6 className="fw-bold mb-2">
+                                        <i className="bi bi-info-circle me-2"></i>
+                                        Product Details
+                                    </h6>
+
+                                    <p className="small mb-1">
+                                        <strong>Brand:</strong> {particularproduct?.brand_name}
+                                    </p>
+                                    <p className="small mb-1">
+                                        <strong>Category:</strong> {particularproduct?.category_name}
+                                    </p>
+                                </div>
+
                             </div>
 
                         </div>
@@ -149,4 +335,3 @@ export const Viewproduct = () => {
         </div>
     );
 };
-

@@ -5,9 +5,13 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Sidebar } from "../sidebar/Sidebar";
 import { Getadmindashboarddata } from "../../function/Getadmindashboarddata";
 import { maincontext } from "../../App";
+import { Link } from "react-router-dom";
+import { Getloginuser } from "../../function/Getloginuser";
 
 export const Adminhome = () => {
     const {
+        loginuser,
+        Setloginuser,
         customerscount,
         Setcustomerscount,
         productscount,
@@ -23,10 +27,17 @@ export const Adminhome = () => {
         activecustomerscont,
         Setactivecustomerscont,
         blockedcustomerscont,
-        Setblockedcustomerscont
+        Setblockedcustomerscont,
+        orderscount,
+        Setorderscount,
+        totalrevenue,
+        Settotalrevenue,
+        recenttransactions,
+        Setrecenttransactions,
     } = useContext(maincontext);
 
     useEffect(() => {
+        Setloginuser(Getloginuser())
         Getadmindashboarddata(
             Setcustomerscount,
             Setproductscount,
@@ -35,12 +46,15 @@ export const Adminhome = () => {
             Setbrandscount,
             Setcategoriescount,
             Setactivecustomerscont,
-            Setblockedcustomerscont
+            Setblockedcustomerscont,
+            Setorderscount,
+            Settotalrevenue,
+            Setrecenttransactions
         );
     }, []);
     return (
         <div className="container-fluid p-0 bg-light">
-            <div className="d-flex min-vh-100">
+            <div className="d-flex min-vh-0">
                 <Sidebar />
 
                 <div className="flex-grow-1 overflow-hidden">
@@ -50,10 +64,10 @@ export const Adminhome = () => {
                             <h5 className="fw-bold m-0 text-dark"><i className="bi bi-speedometer2 me-2 text-primary"></i>Admin Dashboard</h5>
                             <div className="ms-auto d-flex align-items-center gap-3">
                                 <div className="text-end d-none d-sm-block">
-                                    <p className="m-0 small fw-bold text-dark">Alex Rivera</p>
+                                    <p className="m-0 small fw-bold text-dark">{loginuser.name}</p>
                                     <small className="text-muted" style={{ fontSize: '0.65rem' }}>Super Admin</small>
                                 </div>
-                                <img src="https://ui-avatars.com" alt="Profile" className="rounded-circle border shadow-sm" width="38" height="38" />
+                                <img src={`http://localhost:5000/images/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="38" height="38" />
                             </div>
                         </div>
                     </nav>
@@ -74,7 +88,7 @@ export const Adminhome = () => {
                                             <span className="badge bg-success bg-opacity-10 text-success rounded-pill">+12%</span>
                                         </div>
                                         <h6 className="text-muted small fw-bold text-uppercase">Total Revenue</h6>
-                                        <h3 className="fw-bold m-0 text-dark">$45,231</h3>
+                                        <h3 className="fw-bold m-0 text-dark">${parseFloat(totalrevenue || 0).toLocaleString()}</h3>
                                     </div>
                                 </div>
                             </div>
@@ -86,7 +100,7 @@ export const Adminhome = () => {
                                             <span className="badge bg-success bg-opacity-10 text-success rounded-pill">+5%</span>
                                         </div>
                                         <h6 className="text-muted small fw-bold text-uppercase">Active Orders</h6>
-                                        <h3 className="fw-bold m-0 text-dark">356</h3>
+                                        <h3 className="fw-bold m-0 text-dark">{orderscount}</h3>
                                     </div>
                                 </div>
                             </div>
@@ -204,56 +218,53 @@ export const Adminhome = () => {
                         </div>
 
 
-                        {/* Static Recent Orders Table */}
-                        <div className="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
-                            <div className="card-header bg-white py-4 px-4 border-0">
-                                <h5 className="fw-bold m-0 text-dark">Recent Transactions</h5>
+                        {/* Modern Recent Transactions Table */}
+                        <div className="card rounded-4 shadow-sm bg-white p-3">
+                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                <h5 className="fw-bold m-0">Recent Transactions</h5>
+                                <Link to={'/orders'} className="btn btn-sm btn-outline-primary rounded-pill">View All</Link>
                             </div>
-                            <div className="table-responsive px-2">
-                                <table className="table align-middle table-hover mb-0">
+
+                            <div className="table-responsive">
+                                <table className="table align-middle mb-0 modern-table">
                                     <thead className="bg-light">
                                         <tr>
-                                            <th className="border-0 ps-4 py-3 text-muted extra-small fw-bold">ORDER ID</th>
-                                            <th className="border-0 py-3 text-muted extra-small fw-bold">CUSTOMER</th>
-                                            <th className="border-0 py-3 text-muted extra-small fw-bold">AMOUNT</th>
-                                            <th className="border-0 py-3 text-muted extra-small fw-bold">STATUS</th>
-                                            <th className="border-0 pe-4 py-3 text-muted extra-small fw-bold text-end">ACTION</th>
+                                            <th>ID</th>
+                                            <th>CUSTOMER</th>
+                                            <th>AMOUNT</th>
+                                            <th>STATUS</th>
+                                            <th>DETAILS</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="border-top-0">
-                                        <tr>
-                                            <td className="ps-4 py-3 fw-bold text-primary">#1001</td>
-                                            <td className="py-3 text-dark fw-semibold">John Doe</td>
-                                            <td className="py-3 text-dark fw-bold">$120.00</td>
-                                            <td className="py-3">
-                                                <span className="badge rounded-pill bg-success bg-opacity-10 text-success px-3 py-2 fw-bold" style={{ fontSize: '0.7rem' }}>● Completed</span>
-                                            </td>
-                                            <td className="pe-4 py-3 text-end">
-                                                <button className="btn btn-light btn-sm border rounded-circle shadow-sm"><i className="bi bi-three-dots"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className="ps-4 py-3 fw-bold text-primary">#1002</td>
-                                            <td className="py-3 text-dark fw-semibold">Jane Smith</td>
-                                            <td className="py-3 text-dark fw-bold">$80.50</td>
-                                            <td className="py-3">
-                                                <span className="badge rounded-pill bg-warning bg-opacity-10 text-warning px-3 py-2 fw-bold" style={{ fontSize: '0.7rem' }}>● Pending</span>
-                                            </td>
-                                            <td className="pe-4 py-3 text-end">
-                                                <button className="btn btn-light btn-sm border rounded-circle shadow-sm"><i className="bi bi-three-dots"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className="ps-4 py-3 fw-bold text-primary">#1003</td>
-                                            <td className="py-3 text-dark fw-semibold">Mike Johnson</td>
-                                            <td className="py-3 text-dark fw-bold">$50.00</td>
-                                            <td className="py-3">
-                                                <span className="badge rounded-pill bg-info bg-opacity-10 text-info px-3 py-2 fw-bold" style={{ fontSize: '0.7rem' }}>● Shipped</span>
-                                            </td>
-                                            <td className="pe-4 py-3 text-end">
-                                                <button className="btn btn-light btn-sm border rounded-circle shadow-sm"><i className="bi bi-three-dots"></i></button>
-                                            </td>
-                                        </tr>
+                                    <tbody>
+                                        {recenttransactions.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={5} className="text-center py-4 text-muted">
+                                                    No recent transactions
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            recenttransactions.map((tx) => (
+                                                <tr key={tx.order_id} className="align-middle">
+                                                    <td>
+                                                        <div className="fw-bold text-dark">#{tx.order_id}</div>
+                                                        <small className="text-muted">{new Date(tx.created_at).toLocaleDateString()}</small>
+                                                    </td>
+                                                    <td className="text-dark fw-semibold">{tx.name}</td>
+                                                    <td className="fw-bold text-dark">${parseFloat(tx.total_amount).toFixed(2)}</td>
+                                                    <td>
+                                                        <span className={`text-white bg-success badge status-badge`}>
+                                                            ● {tx.order_status}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <Link to={`/vieworder/${tx.order_id}`} className="btn btn-primary btn-sm rounded-pill px-3">
+                                                            View <i className="bi bi-chevron-right ms-1"></i>
+                                                        </Link>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
                                     </tbody>
                                 </table>
                             </div>

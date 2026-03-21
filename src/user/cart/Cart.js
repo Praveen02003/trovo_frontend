@@ -1,104 +1,235 @@
-import React, { useState } from 'react';
-import '../cart/Cart.css'
+import React, { useContext, useEffect } from 'react';
+import '../cart/Cart.css';
 import { Navbar } from '../navbar/Navbar';
+import { maincontext } from '../../App';
+import { Getloginuser } from '../../function/Getloginuser';
+import { Getcartdata } from '../../function/Getcartdata';
+import { Removefromcart } from '../../function/Removefromcart';
+import { Updatecartquantity } from '../../function/Updatecartquantity';
+import { Link } from 'react-router-dom';
+
 export const Cart = () => {
-    const [items, setItems] = useState([
-        { id: 1, name: 'Samsung Galaxy Watch 4 Classic', brand: 'Samsung', price: 249.99, qty: 1, img: 'https://images.unsplash.com' },
-        { id: 2, name: 'Beats Fit Pro - True Wireless', brand: 'Beats', price: 199.99, qty: 1, img: 'https://images.unsplash.com' }
-    ]);
+
+    const {
+        loginuser,
+        Setloginuser,
+        cartids,
+        Setcartids,
+        cartdata,
+        Setcartdata,
+        Setshowtoast,
+        Settoastcolor,
+        Settoastmessage
+    } = useContext(maincontext);
+
+    useEffect(() => {
+        Setloginuser(Getloginuser());
+        Getcartdata(Setcartids, Setcartdata);
+    }, []);
+
+    // ✅ TOTAL CALCULATION (WITH QUANTITY)
+    const subtotal = cartdata.reduce(
+        (acc, item) => acc + (item.price * (item.quantity || 1)),
+        0
+    );
+
+    const tax = subtotal * 0.03;
+    const total = subtotal + tax;
 
     return (
         <div className="cart-bg py-5">
             <Navbar />
+
             <div className="container mt-5">
                 <div className="row g-4">
-                    {/* Left Side: Shopping Cart Table */}
+
+                    {/* LEFT */}
                     <div className="col-lg-8">
                         <div className="bg-white rounded-4 shadow-sm p-4">
                             <h4 className="fw-bold mb-4">Shopping Cart</h4>
 
-                            {/* Table Header */}
+                            {/* HEADER */}
                             <div className="row text-muted small fw-bold mb-3 px-2">
-                                <div className="col-6 text-uppercase">Product</div>
-                                <div className="col-3 text-center text-uppercase">Quantity</div>
-                                <div className="col-3 text-end text-uppercase">Price</div>
+                                <div className="col-6">Product</div>
+                                <div className="col-3 text-center">Quantity</div>
+                                <div className="col-3 text-end">Price</div>
                             </div>
 
-                            {items.map(item => (
-                                <div key={item.id} className="row align-items-center py-3 border-top mx-0">
-                                    <div className="col-6 d-flex align-items-center">
-                                        <div className="cart-img-box rounded-3 border me-3">
-                                            <img src={item.img} alt={item.name} />
+                            {cartdata.length > 0 ? (
+                                cartdata.map((item, index) => (
+                                    <div key={index} className="row align-items-center py-3 border-top">
+
+                                        {/* PRODUCT */}
+                                        <div className="col-6 d-flex align-items-center">
+                                            <div className="cart-img-box me-3">
+                                                <img
+                                                    src={`http://localhost:5000/images/${item.image}`}
+                                                    alt={item.product_name}
+                                                />
+                                            </div>
+                                            <div>
+                                                <h6 className="mb-0 fw-bold">{item.product_name}</h6>
+                                                <p className="text-muted small">{item.brand_name}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h6 className="mb-0 fw-bold">{item.name}</h6>
-                                            <p className="extra-small text-muted mb-0">{item.brand}</p>
+
+                                        {/* ✅ QUANTITY CONTROL */}
+                                        <div className="col-3 d-flex justify-content-center">
+                                            <div className="qty-box border rounded-pill px-2 py-1 d-flex align-items-center">
+
+                                                {/* DECREASE */}
+                                                <button
+                                                    className="btn btn-sm"
+                                                    onClick={() => {
+                                                        if ((item.quantity || 1) <= 1) return;
+
+                                                        const newQty = (item.quantity || 1) - 1;
+
+                                                        // ✅ instant UI update
+                                                        Setcartdata(prev =>
+                                                            prev.map(p =>
+                                                                p.product_id === item.product_id
+                                                                    ? { ...p, quantity: newQty }
+                                                                    : p
+                                                            )
+                                                        );
+
+                                                        // ✅ backend sync
+                                                        Updatecartquantity(
+                                                            loginuser.user_id,
+                                                            item.product_id,
+                                                            newQty,
+                                                            Settoastmessage,
+                                                            Setshowtoast,
+                                                            Settoastcolor
+                                                        );
+                                                    }}
+                                                >
+                                                    <i className="bi bi-dash"></i>
+                                                </button>
+
+                                                {/* VALUE */}
+                                                <span className="mx-2 fw-bold">
+                                                    {item.quantity || 1}
+                                                </span>
+
+                                                {/* INCREASE */}
+                                                <button
+                                                    className="btn btn-sm"
+                                                    onClick={() => {
+                                                        const newQty = (item.quantity || 1) + 1;
+
+                                                        // ✅ instant UI update
+                                                        Setcartdata(prev =>
+                                                            prev.map(p =>
+                                                                p.product_id === item.product_id
+                                                                    ? { ...p, quantity: newQty }
+                                                                    : p
+                                                            )
+                                                        );
+
+                                                        // ✅ backend sync
+                                                        Updatecartquantity(
+                                                            loginuser.user_id,
+                                                            item.product_id,
+                                                            newQty,
+                                                            Settoastmessage,
+                                                            Setshowtoast,
+                                                            Settoastcolor
+                                                        );
+                                                    }}
+                                                >
+                                                    <i className="bi bi-plus"></i>
+                                                </button>
+
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="col-3 d-flex justify-content-center">
-                                        <div className="qty-box border rounded-pill px-2 py-1">
-                                            <button className="btn btn-sm"><i className="bi bi-dash"></i></button>
-                                            <span className="mx-2 fw-bold">{item.qty}</span>
-                                            <button className="btn btn-sm"><i className="bi bi-plus"></i></button>
+
+                                        {/* PRICE + DELETE */}
+                                        <div className="col-3 text-end">
+                                            <span className="fw-bold">
+                                                ₹{item.price * (item.quantity || 1)}
+                                            </span>
+
+                                            <button
+                                                className="btn btn-sm text-danger ms-2"
+                                                onClick={() => {
+
+                                                    // ✅ instant UI remove
+                                                    Setcartids(prev =>
+                                                        prev.filter(id => id !== item.product_id)
+                                                    );
+
+                                                    Setcartdata(prev =>
+                                                        prev.filter(p => p.product_id !== item.product_id)
+                                                    );
+
+                                                    // ✅ backend
+                                                    Removefromcart(
+                                                        loginuser.user_id,
+                                                        item.product_id,
+                                                        Setcartids,
+                                                        Settoastmessage,
+                                                        Setshowtoast,
+                                                        Settoastcolor,
+                                                        Setcartdata
+                                                    );
+                                                }}
+                                            >
+                                                <i className="bi bi-trash"></i>
+                                            </button>
                                         </div>
+
                                     </div>
-                                    <div className="col-3 text-end">
-                                        <span className="fw-bold fs-5">${item.price}</span>
-                                        <button className="btn btn-sm text-danger ms-2"><i className="bi bi-trash"></i></button>
-                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-5">
+                                    <h5>No items in cart</h5>
                                 </div>
-                            ))}
+                            )}
 
-                            <div className="mt-4 pt-3 border-top">
-                                <button className="btn btn-danger rounded-pill px-4 fw-bold">Clear Cart</button>
-                            </div>
                         </div>
                     </div>
 
-                    {/* Right Side: Action Cards */}
+                    {/* RIGHT */}
                     <div className="col-lg-4">
-                        {/* Coupon Card */}
-                        <div className="bg-white rounded-4 shadow-sm p-4 mb-4">
-                            <h6 className="fw-bold mb-3">Coupon Code</h6>
-                            <div className="input-group mb-3">
-                                <input type="text" className="form-control bg-light border-0 py-2" placeholder="Enter code" />
-                            </div>
-                            <button className="btn btn-outline-primary w-100 rounded-pill fw-bold btn-sm py-2">Apply Coupon</button>
-                        </div>
 
-                        {/* Order Summary Card */}
+                        {/* SUMMARY */}
                         <div className="bg-white rounded-4 shadow-sm p-4 mb-4">
                             <h6 className="fw-bold mb-4">Order Summary</h6>
-                            <div className="d-flex justify-content-between mb-2 small">
-                                <span className="text-muted">Subtotal</span>
-                                <span className="fw-bold">$449.98</span>
+
+                            <div className="d-flex justify-content-between mb-2">
+                                <span>Subtotal</span>
+                                <span>₹{subtotal.toFixed(2)}</span>
                             </div>
-                            <div className="d-flex justify-content-between mb-2 small">
-                                <span className="text-muted">Shipping</span>
-                                <span className="fw-bold text-success">Free</span>
+
+                            <div className="d-flex justify-content-between mb-2">
+                                <span>Shipping</span>
+                                <span className="text-success">Free</span>
                             </div>
-                            <div className="d-flex justify-content-between mb-4 small">
-                                <span className="text-muted">Tax</span>
-                                <span className="fw-bold">$12.50</span>
+
+                            <div className="d-flex justify-content-between mb-2">
+                                <span>Tax</span>
+                                <span>₹{tax.toFixed(2)}</span>
                             </div>
+
                             <hr />
-                            <div className="d-flex justify-content-between align-items-center mt-3">
-                                <span className="h5 fw-bold mb-0">Total</span>
-                                <span className="h4 fw-bold text-primary mb-0">$462.48</span>
+
+                            <div className="d-flex justify-content-between">
+                                <strong>Total</strong>
+                                <strong className="text-primary">₹{total.toFixed(2)}</strong>
                             </div>
                         </div>
 
-                        {/* Payment Card */}
+                        {/* CHECKOUT */}
                         <div className="bg-white rounded-4 shadow-sm p-4">
-                            <h6 className="fw-bold mb-3 text-center">Payment Method</h6>
-                            <div className="d-flex justify-content-center gap-3 mb-4 opacity-75">
-                                <i className="bi bi-paypal fs-3"></i>
-                                <i className="bi bi-credit-card fs-3"></i>
-                                <i className="bi bi-apple fs-3"></i>
-                            </div>
-                            <button className="btn btn-primary w-100 rounded-pill fw-bold py-3">Check Out</button>
+                            <Link className="btn btn-primary w-100 rounded-pill fw-bold" to={`/checkout/${loginuser.user_id}`}>
+                                Checkout
+                            </Link>
                         </div>
+
                     </div>
+
                 </div>
             </div>
         </div>

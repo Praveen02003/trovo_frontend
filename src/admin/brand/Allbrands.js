@@ -10,9 +10,12 @@ import { Addbrand } from "../../function/Addbrand";
 import { Closetoast } from "../../function/Closetoast";
 import { Deletebrand } from "../../function/Deletebrand";
 import { Updatebrand } from "../../function/Updatebrand";
+import { Getloginuser } from "../../function/Getloginuser";
 
 export const Allbrands = () => {
     const {
+        loginuser,
+        Setloginuser,
         allbrands,
         Setallbrands,
         addbrand,
@@ -33,6 +36,7 @@ export const Allbrands = () => {
 
     // Sync brands with search and pagination
     useEffect(() => {
+        Setloginuser(Getloginuser())
         Getallbrands(Setallbrands, page, search);
     }, [page, search]);
 
@@ -50,7 +54,11 @@ export const Allbrands = () => {
                                 <i className="bi bi-patch-check-fill me-2 text-primary"></i>Brand Management
                             </h5>
                             <div className="ms-auto d-flex align-items-center gap-3">
-                                <img src="https://ui-avatars.com" alt="Profile" className="rounded-circle border shadow-sm" width="35" height="35" />
+                                <div className="text-end d-none d-sm-block">
+                                    <p className="m-0 small fw-bold">{loginuser.name}</p>
+                                    <p className="m-0 text-muted extra-small" style={{ fontSize: '0.7rem' }}>Super Admin</p>
+                                </div>
+                                <img src={`http://localhost:5000/images/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="40" height="40" />
                             </div>
                         </div>
                     </nav>
