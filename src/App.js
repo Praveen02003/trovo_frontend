@@ -17,6 +17,15 @@ import { Vieweachcustomer } from './admin/vieweachcustomer/Vieweachcustomer.js';
 import { Profile } from './admin/profile/Profile.js';
 import { Allbrands } from './admin/brand/Allbrands.js';
 import { Allcategories } from './admin/category/Allcategory.js';
+import { Wishlist } from './user/wishlist/Wishlist.js';
+import { Offer } from './user/offer/Offerpage.js';
+import { Cart } from './user/cart/Cart.js';
+import { Checkout } from './user/checkout/Checkout.js';
+import { Payment } from './user/payment/Payment.js';
+import { Viewproduct } from './user/viewproduct/Viewproduct.js';
+import { Orderhistory } from './user/orderhistory/Orderhistory.js';
+import { Myorder } from './user/myorders/Myorder.js';
+import { Userprofile } from './user/profile/Userprofile.js';
 export const maincontext = createContext();
 
 function App() {
@@ -85,10 +94,21 @@ function App() {
   const [activecustomerscont, Setactivecustomerscont] = useState(0)
   const [blockedcustomerscont, Setblockedcustomerscont] = useState(0)
 
+  //user
 
+  const [loginuser, Setloginuser] = useState({});
+  const [fewproducts, Setfewproducts] = useState([]);
+  const [getactiveproducts, Setgetactiveproducts] = useState([]);
+  const [particularproduct, Setparticularproduct] = useState({});
+  const [wishlistids, Setwishlistids] = useState([]);
+  const [wishlistdata, Setwishlistdata] = useState([]);
+  const [getcategories, Setgetcategories] = useState([]);
 
   return (
     <maincontext.Provider value={{
+      loginuser,
+      Setloginuser,
+
       signupname,
       Setsignupname,
       signupmail,
@@ -179,17 +199,34 @@ function App() {
       activecustomerscont,
       Setactivecustomerscont,
       blockedcustomerscont,
-      Setblockedcustomerscont
+      Setblockedcustomerscont,
+
+      getactiveproducts,
+      Setgetactiveproducts,
+
+      fewproducts,
+      Setfewproducts,
+
+      particularproduct,
+      Setparticularproduct,
+
+      wishlistids,
+      Setwishlistids,
+      wishlistdata,
+      Setwishlistdata,
+
+      getcategories,
+      Setgetcategories,
 
     }}>
 
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<Login />} />
+          {/* Auth routes */}
+          <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/forgetpassword' element={<Forget />} />
-          <Route path='/home' element={<Home />} />
-          <Route path='/shop' element={<Product />} />
+
 
           {/* Admin routes */}
 
@@ -203,6 +240,22 @@ function App() {
           <Route path='/allcategories' element={< Allcategories />} />
           <Route path='/orders' element={<Orders />} />
           <Route path='/vieworder' element={<Vieweachorder />} />
+
+          {/* User routes */}
+          <Route path='/' element={<Home />} />
+          <Route path='/shop' element={<Product />} />
+          <Route path='/offer' element={<Offer />} />
+          <Route path='/cart' element={<Cart />} />
+          <Route path='/checkout' element={<Checkout />} />
+          <Route path='/payment' element={<Payment />} />
+
+          <Route path='/viewproduct/:id' element={<Viewproduct />} />
+          <Route path='/history/:id' element={<Orderhistory />} />
+          <Route path='/trackorder/:id' element={<Myorder />} />
+          <Route path='/userprofile/:id' element={<Userprofile />} />
+          <Route path='/wishlist/:id' element={<Wishlist />} />
+
+
 
         </Routes>
       </BrowserRouter>

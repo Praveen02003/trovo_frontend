@@ -115,7 +115,7 @@ export const Customers = () => {
                                                     </td>
                                                     <td className="py-3 text-center">
                                                         <span className={`badge rounded-pill px-3 py-2 fw-bold 
-            ${cust.status === 'active' ? 'bg-success-subtle text-success border border-success' :
+                                                            ${cust.status === 'active' ? 'bg-success-subtle text-success border border-success' :
                                                                 cust.status === 'blocked' ? 'bg-danger-subtle text-danger border border-danger' :
                                                                     'bg-warning-subtle text-warning border border-warning'}`}
                                                             style={{ fontSize: '0.65rem' }}>

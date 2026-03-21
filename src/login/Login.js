@@ -1,5 +1,7 @@
 import React, { useContext } from "react";
 import "../login/Login.css";
+import { useNavigate } from 'react-router-dom';
+
 import { Link } from "react-router-dom";
 import { maincontext } from "../App";
 import { Verifyuser } from "../function/Verifyuser";
@@ -18,6 +20,8 @@ export const Login = () => {
         loginpassword,
         Setloginpassword
     } = useContext(maincontext)
+
+    const navigate = useNavigate();
     return (
         <div className="container-fluid vh-100 login-wrapper">
             <div className="row h-100">
@@ -72,7 +76,7 @@ export const Login = () => {
                         </div>
 
                         <button type="submit" className="btn btn-trovo w-100 mb-3" onClick={() => {
-                            Verifyuser(loginmail, loginpassword, Setshowtoast, Settoastmessage, Settoastcolor)
+                            Verifyuser(loginmail, loginpassword, Setshowtoast, Settoastmessage, Settoastcolor, navigate)
                         }}>
                             Login
                         </button>

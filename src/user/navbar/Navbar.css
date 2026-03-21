@@ -1,0 +1,193 @@
+.trovo-neo-nav {
+    background: #000;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* BRANDING */
+.brand-icon-box {
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 1.1rem;
+}
+
+.brand-logo-text {
+    color: #fff;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-left: 10px;
+    font-size: 1.2rem;
+}
+
+/* NAV LINKS */
+.neo-links .nav-link {
+    color: #888 !important;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px 20px !important;
+    position: relative;
+}
+
+.neo-links .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: #0d6efd;
+    transition: 0.3s;
+    transform: translateX(-50%);
+}
+
+.neo-links .nav-link:hover,
+.neo-links .nav-link.active {
+    color: #fff !important;
+}
+
+.neo-links .nav-link:hover::after,
+.neo-links .nav-link.active::after {
+    width: 20px;
+}
+
+/* SEARCH */
+.search-capsule {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 6px 15px;
+    align-items: center;
+    color: #666;
+}
+
+.search-capsule input {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 0.8rem;
+    margin-left: 10px;
+    outline: none;
+}
+
+/* ICONS & BADGES */
+.neo-icon-btn {
+    color: #888;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.neo-icon-btn:hover {
+    color: #fff;
+}
+
+.neo-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background: #fff;
+    color: #000;
+    font-size: 0.6rem;
+    font-weight: 900;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+/* PROFILE */
+.profile-btn-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #0d6efd;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.profile-btn-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* DROPDOWN */
+.neo-dropdown {
+    background: #111 !important;
+    border: 1px solid #222 !important;
+    border-radius: 12px !important;
+    padding: 10px !important;
+    margin-top: 15px !important;
+}
+
+.neo-dropdown .dropdown-item {
+    color: #888;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.neo-dropdown .dropdown-item i {
+    color: #0d6efd;
+}
+
+.neo-dropdown .dropdown-item:hover {
+    background: #1a1a1a !important;
+    color: #fff;
+}
+
+.text-danger-light {
+    color: #ff4d4d !important;
+}
+
+.extra-small {
+    font-size: 0.65rem;
+}
+
+/* TOGGLE */
+.neo-toggle {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.neo-toggle span {
+    height: 2px;
+    background: #fff;
+    transition: 0.3s;
+}
+
+.bar-top {
+    width: 25px;
+}
+
+.bar-mid {
+    width: 15px;
+    align-self: flex-end;
+}
+
+.bar-bot {
+    width: 20px;
+}
+
+.trovo-neo-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030;
+    background: #000;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}

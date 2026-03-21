@@ -1,0 +1,126 @@
+.trovo-footer {
+    background: #0f172a;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.fw-black {
+    font-weight: 900;
+    letter-spacing: -2px;
+}
+
+.footer-label {
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    margin-bottom: 2rem;
+}
+
+.footer-text {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    line-height: 1.8;
+}
+
+/* Links */
+.menu-links li {
+    margin-bottom: 0.8rem;
+}
+
+.menu-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: 0.3s;
+}
+
+.menu-links a:hover {
+    color: #22d3ee;
+    padding-left: 5px;
+}
+
+/* Social */
+.social-link {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    text-decoration: none;
+}
+
+.social-link:hover {
+    background: #22d3ee;
+    color: #0f172a;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(34, 211, 238, 0.2);
+}
+
+/* Newsletter */
+.newsletter-card {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 2rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.newsletter-input-group {
+    display: flex;
+    background: #1e293b;
+    padding: 5px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.newsletter-control {
+    background: transparent;
+    border: none;
+    color: #fff;
+    padding: 10px 15px;
+    flex-grow: 1;
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.newsletter-btn {
+    background: #22d3ee;
+    color: #0f172a;
+    border: none;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+.newsletter-btn:hover {
+    background: #fff;
+}
+
+/* Bottom Bar */
+.footer-sub-bar {
+    background: #0a0f1d;
+}
+
+.copyright-text {
+    color: #475569;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+}
+
+.payment-stack {
+    color: #334155;
+    font-size: 1.3rem;
+}
+
+.payment-stack i:hover {
+    color: #fff;
+    transition: 0.3s;
+}

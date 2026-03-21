@@ -1,0 +1,136 @@
+.wishlist-page-wrapper {
+    background: #ffffff;
+    min-height: 100vh;
+}
+
+.fw-black {
+    font-weight: 900;
+    letter-spacing: -1.5px;
+}
+
+/* Card Design */
+.wishlist-card {
+    position: relative;
+    transition: 0.3s ease;
+}
+
+.wish-img-wrap {
+    position: relative;
+    height: 320px;
+    background: #f8fafc;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.img-placeholder {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+}
+
+/* Interaction Elements */
+.remove-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 5;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(5px);
+    border: none;
+    color: #000;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.remove-btn:hover {
+    background: #ff4d4d;
+    color: #fff;
+}
+
+.move-to-bag {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 15px;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    transform: translateY(100%);
+    transition: 0.4s ease;
+}
+
+.wishlist-card:hover .move-to-bag {
+    transform: translateY(0);
+}
+
+/* Text & Labels */
+.cat-label {
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: #94a3b8;
+    letter-spacing: 1.5px;
+}
+
+.stock-status {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.in-stock {
+    color: #198754;
+}
+
+.out-stock {
+    color: #dc3545;
+}
+
+.item-name {
+    color: #0f172a;
+    font-size: 0.95rem;
+}
+
+.item-price {
+    font-size: 1.1rem;
+}
+
+/* Gradient Backgrounds */
+.bg-soft-blue {
+    background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+}
+
+.bg-soft-purple {
+    background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+}
+
+.bg-soft-gray {
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+}
+
+.bg-soft-dark {
+    background: linear-gradient(135deg, #334155, #1e293b);
+}
+
+@media (max-width: 768px) {
+    .wish-img-wrap {
+        height: 220px;
+    }
+
+    .move-to-bag {
+        transform: translateY(0);
+        padding: 10px;
+        font-size: 0.65rem;
+    }
+}

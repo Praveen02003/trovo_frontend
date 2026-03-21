@@ -1,6 +1,7 @@
 import api from '../axios/Axios'
 import { Opentoast } from './Opentoast';
-export const Verifyuser = async (loginmail, loginpassword, Setshowtoast, Settoastmessage, Settoastcolor) => {
+export const Verifyuser = async (loginmail, loginpassword, Setshowtoast, Settoastmessage, Settoastcolor, navigate) => {
+
     if (!loginmail || !loginpassword) {
         // console.log("please fill all the data");
         Settoastcolor('danger')
@@ -15,12 +16,14 @@ export const Verifyuser = async (loginmail, loginpassword, Setshowtoast, Settoas
         try {
             const res = await api.post('/verifyuser', { data: data })
             if (res.data.message === "Login Successfull") {
-                console.log(res.data.token);
+                // console.log(res.data.token);
                 localStorage.setItem("token", res.data.token);
                 localStorage.setItem("loginuser", JSON.stringify(res.data.data));
                 Settoastcolor('success')
                 Settoastmessage(res.data.message)
                 Opentoast(Setshowtoast)
+                navigate('/');
+
             }
             else {
                 Settoastcolor('danger')

@@ -1,0 +1,80 @@
+/* Page Background */
+.checkout-page {
+    background: #f8fafc;
+    min-height: 100vh;
+}
+
+/* Product Card */
+.item-card-separate {
+    background: #ffffff;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.item-card-separate:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Product Image Placeholder */
+.product-img-placeholder {
+    width: 60px;
+    height: 60px;
+    background: #f1f5f9;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+/* Small Text */
+.extra-small {
+    font-size: 12px;
+}
+
+/* Summary Card */
+.summary-floating-card {
+    background: #ffffff;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+.summary-floating-card:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+/* Total Box Highlight */
+.total-box-accent {
+    background: linear-gradient(135deg, #eef2ff, #f0f9ff);
+    border-radius: 14px;
+    border: 1px solid #e0e7ff;
+}
+
+/* Button Styling */
+.btn-primary {
+    background: linear-gradient(135deg, #4f46e5, #06b6d4);
+    border: none;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #4338ca, #0891b2);
+    transform: translateY(-2px);
+}
+
+/* Badge Styling */
+.badge {
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+/* Sticky Summary Fix (Mobile) */
+@media (max-width: 991px) {
+    .summary-floating-card {
+        position: static !important;
+        margin-top: 20px;
+    }
+}

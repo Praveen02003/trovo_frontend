@@ -1,0 +1,240 @@
+.offers-premium-wrapper {
+    background: #fcfcfd;
+    min-height: 100vh;
+}
+
+.fw-black {
+    font-weight: 900;
+    letter-spacing: -2px;
+}
+
+.text-navy {
+    color: #0f172a;
+}
+
+.text-cyan-glow {
+    color: #22d3ee;
+    text-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
+}
+
+.extra-small {
+    font-size: 0.65rem;
+}
+
+/* HERO SECTION */
+.offer-hero-card {
+    background: #020617;
+    min-height: 500px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.offer-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ef4444;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    animation: pulse-red 2s infinite;
+}
+
+.glass-countdown {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 10px 25px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.time-unit span {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.time-unit small {
+    font-size: 0.6rem;
+    font-weight: 700;
+    opacity: 0.5;
+}
+
+.time-sep {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #334155;
+}
+
+.btn-cyan-solid {
+    background: #22d3ee;
+    color: #020617;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+
+.btn-cyan-solid:hover {
+    background: #fff;
+    transform: translateY(-3px);
+}
+
+/* BENTO CARDS */
+.bento-offer-card {
+    background: #fff;
+    border-radius: 30px;
+    border: 1px solid #f1f5f9;
+    transition: 0.4s;
+    overflow: hidden;
+}
+
+.bento-offer-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 30px 60px -15px rgba(15, 23, 42, 0.1);
+}
+
+.offer-visual {
+    height: 280px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+}
+
+.bg-soft-dark {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #fff;
+}
+
+.save-tag {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: #fff;
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 900;
+    padding: 6px 12px;
+    border-radius: 50px;
+    z-index: 2;
+}
+
+.hover-action {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: 0.3s;
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+}
+
+.bento-offer-card:hover .hover-action {
+    opacity: 1;
+}
+
+.btn-quick-add {
+    width: 100%;
+    background: #fff;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.75rem;
+}
+
+.offer-cat {
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: #94a3b8;
+    letter-spacing: 2px;
+}
+
+.stock-alert {
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: #ef4444;
+}
+
+.price-now {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #0d6efd;
+}
+
+.price-was {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    text-decoration: line-through;
+    font-weight: 700;
+}
+
+.inventory-bar {
+    height: 6px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    transition: 1s;
+}
+
+/* FILTERS */
+.neo-filter-bar {
+    background: #f1f5f9;
+    padding: 5px;
+    border-radius: 50px;
+    display: inline-flex;
+}
+
+.neo-pill {
+    border: none;
+    background: transparent;
+    padding: 10px 25px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #64748b;
+    transition: 0.3s;
+}
+
+.neo-pill.active {
+    background: #fff;
+    color: #0f172a;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+@keyframes pulse-red {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.4;
+        transform: scale(1.2);
+    }
+}

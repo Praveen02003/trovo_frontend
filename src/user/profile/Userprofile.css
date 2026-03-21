@@ -1,11 +1,11 @@
-/* Navbar spacing fix */
+/* Fix navbar overlap */
 .bg-light {
     padding-top: 90px;
 }
 
-/* Card hover */
+/* Smooth card hover */
 .card {
-    transition: 0.2s;
+    transition: 0.25s;
 }
 
 .card:hover {
@@ -13,14 +13,14 @@
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Product image */
-.order-img {
-    width: 70px;
-    height: 70px;
+/* Profile image */
+.profile-img {
+    width: 100px;
+    height: 100px;
     object-fit: cover;
 }
 
-/* Mobile */
+/* Mobile fix */
 @media (max-width: 768px) {
     .bg-light {
         padding-top: 110px;

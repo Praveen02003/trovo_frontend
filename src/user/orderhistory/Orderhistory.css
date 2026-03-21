@@ -1,0 +1,33 @@
+/* Fix navbar overlap */
+.bg-light {
+    padding-top: 90px;
+}
+
+/* Smooth card hover */
+.card {
+    transition: 0.25s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Small text improvement */
+.small {
+    font-size: 13px;
+}
+
+/* Image */
+.order-img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+}
+
+/* Mobile fix */
+@media (max-width: 768px) {
+    .bg-light {
+        padding-top: 110px;
+    }
+}
