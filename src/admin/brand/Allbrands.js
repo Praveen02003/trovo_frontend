@@ -12,6 +12,7 @@ import { Deletebrand } from "../../function/Deletebrand";
 import { Updatebrand } from "../../function/Updatebrand";
 import { Getloginuser } from "../../function/Getloginuser";
 import { IMAGES_URL } from "../../axios/Imageurl";
+import { Adminauth } from "../../function/Adminauth";
 
 export const Allbrands = () => {
     const {
@@ -37,10 +38,18 @@ export const Allbrands = () => {
 
     // Sync brands with search and pagination
     useEffect(() => {
-        Setloginuser(Getloginuser())
-        Getallbrands(Setallbrands, page, search);
-    }, [page, search]);
+        const loadData = async () => {
+            const isAdmin = await Adminauth();
+            if (!isAdmin) return; // stop if not admin
+            // 1️⃣ Set logged-in user (synchronous)
+            Setloginuser(Getloginuser());
 
+            // 2️⃣ Fetch brands (await if async)
+            await Getallbrands(Setallbrands, page, search);
+        };
+
+        loadData();
+    }, [page, search]);
     return (
         <div className="container-fluid p-0 bg-light min-vh-100">
             <div className="d-flex text-dark">

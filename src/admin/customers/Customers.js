@@ -10,6 +10,7 @@ import { Blockcustomer } from "../../function/Blockcustomer";
 import { Closetoast } from "../../function/Closetoast";
 import { Getloginuser } from "../../function/Getloginuser";
 import { IMAGES_URL } from "../../axios/Imageurl";
+import { Adminauth } from "../../function/Adminauth";
 
 export const Customers = () => {
     const {
@@ -32,8 +33,19 @@ export const Customers = () => {
     } = useContext(maincontext);
 
     useEffect(() => {
-        Setloginuser(Getloginuser())
-        Getallcustomers(Setallcustomers, page, status, search);
+        const loadData = async () => {
+            // 1️⃣ Verify admin
+            const isAdmin = await Adminauth();
+            if (!isAdmin) return; // stop if not admin
+
+            // 2️⃣ Set logged-in user
+            Setloginuser(Getloginuser());
+
+            // 3️⃣ Fetch customers (await if async)
+            await Getallcustomers(Setallcustomers, page, status, search);
+        };
+
+        loadData();
     }, [page, status, search]);
 
     return (

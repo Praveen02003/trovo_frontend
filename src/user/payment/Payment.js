@@ -5,6 +5,7 @@ import { maincontext } from '../../App';
 import { Getloginuser } from '../../function/Getloginuser';
 import { useParams, useLocation } from 'react-router-dom';
 import { IMAGES_URL } from '../../axios/Imageurl';
+import { Userauth } from '../../function/Userauth';
 
 export const Payment = () => {
 
@@ -19,16 +20,23 @@ export const Payment = () => {
     const [orderedItems, setOrderedItems] = useState([]);
 
     useEffect(() => {
-        const user = Getloginuser();
-        Setloginuser(user);
+        const loadData = async () => {
+            // 1️⃣ Check if user is authenticated
+            const isUser = await Userauth();
+            if (!isUser) return; // stop if not logged in
 
-        // ✅ GET ORDERED ITEMS FROM CHECKOUT
-        if (location.state?.orderedItems) {
-            setOrderedItems(location.state.orderedItems);
-        }
+            // 2️⃣ Set login user
+            const user = Getloginuser();
+            Setloginuser(user);
 
-    }, []);
+            // 3️⃣ Get ordered items from checkout
+            if (location.state?.orderedItems) {
+                setOrderedItems(location.state.orderedItems);
+            }
+        };
 
+        loadData();
+    }, [location.state]);
     // ✅ TOTAL CALCULATION
     const subtotal = orderedItems.reduce(
         (acc, item) => acc + (Number(item.price) * (item.quantity || 1)),
@@ -87,7 +95,7 @@ export const Payment = () => {
                                     </div>
 
                                 </div>
-                                
+
 
                                 {/* ORDERED ITEMS */}
                                 <div className="text-start mb-4">

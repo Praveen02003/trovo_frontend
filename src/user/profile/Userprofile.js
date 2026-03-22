@@ -7,6 +7,7 @@ import { Updateprofile } from '../../function/Updateprofile';
 import { Closetoast } from '../../function/Closetoast';
 import { Logout } from '../../function/Logout';
 import { IMAGES_URL } from '../../axios/Imageurl';
+import { Userauth } from '../../function/Userauth';
 
 export const Userprofile = () => {
     const {
@@ -17,9 +18,16 @@ export const Userprofile = () => {
     const [preview, setPreview] = useState(null);
 
     useEffect(() => {
-        Setloginuser(Getloginuser());
-    }, []);
+        const loadUser = async () => {
+            const isUser = await Userauth(); // check authentication
+            if (!isUser) return;            // stop if not logged in
 
+            // set login user
+            Setloginuser(Getloginuser());
+        };
+
+        loadUser();
+    }, []);
     if (!loginuser) return <div className="text-center mt-5 p-5">Loading Profile...</div>;
 
     return (

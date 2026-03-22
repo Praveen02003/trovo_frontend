@@ -9,6 +9,7 @@ import { Getloginuser } from '../../function/Getloginuser';
 import { Closetoast } from '../../function/Closetoast';
 import { Opentoast } from '../../function/Opentoast';
 import { IMAGES_URL } from '../../axios/Imageurl';
+import { Userauth } from '../../function/Userauth';
 
 export const Wishlist = () => {
     const {
@@ -27,9 +28,23 @@ export const Wishlist = () => {
     } = useContext(maincontext)
 
     useEffect(() => {
-        Setloginuser(Getloginuser());
-        Getwishlistdata(Setwishlistids, Setwishlistdata);
-    }, [])
+        const loadData = async () => {
+            // 1️⃣ Check if user is authenticated
+            const isUser = await Userauth();
+            if (!isUser) return; // stop if not logged in
+
+            // 2️⃣ Set login user
+            const user = Getloginuser();
+            Setloginuser(user);
+
+            // 3️⃣ Fetch wishlist data
+            if (user?.user_id) {
+                await Getwishlistdata(Setwishlistids, Setwishlistdata);
+            }
+        };
+
+        loadData();
+    }, []);
     return (
         <div className="bg-light min-vh-100">
             <Navbar />

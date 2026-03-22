@@ -27,6 +27,7 @@ import { Orderhistory } from './user/orderhistory/Orderhistory.js';
 import { Myorder } from './user/myorders/Myorder.js';
 import { Userprofile } from './user/profile/Userprofile.js';
 import { Viewparticularorder } from './user/viewparticularorder/Viewparticularorder.js';
+import { NotFound } from './notfound/Notfound.js';
 export const maincontext = createContext();
 
 function App() {
@@ -276,10 +277,7 @@ function App() {
           <Route path='/payment/:id' element={<Payment />} />
           <Route path="/orderdetails/:orderId" element={<Viewparticularorder />} />
 
-
-
-
-
+          <Route path="*" element={<NotFound />} />
 
         </Routes>
       </BrowserRouter>

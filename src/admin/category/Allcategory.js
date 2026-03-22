@@ -13,6 +13,7 @@ import { Closetoast } from "../../function/Closetoast";
 import { Deletecategory } from "../../function/Deletecategory";
 import { Updatecategory } from "../../function/Updatecategory";
 import { IMAGES_URL } from "../../axios/Imageurl";
+import { Adminauth } from "../../function/Adminauth";
 
 export const Allcategories = () => {
     const {
@@ -22,7 +23,13 @@ export const Allcategories = () => {
     } = useContext(maincontext);
 
     useEffect(() => {
-        Getallcategories(Setallcategories, page, search);
+        const loadData = async () => {
+            const isAdmin = await Adminauth();
+            if (!isAdmin) return; // stop if not admin
+            await Getallcategories(Setallcategories, page, search);
+        };
+
+        loadData();
     }, [page, search, Setallcategories]);
 
     return (

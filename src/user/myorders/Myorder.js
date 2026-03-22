@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import '../myorders/Myorder.css';
 import { Deleteorder } from '../../function/Deleteorder';
 import { IMAGES_URL } from '../../axios/Imageurl';
+import { Userauth } from '../../function/Userauth';
 
 const IMG_URL = `${IMAGES_URL}/`;
 
@@ -53,13 +54,20 @@ export const Myorder = () => {
     }, []);
 
     useEffect(() => {
-        const user = Getloginuser();
-        if (user) {
+        const loadData = async () => {
+            // 1️⃣ Check if user is authenticated
+            const isUser = await Userauth();
+            if (!isUser) return; // stop if not logged in
+
+            // 2️⃣ Get user from localStorage
+            const user = Getloginuser();
             Setloginuser(user);
-            fetchOrders(user.user_id);
-        } else {
-            navigate('/login');
-        }
+
+            // 3️⃣ Fetch user orders
+            await fetchOrders(user.user_id);
+        };
+
+        loadData();
     }, [fetchOrders, navigate, Setloginuser]);
 
     // ✅ Download PDF Logic

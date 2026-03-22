@@ -4,6 +4,7 @@ import { Sidebar } from "../sidebar/Sidebar";
 import Swal from "sweetalert2";
 import api from "../../axios/Axios";
 import { IMAGES_URL } from "../../axios/Imageurl";
+import { Adminauth } from "../../function/Adminauth";
 export const Vieweachorder = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -11,10 +12,15 @@ export const Vieweachorder = () => {
     const [status, setStatus] = useState("");
 
     useEffect(() => {
-        fetchOrder();
-    }, [id]);
+        const loadOrder = async () => {
+            const isAdmin = await Adminauth();
+            if (!isAdmin) return; // stop if not admin
+            await fetchOrder(); // wait for async fetch to complete
+        };
 
-    const fetchOrder = () => {
+        loadOrder();
+    }, [id]);
+    const fetchOrder = async () => {
         api.get(`/getorder/${id}`)
             .then((res) => {
                 setOrderDetails(res.data);

@@ -13,6 +13,7 @@ import { Updateproduct } from "../../function/Updateproduct";
 import '../edit/Editproduct.css';
 import { IMAGES_URL } from "../../axios/Imageurl";
 import { Getloginuser } from "../../function/Getloginuser";
+import { Adminauth } from "../../function/Adminauth";
 
 export const Editproduct = () => {
     const {
@@ -29,12 +30,23 @@ export const Editproduct = () => {
     const { id } = useParams();
 
     useEffect(() => {
-        Setloginuser(Getloginuser())
-        Getcurrentproduct(id, Seteachproduct);
-        Getallcategories(Setallcategories);
-        Getallbrands(Setallbrands);
-    }, [id]);
+        const loadData = async () => {
+            // 1️⃣ Verify admin first
+            const isAdmin = await Adminauth();
+            if (!isAdmin) return; // Stop if not admin
 
+            // 2️⃣ Set logged-in user (synchronous)
+            Setloginuser(Getloginuser());
+
+            // 3️⃣ Fetch data (await if functions are async)
+            await Getcurrentproduct(id, Seteachproduct);
+            await Getallcategories(Setallcategories);
+            await Getallbrands(Setallbrands);
+        };
+
+        loadData();
+    }, [id]);
+    
     const getCategoryId = (name) => {
         const cat = allcategories.find(c => c.category_name === name);
         return cat ? cat.category_id : "";

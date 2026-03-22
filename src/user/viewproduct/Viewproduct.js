@@ -14,6 +14,7 @@ import { Addtowishlist } from '../../function/Addtowishlist';
 import { Removefromwishlist } from '../../function/Removefromwishlist';
 import { Updatecartquantity } from '../../function/Updatecartquantity';
 import { IMAGES_URL } from '../../axios/Imageurl';
+import { Userauth } from '../../function/Userauth';
 
 export const Viewproduct = () => {
 
@@ -33,12 +34,22 @@ export const Viewproduct = () => {
     // FETCH DATA
     // =========================
     useEffect(() => {
-        Getparticularproduct(id, Setparticularproduct);
+        const loadData = async () => {
+            // 1️⃣ Check if user is authenticated
+            const isUser = await Userauth();
+            if (!isUser) return; // stop if not logged in
 
-        if (loginuser?.user_id) {
-            Getcartdata(Setcartids, Setcartdata);
-            Getwishlistdata(Setwishlistids, Setwishlistdata);
-        }
+            // 2️⃣ Fetch the particular product
+            await Getparticularproduct(id, Setparticularproduct);
+
+            // 3️⃣ If user is logged in, fetch cart and wishlist
+            if (loginuser?.user_id) {
+                await Getcartdata(Setcartids, Setcartdata);
+                await Getwishlistdata(Setwishlistids, Setwishlistdata);
+            }
+        };
+
+        loadData();
     }, [id, loginuser?.user_id]);
 
     const prodId = particularproduct?.product_id;

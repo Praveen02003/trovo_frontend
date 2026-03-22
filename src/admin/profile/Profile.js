@@ -10,6 +10,7 @@ import '../profile/Profile.css'
 import { Updateprofile } from "../../function/Updateprofile";
 import { Closetoast } from "../../function/Closetoast";
 import { IMAGES_URL } from "../../axios/Imageurl";
+import { Adminauth } from "../../function/Adminauth";
 
 export const Profile = () => {
     const {
@@ -19,7 +20,13 @@ export const Profile = () => {
     const { id } = useParams();
 
     useEffect(() => {
-        Getmyprofile(id, Setuserprofile);
+        const loadProfile = async () => {
+            const isAdmin = await Adminauth();
+            if (!isAdmin) return; // stop if not admin
+            await Getmyprofile(id, Setuserprofile);
+        };
+
+        loadProfile();
     }, [id]);
 
     // Internal state for image preview in modal

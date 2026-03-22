@@ -5,6 +5,7 @@ import { maincontext } from "../../App";
 import { Getcurrentcustomer } from "../../function/Getcurrentcustomer";
 import { Blockcustomer } from "../../function/Blockcustomer";
 import { IMAGES_URL } from "../../axios/Imageurl";
+import { Adminauth } from "../../function/Adminauth";
 
 export const Vieweachcustomer = () => {
     const { id } = useParams();
@@ -15,7 +16,13 @@ export const Vieweachcustomer = () => {
     } = useContext(maincontext);
 
     useEffect(() => {
-        Getcurrentcustomer(id, Seteachcustomer);
+        const loadData = async () => {
+            const isAdmin = await Adminauth();
+            if (!isAdmin) return; // stop if not admin
+            await Getcurrentcustomer(id, Seteachcustomer);
+        };
+
+        loadData();
     }, [id]);
 
     return (

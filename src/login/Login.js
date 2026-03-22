@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "../login/Login.css";
 import { useNavigate } from 'react-router-dom';
 
@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { maincontext } from "../App";
 import { Verifyuser } from "../function/Verifyuser";
 import { Closetoast } from "../function/Closetoast";
+import { Authuser } from "../function/Authuser";
 
 export const Login = () => {
     const {
@@ -16,6 +17,10 @@ export const Login = () => {
     } = useContext(maincontext)
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        Authuser();
+    }, [])
     return (
         <div className="container-fluid vh-100 login-wrapper">
             <div className="row h-100">

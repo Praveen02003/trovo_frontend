@@ -7,6 +7,7 @@ import { Getloginuser } from '../../function/Getloginuser';
 import { Deleteorder } from '../../function/Deleteorder'; // Correct import
 import api from '../../axios/Axios';
 import { IMAGES_URL } from '../../axios/Imageurl';
+import { Userauth } from '../../function/Userauth';
 
 export const Orderhistory = () => {
     const { loginuser, Setloginuser } = useContext(maincontext);
@@ -15,9 +16,22 @@ export const Orderhistory = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const user = Getloginuser();
-        Setloginuser(user);
-        if (user?.user_id) fetchOrders(user.user_id);
+        const loadData = async () => {
+            // 1️⃣ Check if user is authenticated
+            const isUser = await Userauth();
+            if (!isUser) return; // stop if not logged in
+
+            // 2️⃣ Get login user from localStorage
+            const user = Getloginuser();
+            Setloginuser(user);
+
+            // 3️⃣ Fetch user orders if user exists
+            if (user?.user_id) {
+                await fetchOrders(user.user_id);
+            }
+        };
+
+        loadData();
     }, []);
 
     const fetchOrders = async (userId) => {

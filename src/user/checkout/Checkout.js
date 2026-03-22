@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../axios/Axios';
 import { Handlecheckout } from '../../function/Handlecheckout';
 import { IMAGES_URL } from '../../axios/Imageurl';
+import { Userauth } from '../../function/Userauth';
 
 export const Checkout = () => {
 
@@ -25,8 +26,22 @@ export const Checkout = () => {
     } = useContext(maincontext);
 
     useEffect(() => {
-        Setloginuser(Getloginuser());
-        Getcartdata(Setcartids, Setcartdata);
+        const loadData = async () => {
+            // 1️⃣ Check if the user is authenticated
+            const isUser = await Userauth();
+            if (!isUser) return; // stop if not logged in
+
+            // 2️⃣ Set login user
+            const user = Getloginuser();
+            Setloginuser(user);
+
+            // 3️⃣ Fetch cart data if user exists
+            if (user?.user_id) {
+                await Getcartdata(Setcartids, Setcartdata);
+            }
+        };
+
+        loadData();
     }, []);
 
     // ✅ TOTAL CALCULATION

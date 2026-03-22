@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "../forget/Forget.css";
 import { Link } from "react-router-dom";
 import { maincontext } from "../App";
 import { Closetoast } from "../function/Closetoast";
 import { Updatepassword } from "../function/Updatepassword";
+import { Authuser } from "../function/Authuser";
 
 export const Forget = () => {
     const {
@@ -14,6 +15,10 @@ export const Forget = () => {
         forgetconfirmpassword,
         Setforgetconfirmpassword
     } = useContext(maincontext)
+
+    useEffect(() => {
+        Authuser();
+    }, [])
     return (
         <div className="forget-wrapper container-fluid">
             <div className="row vh-100">
@@ -90,7 +95,7 @@ export const Forget = () => {
 
                         <p className="text-center small">
                             Remember your password?{" "}
-                            <Link to="/" className="trovo-link">
+                            <Link to="/login" className="trovo-link">
                                 Login
                             </Link>
                         </p>

@@ -11,6 +11,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Getcategories } from '../../function/Getcategories';
 import { Closetoast } from '../../function/Closetoast';
 import { IMAGES_URL } from '../../axios/Imageurl';
+import { Authuser } from '../../function/Authuser';
 
 export const Product = () => {
     const {

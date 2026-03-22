@@ -15,6 +15,7 @@ import { Createproduct } from "../../function/Createproduct";
 import { Getallbrands } from "../../function/Getallbrands";
 import { Getloginuser } from "../../function/Getloginuser";
 import { IMAGES_URL } from "../../axios/Imageurl";
+import { Adminauth } from "../../function/Adminauth";
 
 export const Allproducts = () => {
   const {
@@ -49,10 +50,21 @@ export const Allproducts = () => {
   } = useContext(maincontext);
 
   useEffect(() => {
-    Setloginuser(Getloginuser())
-    Getallproducts(Setallproducts, page, search, category);
-    Getallcategories(Setallcategories);
-    Getallbrands(Setallbrands)
+    const loadData = async () => {
+      // 1️⃣ Verify admin first
+      const isAdmin = await Adminauth();
+      if (!isAdmin) return; // stop if not admin
+
+      // 2️⃣ Set login user
+      Setloginuser(Getloginuser()); // synchronous
+
+      // 3️⃣ Fetch data (await if functions are async)
+      await Getallproducts(Setallproducts, page, search, category);
+      await Getallcategories(Setallcategories);
+      await Getallbrands(Setallbrands);
+    };
+
+    loadData();
   }, [page, search, category]);
 
   return (

@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "../signup/Signup.css";
 import { Link } from "react-router-dom";
 import { Createuser } from "../function/Createuser";
 import { maincontext } from "../App";
 import { Closetoast } from "../function/Closetoast";
+import { Authuser } from "../function/Authuser";
 
 export const Signup = () => {
     const {
@@ -20,6 +21,11 @@ export const Signup = () => {
         signupmobilenumber,
         Setsignupmobilenumber
     } = useContext(maincontext)
+
+
+    useEffect(() => {
+        Authuser();
+    }, [])
     return (
         <div className="signup-wrapper container-fluid">
             <div className="row vh-100">

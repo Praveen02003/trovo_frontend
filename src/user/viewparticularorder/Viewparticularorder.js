@@ -7,6 +7,7 @@ import html2canvas from 'html2canvas';
 import Swal from "sweetalert2";
 import { Deleteorder } from '../../function/Deleteorder';
 import { IMAGES_URL } from '../../axios/Imageurl';
+import { Userauth } from '../../function/Userauth';
 
 export const Viewparticularorder = () => {
     const { orderId } = useParams();
@@ -16,7 +17,18 @@ export const Viewparticularorder = () => {
     const pdfRef = useRef();
 
     useEffect(() => {
-        if (orderId) fetchOrder();
+        const loadData = async () => {
+            // 1️⃣ Check if user is authenticated
+            const isUser = await Userauth();
+            if (!isUser) return; // stop if not logged in
+
+            // 2️⃣ Fetch order if orderId exists
+            if (orderId) {
+                await fetchOrder();
+            }
+        };
+
+        loadData();
     }, [orderId]);
 
     const fetchOrder = async () => {

@@ -5,6 +5,7 @@ import { Getloginuser } from "../../function/Getloginuser";
 import { maincontext } from "../../App";
 import { IMAGES_URL } from "../../axios/Imageurl";
 import api from "../../axios/Axios";
+import { Adminauth } from "../../function/Adminauth";
 
 export const Orders = () => {
     const {
@@ -16,12 +17,22 @@ export const Orders = () => {
     const [filterStatus, setFilterStatus] = useState("All"); // New State
 
     useEffect(() => {
-        api
-            .get("/getallorders")
-            .then((res) => setOrders(res.data))
-            .catch((err) => console.error(err));
+        const loadData = async () => {
+            try {
+                const isAdmin = await Adminauth();
+                if (!isAdmin) return; // stop if not admin
+                // 1️⃣ Fetch orders
+                const res = await api.get("/getallorders");
+                setOrders(res.data);
 
-        Setloginuser(Getloginuser())
+                // 2️⃣ Set logged-in user
+                Setloginuser(Getloginuser());
+            } catch (err) {
+                console.error("Error fetching orders:", err);
+            }
+        };
+
+        loadData();
     }, []);
 
     const getStatusStyle = (status) => {

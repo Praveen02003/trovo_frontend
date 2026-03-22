@@ -8,6 +8,7 @@ import { maincontext } from "../../App";
 import { Link } from "react-router-dom";
 import { Getloginuser } from "../../function/Getloginuser";
 import { IMAGES_URL } from "../../axios/Imageurl";
+import { Adminauth } from "../../function/Adminauth";
 
 export const Adminhome = () => {
     const {
@@ -40,21 +41,31 @@ export const Adminhome = () => {
     } = useContext(maincontext);
 
     useEffect(() => {
-        Setloginuser(Getloginuser())
-        Getadmindashboarddata(
-            Setcustomerscount,
-            Setproductscount,
-            Setactiveproductscount,
-            Setinactiveproductscount,
-            Setbrandscount,
-            Setcategoriescount,
-            Setactivecustomerscont,
-            Setblockedcustomerscont,
-            Setorderscount,
-            Settotalrevenue,
-            Setrecenttransactions,
-            Setavgsale
-        );
+        const loadData = async () => {
+            const isAdmin = await Adminauth(); // Wait until admin is verified
+            if (!isAdmin) return; // Stop if not admin
+
+            // Set logged-in user (synchronous)
+            Setloginuser(Getloginuser());
+
+            // Call async dashboard data function and wait for it
+            await Getadmindashboarddata(
+                Setcustomerscount,
+                Setproductscount,
+                Setactiveproductscount,
+                Setinactiveproductscount,
+                Setbrandscount,
+                Setcategoriescount,
+                Setactivecustomerscont,
+                Setblockedcustomerscont,
+                Setorderscount,
+                Settotalrevenue,
+                Setrecenttransactions,
+                Setavgsale
+            );
+        };
+
+        loadData();
     }, []);
     return (
         <div className="container-fluid p-0 bg-light">
