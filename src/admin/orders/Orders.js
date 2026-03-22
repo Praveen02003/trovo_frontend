@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { Sidebar } from "../sidebar/Sidebar";
 import { Getloginuser } from "../../function/Getloginuser";
 import { maincontext } from "../../App";
+import { IMAGES_URL } from "../../axios/Imageurl";
+import api from "../../axios/Axios";
 
 export const Orders = () => {
     const {
@@ -15,8 +16,8 @@ export const Orders = () => {
     const [filterStatus, setFilterStatus] = useState("All"); // New State
 
     useEffect(() => {
-        axios
-            .get("http://localhost:5000/getallorders")
+        api
+            .get("/getallorders")
             .then((res) => setOrders(res.data))
             .catch((err) => console.error(err));
 
@@ -52,14 +53,14 @@ export const Orders = () => {
                             <div className="bg-primary bg-opacity-10 p-2 rounded-3 me-3">
                                 <i className="bi bi-people-fill text-primary fs-5"></i>
                             </div>
-                            <h5 className="fw-bold m-0 text-dark">Customer Management</h5>
+                            <h5 className="fw-bold m-0 text-dark">Order Management</h5>
                         </div>
                         <div className="ms-auto d-flex align-items-center gap-3">
                             <div className="text-end d-none d-sm-block">
                                 <p className="m-0 small fw-bold">{loginuser.name}</p>
                                 <p className="m-0 text-muted extra-small" style={{ fontSize: '0.7rem' }}>Super Admin</p>
                             </div>
-                            <img src={`http://localhost:5000/images/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="40" height="40" />
+                            <img src={`${IMAGES_URL}/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="40" height="40" />
                         </div>
                     </div>
                 </nav>

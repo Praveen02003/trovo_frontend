@@ -12,11 +12,11 @@ import { Addcategory } from "../../function/Addcategory";
 import { Closetoast } from "../../function/Closetoast";
 import { Deletecategory } from "../../function/Deletecategory";
 import { Updatecategory } from "../../function/Updatecategory";
+import { IMAGES_URL } from "../../axios/Imageurl";
 
 export const Allcategories = () => {
     const {
         allcategories, Setallcategories, search, Setsearch, page, Setpage,
-        Setshowtoast, Settoastcolor, Settoastmessage, showtoast, toastcolor, toastmessage,
         addcategory, Setaddcategory, addcategoryimage, Setaddcategoryimage,
         editcategorydata, Seteditcategorydata
     } = useContext(maincontext);
@@ -68,7 +68,7 @@ export const Allcategories = () => {
                                             allcategories.map((cat) => (
                                                 <tr key={cat.category_id}>
                                                     <td className="ps-4 py-3">
-                                                        <img src={`http://localhost:5000/images/${cat.category_image}`}
+                                                        <img src={`${IMAGES_URL}/${cat.category_image}`}
                                                             className="rounded-3 border shadow-sm" width="50" height="50" style={{ objectFit: 'cover' }} alt="cat" />
                                                     </td>
                                                     <td className="fw-bold text-dark">{cat.category_name}</td>
@@ -82,7 +82,7 @@ export const Allcategories = () => {
 
                                                         {/* NEW: Delete Button */}
                                                         <button className="btn btn-sm btn-light border rounded-circle"
-                                                            onClick={() => Deletecategory(cat.category_id, Setallcategories, page, search, Setshowtoast, Settoastcolor, Settoastmessage)}>
+                                                            onClick={() => Deletecategory(cat.category_id, Setallcategories, page, search)}>
                                                             <i className="bi bi-trash text-danger"></i>
                                                         </button>
                                                     </td>
@@ -132,7 +132,7 @@ export const Allcategories = () => {
                                     onChange={(e) => Setaddcategoryimage(e.target.files[0])} />
                             </div>
                             <button className="btn btn-primary w-100 rounded-pill py-2 fw-bold"
-                                onClick={() => Addcategory(addcategory, addcategoryimage, Setshowtoast, Settoastcolor, Settoastmessage, Setallcategories, page, search)}>Save</button>
+                                onClick={() => Addcategory(addcategory, addcategoryimage, Setallcategories, page, search)}>Save</button>
                         </div>
                     </div>
                 </div>
@@ -157,7 +157,7 @@ export const Allcategories = () => {
                                     src={
                                         editcategorydata.new_image
                                             ? URL.createObjectURL(editcategorydata.new_image) // Show selected file preview
-                                            : `http://localhost:5000/images/${editcategorydata.category_image}` // Show current DB image
+                                            : `${IMAGES_URL}/${editcategorydata.category_image}` // Show current DB image
                                     }
                                     alt="preview"
                                     className="rounded-3 border shadow-sm"
@@ -182,27 +182,13 @@ export const Allcategories = () => {
                             </div>
 
                             <button className="btn btn-primary w-100 rounded-pill py-2 fw-bold"
-                                onClick={() => Updatecategory(editcategorydata, Setallcategories, page, search, Setshowtoast, Settoastcolor, Settoastmessage)}>
+                                onClick={() => Updatecategory(editcategorydata, Setallcategories, page, search)}>
                                 Update Category
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-
-
-
-            {/* --- TOAST SYSTEM --- */}
-            {showtoast && (
-                <div className="toast-container position-fixed bottom-0 end-0 p-3">
-                    <div className={`toast show align-items-center text-white bg-${toastcolor} border-0 shadow rounded-3`}>
-                        <div className="d-flex">
-                            <div className="toast-body">{toastmessage}</div>
-                            <button type="button" className="btn-close btn-close-white me-2 m-auto" onClick={() => Closetoast(Setshowtoast)}></button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

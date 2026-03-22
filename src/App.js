@@ -96,6 +96,7 @@ function App() {
   const [blockedcustomerscont, Setblockedcustomerscont] = useState(0)
   const [orderscount, Setorderscount] = useState(0)
   const [totalrevenue, Settotalrevenue] = useState(0);
+  const [avgsale, Setavgsale] = useState(0);
   const [recenttransactions, Setrecenttransactions] = useState([]);
 
   //user
@@ -212,6 +213,8 @@ function App() {
       Settotalrevenue,
       recenttransactions,
       Setrecenttransactions,
+      avgsale,
+      Setavgsale,
 
       getactiveproducts,
       Setgetactiveproducts,

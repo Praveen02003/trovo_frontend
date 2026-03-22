@@ -11,17 +11,18 @@ export const Getadmindashboarddata = async (
     Setblockedcustomerscont,
     Setorderscount,
     Settotalrevenue,       // New Setter
-    Setrecenttransactions  // New Setter
+    Setrecenttransactions, // New Setter
+    Setavgsale
 ) => {
     try {
         const res = await api.get("/getadmindashboarddata");
-        
+
         // d contains the single row counts/revenue
-        const d = res.data.data; 
+        const d = res.data.data;
         // rt contains the array of the last 5 transactions
         const rt = res.data.recentTransactions;
-        console.log(rt,"===>");
-        
+        console.log(rt, "===>");
+
 
         // Set counts
         Setcustomerscount(d.customers);
@@ -37,6 +38,7 @@ export const Getadmindashboarddata = async (
         // Set New Data
         Settotalrevenue(d.totalRevenue || 0); // Handles null if no orders exist
         Setrecenttransactions(rt || []);      // Handles empty transactions
+        Setavgsale(d.avgSale || 0);
 
     } catch (error) {
         console.log("Error loading dashboard", error);

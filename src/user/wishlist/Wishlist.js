@@ -8,6 +8,7 @@ import { Removefromwishlist } from '../../function/Removefromwishlist';
 import { Getloginuser } from '../../function/Getloginuser';
 import { Closetoast } from '../../function/Closetoast';
 import { Opentoast } from '../../function/Opentoast';
+import { IMAGES_URL } from '../../axios/Imageurl';
 
 export const Wishlist = () => {
     const {
@@ -76,7 +77,7 @@ export const Wishlist = () => {
                                     <div className="position-relative">
 
                                         <img
-                                            src={`http://localhost:5000/images/${product.image}`}
+                                            src={`${IMAGES_URL}/${product.image}`}
                                             className="card-img-top p-3"
                                             style={{
                                                 height: "220px",

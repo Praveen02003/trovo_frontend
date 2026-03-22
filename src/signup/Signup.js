@@ -18,13 +18,7 @@ export const Signup = () => {
         signupaddress,
         Setsignupaddress,
         signupmobilenumber,
-        Setsignupmobilenumber,
-        showtoast,
-        Setshowtoast,
-        toastcolor,
-        Settoastcolor,
-        toastmessage,
-        Settoastmessage
+        Setsignupmobilenumber
     } = useContext(maincontext)
     return (
         <div className="signup-wrapper container-fluid">
@@ -126,13 +120,13 @@ export const Signup = () => {
                         </div>
 
                         <button className="btn btn-trovo w-100 mb-3" onClick={() => {
-                            Createuser(signupname, signupmail, signuppassword, signupconfirmpassword, signupmobilenumber, signupaddress, Setshowtoast, Settoastcolor, Settoastmessage);
+                            Createuser(signupname, signupmail, signuppassword, signupconfirmpassword, signupmobilenumber, signupaddress);
                         }}>
                             Create Account
                         </button>
                         <p className="text-center small">
                             Already have an account?{" "}
-                            <Link to="/" className="trovo-link">
+                            <Link to="/login" className="trovo-link">
                                 Login
                             </Link>
                         </p>
@@ -143,34 +137,6 @@ export const Signup = () => {
                 </div>
 
             </div>
-
-            {showtoast && (
-                <div className="toast-container position-fixed top-0 end-0 p-3">
-
-                    <div className={`toast show text-bg-${toastcolor} border-0`}>
-
-                        <div className="d-flex">
-
-                            <div className="toast-body">
-                                {toastmessage}
-                            </div>
-
-                            <button
-                                type="button"
-                                className="btn-close btn-close-white me-2 m-auto"
-                                onClick={() => {
-                                    Closetoast(Setshowtoast)
-                                }}
-                            ></button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-            )}
-
-
         </div>
 
 

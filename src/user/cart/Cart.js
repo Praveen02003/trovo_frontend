@@ -7,6 +7,7 @@ import { Getcartdata } from '../../function/Getcartdata';
 import { Removefromcart } from '../../function/Removefromcart';
 import { Updatecartquantity } from '../../function/Updatecartquantity';
 import { Link } from 'react-router-dom';
+import { IMAGES_URL } from '../../axios/Imageurl';
 
 export const Cart = () => {
 
@@ -63,7 +64,7 @@ export const Cart = () => {
                                         <div className="col-6 d-flex align-items-center">
                                             <div className="cart-img-box me-3">
                                                 <img
-                                                    src={`http://localhost:5000/images/${item.image}`}
+                                                    src={` ${IMAGES_URL}/${item.image}`}
                                                     alt={item.product_name}
                                                 />
                                             </div>

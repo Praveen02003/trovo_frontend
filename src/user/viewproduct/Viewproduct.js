@@ -13,6 +13,7 @@ import { Removefromcart } from '../../function/Removefromcart';
 import { Addtowishlist } from '../../function/Addtowishlist';
 import { Removefromwishlist } from '../../function/Removefromwishlist';
 import { Updatecartquantity } from '../../function/Updatecartquantity';
+import { IMAGES_URL } from '../../axios/Imageurl';
 
 export const Viewproduct = () => {
 
@@ -171,7 +172,7 @@ export const Viewproduct = () => {
                         <div className="sticky-top" style={{ top: '100px' }}>
                             <div className="card border-0 shadow-sm rounded-4">
                                 <img
-                                    src={`http://localhost:5000/images/${particularproduct?.image}`}
+                                    src={`${IMAGES_URL}/${particularproduct?.image}`}
                                     className="card-img-top rounded-4"
                                     alt={particularproduct?.product_name}
                                 />

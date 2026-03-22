@@ -1,7 +1,8 @@
 import api from "../axios/Axios";
 import { Opentoast } from "./Opentoast";
+import { showSwal } from "./SwalHelper";
 
-export const Updateprofile = async (userprofile, Settoastcolor, Settoastmessage, Setshowtoast) => {
+export const Updateprofile = async (userprofile) => {
 
     const formData = new FormData();
 
@@ -26,14 +27,19 @@ export const Updateprofile = async (userprofile, Settoastcolor, Settoastmessage,
                 }
             }
         );
-        Settoastcolor("success");
-        Settoastmessage(res.data.message);
-        Opentoast(Setshowtoast);
+        await showSwal({
+            title: "Profile Updated!",
+            text: res.data.message || "Your profile has been updated successfully.",
+            icon: "success",
+            timer: 2000
+        });
 
     } catch (err) {
-        Settoastcolor("danger");
-        Settoastmessage("error");
-        Opentoast(Setshowtoast);
+        await showSwal({
+            title: "Error!",
+            text: "Failed to update profile. Please try again.",
+            icon: "error"
+        });
     }
 
 };

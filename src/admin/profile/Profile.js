@@ -9,17 +9,12 @@ import { Getmyprofile } from "../../function/Getmyprofile";
 import '../profile/Profile.css'
 import { Updateprofile } from "../../function/Updateprofile";
 import { Closetoast } from "../../function/Closetoast";
+import { IMAGES_URL } from "../../axios/Imageurl";
 
 export const Profile = () => {
     const {
         userprofile,
-        Setuserprofile,
-        showtoast,
-        Setshowtoast,
-        toastcolor,
-        Settoastcolor,
-        toastmessage,
-        Settoastmessage
+        Setuserprofile
     } = useContext(maincontext);
     const { id } = useParams();
 
@@ -62,7 +57,7 @@ export const Profile = () => {
                                     <div className="card-body p-4 pt-0">
                                         <div className="text-center" style={{ marginTop: '-60px' }}>
                                             <img
-                                                src={userprofile.profileimage ? `http://localhost:5000/images/${userprofile.profileimage}` : "https://ui-avatars.com"}
+                                                src={userprofile.profileimage ? `${IMAGES_URL}/${userprofile.profileimage}` : "https://ui-avatars.com"}
                                                 className="rounded-circle border border-4 border-white shadow mb-3"
                                                 width="120" height="120" alt="Admin"
                                                 style={{ objectFit: 'contain' }}
@@ -123,7 +118,7 @@ export const Profile = () => {
                                 <label className="form-label d-block small fw-bold text-muted text-start">Profile Image</label>
                                 <div className="position-relative d-inline-block">
                                     <img
-                                        src={preview ? preview : `http://localhost:5000/images/${userprofile.profileimage}`}
+                                        src={preview ? preview : `${IMAGES_URL}/${userprofile.profileimage}`}
                                         className="rounded-circle border border-2 border-primary p-1 shadow-sm mb-2"
                                         width="100" height="100" alt="Preview"
                                         style={{ objectFit: 'contain' }}
@@ -152,7 +147,7 @@ export const Profile = () => {
                             </div>
                             <div className="d-grid mt-4">
                                 <button type="button" className="btn btn-primary py-2 fw-bold rounded-3 shadow-sm" onClick={() => {
-                                    Updateprofile(userprofile, Settoastcolor, Settoastmessage, Setshowtoast);
+                                    Updateprofile(userprofile);
                                 }}>
                                     Save Changes
                                 </button>
@@ -161,20 +156,6 @@ export const Profile = () => {
                     </div>
                 </div>
             </div>
-            {showtoast && (
-                <div className="toast-container position-fixed top-0 end-0 p-3">
-                    <div className={`toast show text-bg-${toastcolor} border-0`}>
-                        <div className="d-flex">
-                            <div className="toast-body">{toastmessage}</div>
-                            <button
-                                type="button"
-                                className="btn-close btn-close-white me-2 m-auto"
-                                onClick={() => Closetoast(Setshowtoast)}
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

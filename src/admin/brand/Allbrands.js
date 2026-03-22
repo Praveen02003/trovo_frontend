@@ -11,6 +11,7 @@ import { Closetoast } from "../../function/Closetoast";
 import { Deletebrand } from "../../function/Deletebrand";
 import { Updatebrand } from "../../function/Updatebrand";
 import { Getloginuser } from "../../function/Getloginuser";
+import { IMAGES_URL } from "../../axios/Imageurl";
 
 export const Allbrands = () => {
     const {
@@ -58,7 +59,7 @@ export const Allbrands = () => {
                                     <p className="m-0 small fw-bold">{loginuser.name}</p>
                                     <p className="m-0 text-muted extra-small" style={{ fontSize: '0.7rem' }}>Super Admin</p>
                                 </div>
-                                <img src={`http://localhost:5000/images/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="40" height="40" />
+                                <img src={`${IMAGES_URL}/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="40" height="40" />
                             </div>
                         </div>
                     </nav>
@@ -139,10 +140,7 @@ export const Allbrands = () => {
                                                                             brand.brand_id,
                                                                             Setallbrands,
                                                                             page,
-                                                                            search,
-                                                                            Setshowtoast,
-                                                                            Settoastcolor,
-                                                                            Settoastmessage
+                                                                            search
                                                                         )}
                                                                     >
                                                                         <i className="bi bi-trash me-2"></i>Delete
@@ -176,20 +174,6 @@ export const Allbrands = () => {
                         </div>
                     </div>
                 </div>
-                {showtoast && (
-                    <div className="toast-container position-fixed top-0 end-0 p-3">
-                        <div className={`toast show text-bg-${toastcolor} border-0`}>
-                            <div className="d-flex">
-                                <div className="toast-body">{toastmessage}</div>
-                                <button
-                                    type="button"
-                                    className="btn-close btn-close-white me-2 m-auto"
-                                    onClick={() => Closetoast(Setshowtoast)}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                )}
             </div>
             {/* --- ADD BRAND MODAL --- */}
             <div className="modal fade text-dark" id="brandModal" tabIndex="-1" aria-hidden="true">
@@ -208,7 +192,7 @@ export const Allbrands = () => {
                                 />
                             </div>
                             <button type="button" className="btn btn-primary w-100 rounded-pill py-2 fw-bold" onClick={() => {
-                                Addbrand(addbrand, Setshowtoast, Settoastcolor, Settoastmessage, Setallbrands, page, search);
+                                Addbrand(addbrand, Setallbrands, page, search);
                             }}
                             >Save Brand</button>
                         </div>
@@ -235,7 +219,7 @@ export const Allbrands = () => {
                             </div>
                             <button
                                 className="btn btn-primary w-100 rounded-pill py-2 fw-bold"
-                                onClick={() => Updatebrand(editbranddata, Setallbrands, page, search, Setshowtoast, Settoastcolor, Settoastmessage)}
+                                onClick={() => Updatebrand(editbranddata, Setallbrands, page, search)}
                             >
                                 Update Brand
                             </button>

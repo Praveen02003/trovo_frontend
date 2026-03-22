@@ -1,12 +1,14 @@
 import api from '../axios/Axios'
 import { Opentoast } from './Opentoast';
-export const Verifyuser = async (loginmail, loginpassword, Setshowtoast, Settoastmessage, Settoastcolor, navigate) => {
+import { showSwal } from './SwalHelper';
+export const Verifyuser = async (loginmail, loginpassword, navigate) => {
 
     if (!loginmail || !loginpassword) {
-        // console.log("please fill all the data");
-        Settoastcolor('danger')
-        Settoastmessage("please fill all the data")
-        Opentoast(Setshowtoast)
+        await showSwal({
+            title: "Warning!",
+            text: "please fill all the data",
+            icon: "error",
+        });
     }
     else {
         var data = {
@@ -19,24 +21,29 @@ export const Verifyuser = async (loginmail, loginpassword, Setshowtoast, Settoas
                 // console.log(res.data.token);
                 localStorage.setItem("token", res.data.token);
                 localStorage.setItem("loginuser", JSON.stringify(res.data.data));
-                Settoastcolor('success')
-                Settoastmessage(res.data.message)
-                Opentoast(Setshowtoast)
+                await showSwal({
+                    title: "User Verified!",
+                    text: res.data.message || "Login Successfull.",
+                    icon: "success",
+                    timer: 2000
+                });
                 navigate('/');
-
             }
             else {
-                Settoastcolor('danger')
-                Settoastmessage(res.data.message)
-                Opentoast(Setshowtoast)
+                await showSwal({
+                    title: "Warning!",
+                    text: res.data.message,
+                    icon: "error",
+                });
             }
 
         } catch (error) {
             // console.log("error");
-            Settoastcolor('danger')
-            Settoastmessage("error")
-            Opentoast(Setshowtoast)
-
+            await showSwal({
+                title: "Warning!",
+                text: "error",
+                icon: "error",
+            });
         }
     }
 }

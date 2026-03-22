@@ -11,6 +11,8 @@ import { Getallbrands } from "../../function/Getallbrands";
 import { Closetoast } from "../../function/Closetoast";
 import { Updateproduct } from "../../function/Updateproduct";
 import '../edit/Editproduct.css';
+import { IMAGES_URL } from "../../axios/Imageurl";
+import { Getloginuser } from "../../function/Getloginuser";
 
 export const Editproduct = () => {
     const {
@@ -20,17 +22,14 @@ export const Editproduct = () => {
         Seteachproduct,
         allbrands,
         Setallbrands,
-        showtoast,
-        Setshowtoast,
-        toastcolor,
-        Settoastcolor,
-        toastmessage,
-        Settoastmessage
+        loginuser,
+        Setloginuser
     } = useContext(maincontext);
 
     const { id } = useParams();
 
     useEffect(() => {
+        Setloginuser(Getloginuser())
         Getcurrentproduct(id, Seteachproduct);
         Getallcategories(Setallcategories);
         Getallbrands(Setallbrands);
@@ -63,7 +62,7 @@ export const Editproduct = () => {
                                     <span className="text-muted small">ID: {eachproduct.product_id}</span>
                                 </div>
                             </div>
-                            <img src="https://ui-avatars.com" alt="Profile" className="rounded-circle border" width="35" height="35" />
+                            <img src={`${IMAGES_URL}/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border" width="35" height="35" />
                         </div>
                     </nav>
 
@@ -173,7 +172,7 @@ export const Editproduct = () => {
                                         <h6 className="fw-bold mb-3 text-start text-primary"><i className="bi bi-image me-2"></i>Product Media</h6>
                                         <div className="position-relative mb-3">
                                             <img
-                                                src={eachproduct.newimage ? URL.createObjectURL(eachproduct.newimage) : `http://localhost:5000/images/${eachproduct.image}`}
+                                                src={eachproduct.newimage ? URL.createObjectURL(eachproduct.newimage) : `${IMAGES_URL}/${eachproduct.image}`}
                                                 className="img-fluid rounded-4 border p-1"
                                                 alt="Product"
                                                 style={{ maxHeight: '200px', width: '100%', objectFit: 'contain' }}
@@ -243,7 +242,7 @@ export const Editproduct = () => {
 
                                 <div className="d-grid gap-2">
                                     <button className="btn btn-primary py-2 fw-bold rounded-3 shadow-sm" onClick={() => {
-                                        Updateproduct(eachproduct, Settoastcolor, Settoastmessage, Setshowtoast);
+                                        Updateproduct(eachproduct);
                                     }}>Save Changes</button>
                                     <Link to={'/allproduct'} className="btn btn-outline-danger py-2 fw-bold rounded-3 border-0">Cancel</Link>
                                 </div>
@@ -252,21 +251,6 @@ export const Editproduct = () => {
                     </div>
                 </div>
             </div>
-
-            {showtoast && (
-                <div className="toast-container position-fixed top-0 end-0 p-3">
-                    <div className={`toast show text-bg-${toastcolor} border-0`}>
-                        <div className="d-flex">
-                            <div className="toast-body">{toastmessage}</div>
-                            <button
-                                type="button"
-                                className="btn-close btn-close-white me-2 m-auto"
-                                onClick={() => Closetoast(Setshowtoast)}
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

@@ -7,6 +7,7 @@ import { Getcartdata } from '../../function/Getcartdata';
 import { useNavigate } from 'react-router-dom';
 import api from '../../axios/Axios';
 import { Handlecheckout } from '../../function/Handlecheckout';
+import { IMAGES_URL } from '../../axios/Imageurl';
 
 export const Checkout = () => {
 
@@ -75,7 +76,7 @@ export const Checkout = () => {
 
                                     <div className="me-3">
                                         <img
-                                            src={`http://localhost:5000/images/${item.image}`}
+                                            src={`${IMAGES_URL}/${item.image}`}
                                             alt={item.product_name}
                                             style={{ width: "60px", height: "60px", objectFit: "cover" }}
                                         />
@@ -144,7 +145,7 @@ export const Checkout = () => {
                             <button
                                 className="btn btn-primary w-100 py-3 rounded-pill fw-bold"
                                 onClick={() => {
-                                    Handlecheckout(loginuser, Setloginuser, cartdata, Settoastcolor, Settoastmessage, Setshowtoast, Setcartids, Setcartdata, navigate) ;
+                                    Handlecheckout(loginuser, Setloginuser, cartdata, Settoastcolor, Settoastmessage, Setshowtoast, Setcartids, Setcartdata, navigate);
                                 }}
                             >
                                 CONFIRM & PAY

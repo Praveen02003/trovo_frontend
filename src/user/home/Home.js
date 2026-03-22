@@ -14,6 +14,7 @@ import { Getwishlistdata } from "../../function/Getwishlistdata";
 import { Removefromwishlist } from "../../function/Removefromwishlist";
 import { Closetoast } from "../../function/Closetoast";
 import { Opentoast } from "../../function/Opentoast";
+import { IMAGES_URL } from "../../axios/Imageurl";
 
 export const Home = () => {
     const {
@@ -321,7 +322,7 @@ export const Home = () => {
                                             </div>
 
                                             <div className="product-visual">
-                                                <img src={`http://localhost:5000/images/${product.image}`} alt={product.product_name} />
+                                                <img src={`${IMAGES_URL}/${product.image}`} alt={product.product_name} />
                                             </div>
 
                                             <div className="cart-slider">

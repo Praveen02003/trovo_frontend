@@ -1,11 +1,8 @@
 import api from "../axios/Axios";
-import { Opentoast } from "./Opentoast";
+import { showSwal } from "./SwalHelper";
 
 export const Createproduct = async (
-    addproduct,
-    Settoastcolor,
-    Settoastmessage,
-    Setshowtoast
+    addproduct
 ) => {
     if (
         !addproduct.name ||
@@ -17,9 +14,11 @@ export const Createproduct = async (
         !addproduct.category_id ||
         !addproduct.brand_id
     ) {
-        Settoastcolor("danger");
-        Settoastmessage("Please fill all the fields");
-        Opentoast(Setshowtoast);
+        await showSwal({
+            title: "Warning!",
+            text: "Please fill all the fields.",
+            icon: "error",
+        });
         return;
     }
 
@@ -41,24 +40,32 @@ export const Createproduct = async (
         });
 
         if (res.data.message === "Product Created Successfully") {
-            Settoastcolor("success");
-            Settoastmessage(res.data.message);
-            Opentoast(Setshowtoast);
+            await showSwal({
+                title: "Product Created!",
+                text: res.data.message || "Product Created Successfully.",
+                icon: "success",
+                timer: 2000
+            });
         }
         else if (res.data.message === "Product Name Already Exists") {
-            Settoastcolor("danger");
-            Settoastmessage(res.data.message);
-            Opentoast(Setshowtoast);
+            await showSwal({
+                title: "Warning!",
+                text: res.data.message || "Product Name Already Exists.",
+                icon: "error",
+            });
         }
         else {
-            Settoastcolor("success");
-            Settoastmessage(res.data.message);
-            Opentoast(Setshowtoast);
+            await showSwal({
+                title: "Warning!",
+                text: res.data.message,
+                icon: "error",
+            });
         }
     } catch (error) {
-        Settoastcolor("danger");
-        Settoastmessage("Something went wrong");
-        Opentoast(Setshowtoast);
-        console.log(error);
+        await showSwal({
+            title: "Warning!",
+            text: "Something went wrong",
+            icon: "error",
+        });
     }
 };

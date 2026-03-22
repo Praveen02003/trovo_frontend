@@ -4,6 +4,7 @@ import '../payment/Payment.css';
 import { maincontext } from '../../App';
 import { Getloginuser } from '../../function/Getloginuser';
 import { useParams, useLocation } from 'react-router-dom';
+import { IMAGES_URL } from '../../axios/Imageurl';
 
 export const Payment = () => {
 
@@ -86,6 +87,7 @@ export const Payment = () => {
                                     </div>
 
                                 </div>
+                                
 
                                 {/* ORDERED ITEMS */}
                                 <div className="text-start mb-4">
@@ -96,7 +98,7 @@ export const Payment = () => {
                                             <div key={index} className="d-flex align-items-center mb-3">
 
                                                 <img
-                                                    src={`http://localhost:5000/images/${item.image}`}
+                                                    src={`${IMAGES_URL}/${item.image}`}
                                                     alt={item.product_name}
                                                     style={{ width: "50px", height: "50px", objectFit: "cover" }}
                                                     className="me-3 rounded"
@@ -124,7 +126,7 @@ export const Payment = () => {
 
                                 {/* BUTTONS */}
                                 <div className="d-grid gap-3">
-                                    <a href="/orders" className="btn btn-dark">
+                                    <a href={`/trackorder/${loginuser.user_id}`} className="btn btn-dark">
                                         Track Order
                                     </a>
 

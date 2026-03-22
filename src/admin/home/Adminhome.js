@@ -7,6 +7,7 @@ import { Getadmindashboarddata } from "../../function/Getadmindashboarddata";
 import { maincontext } from "../../App";
 import { Link } from "react-router-dom";
 import { Getloginuser } from "../../function/Getloginuser";
+import { IMAGES_URL } from "../../axios/Imageurl";
 
 export const Adminhome = () => {
     const {
@@ -34,6 +35,8 @@ export const Adminhome = () => {
         Settotalrevenue,
         recenttransactions,
         Setrecenttransactions,
+        avgsale,
+        Setavgsale,
     } = useContext(maincontext);
 
     useEffect(() => {
@@ -49,7 +52,8 @@ export const Adminhome = () => {
             Setblockedcustomerscont,
             Setorderscount,
             Settotalrevenue,
-            Setrecenttransactions
+            Setrecenttransactions,
+            Setavgsale
         );
     }, []);
     return (
@@ -67,7 +71,7 @@ export const Adminhome = () => {
                                     <p className="m-0 small fw-bold text-dark">{loginuser.name}</p>
                                     <small className="text-muted" style={{ fontSize: '0.65rem' }}>Super Admin</small>
                                 </div>
-                                <img src={`http://localhost:5000/images/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="38" height="38" />
+                                <img src={`${IMAGES_URL}/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="38" height="38" />
                             </div>
                         </div>
                     </nav>
@@ -124,7 +128,7 @@ export const Adminhome = () => {
                                             <span className="badge bg-danger bg-opacity-10 text-danger rounded-pill">-2%</span>
                                         </div>
                                         <h6 className="text-muted small fw-bold text-uppercase">Avg. Sale</h6>
-                                        <h3 className="fw-bold m-0 text-dark">$124.50</h3>
+                                        <h3 className="fw-bold m-0 text-dark">${parseFloat(avgsale || 0).toFixed(2)}</h3>
                                     </div>
                                 </div>
                             </div>

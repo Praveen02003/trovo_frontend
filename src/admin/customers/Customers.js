@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { Blockcustomer } from "../../function/Blockcustomer";
 import { Closetoast } from "../../function/Closetoast";
 import { Getloginuser } from "../../function/Getloginuser";
+import { IMAGES_URL } from "../../axios/Imageurl";
 
 export const Customers = () => {
     const {
@@ -55,7 +56,7 @@ export const Customers = () => {
                                     <p className="m-0 small fw-bold">{loginuser.name}</p>
                                     <p className="m-0 text-muted extra-small" style={{ fontSize: '0.7rem' }}>Super Admin</p>
                                 </div>
-                                <img src={`http://localhost:5000/images/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="40" height="40" />
+                                <img src={`${IMAGES_URL}/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="40" height="40" />
                             </div>
                         </div>
                     </nav>
@@ -113,7 +114,7 @@ export const Customers = () => {
                                                         <div className="d-flex align-items-center">
                                                             <div className="position-relative">
                                                                 <img
-                                                                    src={cust.profileimage ? `http://localhost:5000/images/${cust.profileimage}` : `https://ui-avatars.com{cust.name}&background=random`}
+                                                                    src={cust.profileimage ? ` ${IMAGES_URL}/${cust.profileimage}` : `https://ui-avatars.com{cust.name}&background=random`}
                                                                     className="rounded-circle border shadow-sm" width="48" height="48" alt="Avatar"
                                                                 />
                                                                 <span className={`position-absolute bottom-0 end-0 p-1 border border-2 border-white rounded-circle ${cust.status === 'active' ? 'bg-success' : 'bg-secondary'}`}></span>
@@ -158,7 +159,7 @@ export const Customers = () => {
                                                                 <li>
                                                                     <button
                                                                         className="dropdown-item py-2 text-danger fw-bold"
-                                                                        onClick={() => Blockcustomer(cust.user_id, Settoastmessage, Setshowtoast, Settoastcolor, Setallcustomers, page, status, search)}
+                                                                        onClick={() => Blockcustomer(cust.user_id, Setallcustomers, page, status, search, {})}
                                                                     >
                                                                         <i className={`bi ${cust.status === 'blocked' ? 'bi-unlock' : 'bi-slash-circle'} me-2`}></i>
                                                                         {cust.status === 'blocked' ? 'Unblock User' : 'Block User'}

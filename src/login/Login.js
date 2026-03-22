@@ -9,12 +9,6 @@ import { Closetoast } from "../function/Closetoast";
 
 export const Login = () => {
     const {
-        showtoast,
-        Setshowtoast,
-        toastcolor,
-        Settoastcolor,
-        toastmessage,
-        Settoastmessage,
         loginmail,
         Setloginmail,
         loginpassword,
@@ -76,7 +70,7 @@ export const Login = () => {
                         </div>
 
                         <button type="submit" className="btn btn-trovo w-100 mb-3" onClick={() => {
-                            Verifyuser(loginmail, loginpassword, Setshowtoast, Settoastmessage, Settoastcolor, navigate)
+                            Verifyuser(loginmail, loginpassword, navigate)
                         }}>
                             Login
                         </button>
@@ -87,37 +81,10 @@ export const Login = () => {
                                 Signup
                             </Link>
                         </p>
-
-
                     </div>
                 </div>
 
             </div>
-            {showtoast && (
-                <div className="toast-container position-fixed top-0 end-0 p-3">
-
-                    <div className={`toast show text-bg-${toastcolor} border-0`}>
-
-                        <div className="d-flex">
-
-                            <div className="toast-body">
-                                {toastmessage}
-                            </div>
-
-                            <button
-                                type="button"
-                                className="btn-close btn-close-white me-2 m-auto"
-                                onClick={() => {
-                                    Closetoast(Setshowtoast)
-                                }}
-                            ></button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-            )}
         </div>
     );
 };

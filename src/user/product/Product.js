@@ -10,6 +10,7 @@ import { Addtowishlist } from '../../function/Addtowishlist';
 import { Link, useParams } from 'react-router-dom';
 import { Getcategories } from '../../function/Getcategories';
 import { Closetoast } from '../../function/Closetoast';
+import { IMAGES_URL } from '../../axios/Imageurl';
 
 export const Product = () => {
     const {
@@ -191,7 +192,7 @@ export const Product = () => {
 
                                                     <div className="img-placeholder bg-gradient-gray">
                                                         <img
-                                                            src={`http://localhost:5000/images/${product.image}`}
+                                                            src={` ${IMAGES_URL}/${product.image}`}
                                                             alt={product.product_name}
                                                             className="img-fluid"
                                                         />

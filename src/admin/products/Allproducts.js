@@ -14,6 +14,7 @@ import { Addcategory } from "../../function/Addcategory";
 import { Createproduct } from "../../function/Createproduct";
 import { Getallbrands } from "../../function/Getallbrands";
 import { Getloginuser } from "../../function/Getloginuser";
+import { IMAGES_URL } from "../../axios/Imageurl";
 
 export const Allproducts = () => {
   const {
@@ -69,7 +70,7 @@ export const Allproducts = () => {
                   <p className="m-0 small fw-bold">{loginuser.name}</p>
                   <p className="m-0 text-muted extra-small" style={{ fontSize: '0.7rem' }}>Super Admin</p>
                 </div>
-                <img src={`http://localhost:5000/images/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="40" height="40" />
+                <img src={`${IMAGES_URL}/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="40" height="40" />
               </div>
             </div>
           </nav>
@@ -137,7 +138,7 @@ export const Allproducts = () => {
                           <td className="ps-4 py-3">
                             <div className="d-flex align-items-center">
                               <div className="rounded-3 bg-light border p-1 me-3 shadow-sm" style={{ width: '50px', height: '50px' }}>
-                                <img src={`http://localhost:5000/images/${product.image}`}
+                                <img src={`${IMAGES_URL}/${product.image}`}
                                   className="w-100 h-100 rounded" style={{ objectFit: 'contain' }} alt="thumb" />
                               </div>
                               <div>
@@ -176,7 +177,7 @@ export const Allproducts = () => {
                                   </Link>
                                 </li>
                                 <li>
-                                  <button className="dropdown-item py-2 text-danger" onClick={() => Deleteproduct(product.product_id, Setallproducts, Setshowtoast, Settoastcolor, Settoastmessage)}>
+                                  <button className="dropdown-item py-2 text-danger" onClick={() => Deleteproduct(product.product_id, Setallproducts, page)}>
                                     <i className="bi bi-trash me-2"></i>Delete
                                   </button>
                                 </li>
@@ -252,7 +253,7 @@ export const Allproducts = () => {
                 />
               </div>
               <button type="button" className="btn btn-primary w-100 rounded-pill py-2 fw-bold" onClick={() => {
-                Addbrand(addbrand, Setshowtoast, Settoastcolor, Settoastmessage);
+                Addbrand(addbrand, Setallbrands, page, search);
               }}
               >Save Brand</button>
             </div>
@@ -279,7 +280,7 @@ export const Allproducts = () => {
                 <input type="file" onChange={(e) => Setaddcategoryimage(e.target.files[0])}
                   className="form-control rounded-3 bg-light border-0 px-3 py-2 shadow-sm" />
               </div>
-              <button type="button" onClick={() => Addcategory(addcategory, addcategoryimage, Setshowtoast, Settoastcolor, Settoastmessage)}
+              <button type="button" onClick={() => Addcategory(addcategory, addcategoryimage, Setallcategories, page, search)}
                 className="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow">
                 <i className="bi bi-check2-circle me-2"></i>Save Category
               </button>
@@ -373,7 +374,7 @@ export const Allproducts = () => {
             </div>
             <div className="modal-footer border-0 p-4 pt-0">
               <button type="button" className="btn btn-primary w-100 rounded-pill py-2 fw-bold"
-                onClick={() => Createproduct(addproduct, Settoastcolor, Settoastmessage, Setshowtoast)}>
+                onClick={() => Createproduct(addproduct)}>
                 Create Product
               </button>
             </div>

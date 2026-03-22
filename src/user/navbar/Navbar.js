@@ -6,6 +6,7 @@ import { maincontext } from '../../App';
 import { Getloginuser } from '../../function/Getloginuser';
 import { Getwishlistdata } from '../../function/Getwishlistdata';
 import { Getcartdata } from '../../function/Getcartdata';
+import { IMAGES_URL } from '../../axios/Imageurl';
 
 export const Navbar = () => {
     const {
@@ -77,7 +78,7 @@ export const Navbar = () => {
                             {/* Profile - Integrated Circle */}
                             <div className="dropdown">
                                 <div className="profile-btn-circle" data-bs-toggle="dropdown">
-                                    <img src={`http://localhost:5000/images/${loginuser.profileimage}`} alt={`${loginuser.name}`} />
+                                    <img src={`${IMAGES_URL}/${loginuser.profileimage}`} alt={`${loginuser.name}`} />
                                 </div>
 
                                 <ul className="dropdown-menu dropdown-menu-end neo-dropdown shadow-xl">

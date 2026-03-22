@@ -4,14 +4,14 @@ import { Sidebar } from "../sidebar/Sidebar";
 import { maincontext } from "../../App";
 import { Getcurrentcustomer } from "../../function/Getcurrentcustomer";
 import { Blockcustomer } from "../../function/Blockcustomer";
-import { Closetoast } from "../../function/Closetoast";
+import { IMAGES_URL } from "../../axios/Imageurl";
 
 export const Vieweachcustomer = () => {
     const { id } = useParams();
     const {
-        eachcustomer, Seteachcustomer,
-        Settoastmessage, Setshowtoast, Settoastcolor, Setallcustomers,
-        showtoast, toastcolor, toastmessage,
+        eachcustomer,
+        Seteachcustomer,
+        Setallcustomers,
     } = useContext(maincontext);
 
     useEffect(() => {
@@ -41,7 +41,7 @@ export const Vieweachcustomer = () => {
                             <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
                                 <div className="bg-primary p-5 text-center">
                                     <img
-                                        src={eachcustomer?.profileimage ? `http://localhost:5000/images/${eachcustomer.profileimage}` : `https://ui-avatars.com{eachcustomer?.name || 'User'}&background=random&size=128`}
+                                        src={eachcustomer?.profileimage ? `${IMAGES_URL}/${eachcustomer.profileimage}` : `https://ui-avatars.com{eachcustomer?.name || 'User'}&background=random&size=128`}
                                         className="rounded-circle border border-4 border-white shadow-lg bg-white mb-3"
                                         width="130" height="130" alt="Avatar"
                                     />
@@ -92,7 +92,6 @@ export const Vieweachcustomer = () => {
                                                 className={`btn w-100 rounded-pill py-3 fw-bold shadow-sm ${eachcustomer?.status === 'blocked' ? 'btn-success' : 'btn-danger'}`}
                                                 onClick={() => Blockcustomer(
                                                     eachcustomer.user_id,
-                                                    Settoastmessage, Setshowtoast, Settoastcolor,
                                                     Setallcustomers, 1, 'all', '', Seteachcustomer// Defaulting refresh params
                                                 )}
                                             >
@@ -107,18 +106,6 @@ export const Vieweachcustomer = () => {
                     </div>
                 </div>
             </div>
-
-            {/* Notification Toast */}
-            {showtoast && (
-                <div className="toast-container position-fixed bottom-0 end-0 p-3">
-                    <div className={`toast show align-items-center text-white bg-${toastcolor} border-0 shadow-lg rounded-3`}>
-                        <div className="d-flex">
-                            <div className="toast-body fw-bold">{toastmessage}</div>
-                            <button type="button" className="btn-close btn-close-white me-2 m-auto" onClick={() => Closetoast(Setshowtoast)}></button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

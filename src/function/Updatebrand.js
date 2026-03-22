@@ -1,26 +1,37 @@
 import api from "../axios/Axios";
 import { Getallbrands } from "./Getallbrands";
 import { Opentoast } from "./Opentoast";
+import { showSwal } from "./SwalHelper";
 
-export const Updatebrand = async (editbranddata, Setallbrands, page, search, Setshowtoast, Settoastcolor, Settoastmessage) => {
+export const Updatebrand = async (editbranddata, Setallbrands, page, search) => {
     try {
         const res = await api.post(`/updatebrand`, {
             brand_name: editbranddata.brand_name,
             brand_id: editbranddata.brand_id
         });
 
-        if (res.status === 200) {
-            Settoastcolor("success");
-            Settoastmessage("Brand updated successfully!");
-            Opentoast(Setshowtoast)
-
-
+        if (res.data.message === "Brand Updated Successfully") {
+            await showSwal({
+                title: "Brand Updated!",
+                text: res.data.message || "Brand Updated Successfully.",
+                icon: "success",
+                timer: 2000
+            });
             // Refresh list
             Getallbrands(Setallbrands, page, search);
         }
+        else {
+            await showSwal({
+                title: "Warning!",
+                text: res.data.message,
+                icon: "error",
+            });
+        }
     } catch (error) {
-        Settoastcolor("danger");
-        Settoastmessage("Failed to update brand");
-        Opentoast(Setshowtoast)
+        await showSwal({
+            title: "Warning!",
+            text: "Failed to update brand",
+            icon: "error",
+        });
     }
 };

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Sidebar } from "../sidebar/Sidebar";
 import Swal from "sweetalert2";
+import api from "../../axios/Axios";
+import { IMAGES_URL } from "../../axios/Imageurl";
 export const Vieweachorder = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -14,7 +15,7 @@ export const Vieweachorder = () => {
     }, [id]);
 
     const fetchOrder = () => {
-        axios.get(`http://localhost:5000/getorder/${id}`)
+        api.get(`/getorder/${id}`)
             .then((res) => {
                 setOrderDetails(res.data);
                 setStatus(res.data[0]?.order_status || res.data[0]?.status);
@@ -24,7 +25,7 @@ export const Vieweachorder = () => {
 
     const handleStatusUpdate = (newStatus) => {
         // We pass both ID and Status in the URL string
-        axios.get(`http://localhost:5000/updateorderstatus/${id}/${newStatus}`)
+        api.get(`/updateorderstatus/${id}/${newStatus}`)
             .then(() => {
                 setStatus(newStatus); // Update local state for UI
                 Swal.fire({
@@ -110,7 +111,7 @@ export const Vieweachorder = () => {
                                         <tr key={idx} className="border-bottom-subtle">
                                             <td className="py-4 ps-0">
                                                 <div className="d-flex align-items-center">
-                                                    <img src={`http://localhost:5000/images/${item.image}`} className="rounded-3 me-3" style={{ width: "50px", height: "50px", objectFit: "cover" }} alt="" />
+                                                    <img src={`${IMAGES_URL}/${item.image}`} className="rounded-3 me-3" style={{ width: "50px", height: "50px", objectFit: "cover" }} alt="" />
                                                     <span className="fw-bold">{item.product_name}</span>
                                                 </div>
                                             </td>

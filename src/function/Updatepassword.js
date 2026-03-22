@@ -1,19 +1,22 @@
 import api from '../axios/Axios'
 import { Opentoast } from "./Opentoast"
+import { showSwal } from './SwalHelper';
 
-export const Updatepassword = async (forgetmail, forgetpassword, forgetconfirmpassword, Setshowtoast, Settoastmessage, Settoastcolor) => {
+export const Updatepassword = async (forgetmail, forgetpassword, forgetconfirmpassword) => {
     if (!forgetmail || !forgetpassword || !forgetconfirmpassword) {
-        // console.log("please fill all the data");
-        Settoastcolor('danger')
-        Settoastmessage("please fill all the data")
-        Opentoast(Setshowtoast)
+        await showSwal({
+            title: "Warning!",
+            text: "please fill all the data",
+            icon: "error",
+        });
     }
     else {
         if (forgetpassword !== forgetconfirmpassword) {
-            // console.log("please fill all the data");
-            Settoastcolor('danger')
-            Settoastmessage("password mismatch")
-            Opentoast(Setshowtoast)
+            await showSwal({
+                title: "Warning!",
+                text: "Password Mismatch",
+                icon: "error",
+            });
         }
         else {
             var data = {
@@ -24,21 +27,27 @@ export const Updatepassword = async (forgetmail, forgetpassword, forgetconfirmpa
                 const res = await api.post("/updatepassword", { data: data });
                 // console.log(res.data.message);
                 if (res.data.message === "Password updated successfully") {
-                    Settoastcolor('success')
-                    Settoastmessage(res.data.message)
-                    Opentoast(Setshowtoast)
+                    await showSwal({
+                        title: "Password updated!",
+                        text: res.data.message || "Password updated successfully.",
+                        icon: "success",
+                        timer: 2000
+                    });
                 }
                 else {
-                    Settoastcolor('danger')
-                    Settoastmessage(res.data.message)
-                    Opentoast(Setshowtoast)
+                    await showSwal({
+                        title: "Warning!",
+                        text: res.data.message,
+                        icon: "error",
+                    });
                 }
 
             } catch (error) {
-                // console.log(error);
-                Settoastcolor('danger')
-                Settoastmessage('error')
-                Opentoast(Setshowtoast)
+                await showSwal({
+                    title: "Warning!",
+                    text: "error",
+                    icon: "error",
+                });
             }
         }
     }

@@ -4,6 +4,9 @@ import { Navbar } from '../navbar/Navbar';
 import api from '../../axios/Axios';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import Swal from "sweetalert2";
+import { Deleteorder } from '../../function/Deleteorder';
+import { IMAGES_URL } from '../../axios/Imageurl';
 
 export const Viewparticularorder = () => {
     const { orderId } = useParams();
@@ -50,6 +53,14 @@ export const Viewparticularorder = () => {
         pdf.save(`Invoice_${order.order_id}.pdf`);
     };
 
+    const handleDeleteOrder = () => {
+        Deleteorder({
+            order,
+            allowedStatuses: ['Placed', 'Shipped', 'Processed'],
+            onSuccess: () => navigate(-1)  // Go back after deletion
+        });
+    }
+
     if (loading) return <div className="d-flex justify-content-center align-items-center vh-100"><div className="spinner-border text-dark"></div></div>;
 
     return (
@@ -65,14 +76,22 @@ export const Viewparticularorder = () => {
                             <button onClick={() => navigate(-1)} className="btn btn-link text-dark fw-bold text-decoration-none p-0">
                                 <i className="bi bi-arrow-left me-2"></i>BACK
                             </button>
-                            <button onClick={downloadPDF} className="btn btn-dark rounded-0 px-4 fw-bold shadow-sm">
-                                DOWNLOAD INVOICE
-                            </button>
+                            <div>
+                                <button onClick={downloadPDF} className="btn btn-dark rounded-0 px-4 fw-bold shadow-sm me-2">
+                                    DOWNLOAD INVOICE
+                                </button>
+
+                                {/* Show Delete button only for Placed, Shipped, or Processed */}
+                                {['Placed', 'Shipped', 'Processed'].includes(order.status) && (
+                                    <button onClick={handleDeleteOrder} className="btn btn-danger rounded-0 px-4 fw-bold shadow-sm">
+                                        DELETE ORDER
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         {/* INVOICE CONTENT */}
                         <div ref={pdfRef} className="p-4 p-md-5 border shadow-sm bg-white" style={{ borderRadius: '2px' }}>
-
                             {/* LOGO & STATUS */}
                             <div className="d-flex justify-content-between border-bottom border-2 border-dark pb-4 mb-5">
                                 <div>
@@ -116,7 +135,7 @@ export const Viewparticularorder = () => {
                                                 <div className="d-flex align-items-center">
                                                     <img
                                                         crossOrigin="anonymous"
-                                                        src={`http://localhost:5000/images/${item.image}`}
+                                                        src={`${IMAGES_URL}/${item.image}`}
                                                         style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                                                         className="border me-3" alt=""
                                                     />

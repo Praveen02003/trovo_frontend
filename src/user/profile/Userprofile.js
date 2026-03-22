@@ -6,17 +6,12 @@ import { Getloginuser } from '../../function/Getloginuser';
 import { Updateprofile } from '../../function/Updateprofile';
 import { Closetoast } from '../../function/Closetoast';
 import { Logout } from '../../function/Logout';
+import { IMAGES_URL } from '../../axios/Imageurl';
 
 export const Userprofile = () => {
     const {
         loginuser,
-        Setloginuser,
-        showtoast,
-        Setshowtoast,
-        toastcolor,
-        Settoastcolor,
-        toastmessage,
-        Settoastmessage
+        Setloginuser
     } = useContext(maincontext);
 
     const [preview, setPreview] = useState(null);
@@ -37,7 +32,7 @@ export const Userprofile = () => {
                     <div className="col-lg-4">
                         <div className="card border-0 shadow-sm rounded-4 text-center p-4">
                             <img
-                                src={preview ? preview : `http://localhost:5000/images/${loginuser.profileimage}`}
+                                src={preview ? preview : `${IMAGES_URL}/${loginuser.profileimage}`}
                                 className="rounded-circle mx-auto mb-3"
                                 style={{ width: "100px", objectFit: 'contain' }}
                                 alt="profile"
@@ -136,7 +131,7 @@ export const Userprofile = () => {
                                     <label className="form-label d-block">Profile Image</label>
                                     <div className="position-relative d-inline-block">
                                         <img
-                                            src={preview ? preview : `http://localhost:5000/images/${loginuser.profileimage}`}
+                                            src={preview ? preview : `${IMAGES_URL}/${loginuser.profileimage}`}
                                             className="rounded-circle border border-2 border-primary p-1 shadow-sm mb-2"
                                             width="100"
                                             height="100"
@@ -171,7 +166,7 @@ export const Userprofile = () => {
                             <button
                                 className="btn btn-primary"
                                 data-bs-dismiss="modal"
-                                onClick={() => Updateprofile(loginuser, Settoastcolor, Settoastmessage, Setshowtoast)}
+                                onClick={() => Updateprofile(loginuser)}
                             >
                                 Save Changes
                             </button>
@@ -179,22 +174,6 @@ export const Userprofile = () => {
                     </div>
                 </div>
             </div>
-
-            {/* --- TOAST --- */}
-            {showtoast && (
-                <div className="toast-container position-fixed top-0 end-0 p-3">
-                    <div className={`toast show text-bg-${toastcolor} border-0`}>
-                        <div className="d-flex">
-                            <div className="toast-body">{toastmessage}</div>
-                            <button
-                                type="button"
-                                className="btn-close btn-close-white me-2 m-auto"
-                                onClick={() => Closetoast(Setshowtoast)}
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

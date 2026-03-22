@@ -1,18 +1,21 @@
-import React, { useEffect, useState, useContext, useCallback, useRef } from 'react'; // Added useRef
+import React, { useEffect, useState, useContext, useCallback, useRef } from 'react';
 import { Navbar } from '../navbar/Navbar';
 import api from '../../axios/Axios';
 import { maincontext } from '../../App';
 import { Getloginuser } from '../../function/Getloginuser';
 import { useNavigate } from 'react-router-dom';
-import html2canvas from 'html2canvas'; // Added import
-import jsPDF from 'jspdf'; // Added import
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import Swal from 'sweetalert2';
 import '../myorders/Myorder.css';
+import { Deleteorder } from '../../function/Deleteorder';
+import { IMAGES_URL } from '../../axios/Imageurl';
 
-const IMG_URL = "http://localhost:5000/images/";
+const IMG_URL = `${IMAGES_URL}/`;
 
 export const Myorder = () => {
     const navigate = useNavigate();
-    const pdfRef = useRef(); // Reference for PDF capture
+    const pdfRef = useRef();
     const { Setloginuser } = useContext(maincontext);
     const [latestOrder, setLatestOrder] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -62,19 +65,17 @@ export const Myorder = () => {
     // ✅ Download PDF Logic
     const downloadPDF = async () => {
         const element = pdfRef.current;
-        const canvas = await html2canvas(element, {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: "#f8fafc" // Matches your page background
-        });
+        const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: "#f8fafc" });
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         pdf.save(`Invoice_${latestOrder.order_id}.pdf`);
     };
+
+    // ✅ Delete Order Logic
+
 
     const steps = ['Placed', 'Shipped', 'Out for Delivery', 'Delivered'];
     const currentStepIndex = latestOrder ? steps.indexOf(latestOrder.status) : 0;
@@ -88,7 +89,6 @@ export const Myorder = () => {
     return (
         <div className="order-page-wrapper">
             <Navbar />
-
             <div className="container py-5">
                 <div className="header-section d-flex justify-content-between align-items-center mb-4">
                     <div>
@@ -106,9 +106,9 @@ export const Myorder = () => {
                         <h4>No orders found</h4>
                     </div>
                 ) : (
-                    /* ✅ Wrap the area you want in the PDF with pdfRef */
                     <div className="row g-4" ref={pdfRef}>
                         <div className="col-lg-8">
+                            {/* Items Card */}
                             <div className="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
                                 <div className="card-header d-flex justify-content-between align-items-center bg-white border-bottom py-3">
                                     <span className="fw-bold text-uppercase small text-muted tracking-wider">Items Summary</span>
@@ -134,6 +134,7 @@ export const Myorder = () => {
                                 </div>
                             </div>
 
+                            {/* Delivery Progress Card */}
                             <div className="card border-0 shadow-sm rounded-4 p-5 mb-4">
                                 <h6 className="fw-bold mb-5 text-center text-uppercase small text-muted tracking-widest">Delivery Progress</h6>
                                 <div className="stepper-wrapper">
@@ -149,6 +150,7 @@ export const Myorder = () => {
                             </div>
                         </div>
 
+                        {/* Summary & Actions */}
                         <div className="col-lg-4">
                             <div className="card border-0 shadow-sm rounded-4 p-4 sticky-top" style={{ top: '100px' }}>
                                 <h5 className="fw-bold mb-4">Order Summary</h5>
@@ -173,10 +175,25 @@ export const Myorder = () => {
                                     <span className="h6 fw-bold mb-0">Grand Total</span>
                                     <span className="h5 fw-bold mb-0 text-primary">₹{latestOrder.total_amount.toLocaleString()}</span>
                                 </div>
-                                {/* ✅ PDF Download Trigger */}
-                                <button className="btn btn-dark w-100 py-3 rounded-3 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" onClick={downloadPDF}>
+
+                                {/* PDF Download Button */}
+                                <button className="btn btn-dark w-100 py-3 rounded-3 fw-bold shadow-sm mb-2 d-flex align-items-center justify-content-center gap-2" onClick={downloadPDF}>
                                     <i className="bi bi-file-earmark-pdf"></i> Download Invoice
                                 </button>
+
+                                {/* Delete Order Button (only for Placed, Shipped, Processed) */}
+                                {['Placed', 'Shipped', 'Processed'].includes(latestOrder.status) && (
+                                    <button
+                                        className="btn btn-danger btn-sm rounded-pill px-4 fw-bold shadow-sm"
+                                        onClick={() => Deleteorder({
+                                            order: latestOrder,
+                                            allowedStatuses: ['Placed', 'Shipped', 'Processed'],
+                                            onSuccess: () => setLatestOrder(null)
+                                        })}
+                                    >
+                                        Delete
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

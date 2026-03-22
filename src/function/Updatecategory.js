@@ -1,8 +1,9 @@
 import api from "../axios/Axios";
 import { Getallcategories } from "./Getallcategories";
 import { Opentoast } from "./Opentoast";
+import { showSwal } from "./SwalHelper";
 
-export const Updatecategory = async (editcategorydata, Setallcategories, page, search, Setshowtoast, Settoastcolor, Settoastmessage) => {
+export const Updatecategory = async (editcategorydata, Setallcategories, page, search) => {
     try {
         const formData = new FormData();
         formData.append("category_id", editcategorydata.category_id);
@@ -18,16 +19,27 @@ export const Updatecategory = async (editcategorydata, Setallcategories, page, s
         });
 
         if (res.data.message === "Category Updated") {
-            Settoastcolor("success");
-            Settoastmessage(res.data.message);
-            Opentoast(Setshowtoast);
-
+            await showSwal({
+                title: "Category Updated!",
+                text: res.data.message || "Category Updated Successfully.",
+                icon: "success",
+                timer: 2000
+            });
             // Refresh List
             Getallcategories(Setallcategories, page, search);
         }
+        else {
+            await showSwal({
+                title: "Warning!",
+                text: res.data.message,
+                icon: "error",
+            });
+        }
     } catch (error) {
-        Settoastcolor("danger");
-        Settoastmessage("Error updating category");
-        Opentoast(Setshowtoast);
+        await showSwal({
+            title: "Warning!",
+            text: "Error updating category",
+            icon: "error",
+        });
     }
 };

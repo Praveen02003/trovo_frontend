@@ -1,7 +1,8 @@
 import api from "../axios/Axios";
 import { Opentoast } from "./Opentoast";
+import { showSwal } from "./SwalHelper";
 
-export const Updateproduct = async (eachproduct, Settoastcolor, Settoastmessage, Setshowtoast) => {
+export const Updateproduct = async (eachproduct) => {
     try {
         const formData = new FormData();
         formData.append("product_id", eachproduct.product_id);
@@ -26,16 +27,24 @@ export const Updateproduct = async (eachproduct, Settoastcolor, Settoastmessage,
         });
 
         if (res.data.message === "Product Updated Successfully") {
-            Settoastcolor('success');
+            await showSwal({
+                title: "Product Updated!",
+                text: res.data.message || "Product Updated Successfully.",
+                icon: "success",
+                timer: 2000
+            });
         } else {
-            Settoastcolor('danger');
+            await showSwal({
+                title: "Product Error!",
+                text: res.data.message,
+                icon: "error",
+            });
         }
-        Settoastmessage(res.data.message);
-        Opentoast(Setshowtoast);
-
     } catch (error) {
-        Settoastcolor("danger");
-        Settoastmessage("Network Error");
-        Opentoast(Setshowtoast);
+        await showSwal({
+            title: "Product Error!",
+            text: "Network Error",
+            icon: "error",
+        });
     }
 };

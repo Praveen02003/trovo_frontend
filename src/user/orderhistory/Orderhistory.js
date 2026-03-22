@@ -2,9 +2,11 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Navbar } from '../navbar/Navbar';
 import '../orderhistory/Orderhistory.css';
-import api from '../../axios/Axios';
 import { maincontext } from '../../App';
 import { Getloginuser } from '../../function/Getloginuser';
+import { Deleteorder } from '../../function/Deleteorder'; // Correct import
+import api from '../../axios/Axios';
+import { IMAGES_URL } from '../../axios/Imageurl';
 
 export const Orderhistory = () => {
     const { loginuser, Setloginuser } = useContext(maincontext);
@@ -22,8 +24,6 @@ export const Orderhistory = () => {
         try {
             const res = await api.get(`/getorders/${userId}`);
             const grouped = {};
-
-            // Check if res.data is an array before processing
             const data = Array.isArray(res.data) ? res.data : [];
 
             data.forEach(row => {
@@ -51,6 +51,14 @@ export const Orderhistory = () => {
         }
     };
 
+    // ✅ Use the common Deleteorder function
+    const handleDeleteOrder = (order) => {
+        Deleteorder({
+            order,
+            allowedStatuses: ['Placed', 'Shipped', 'Processed'],
+            onSuccess: () => setOrders(prev => prev.filter(o => o.order_id !== order.order_id))
+        });
+    };
     const getStatusStyles = (status) => {
         switch (status) {
             case 'Placed': return { bg: '#fff4e5', color: '#b76e00' };
@@ -69,7 +77,6 @@ export const Orderhistory = () => {
     return (
         <div className="bg-light min-vh-100 pb-5">
             <Navbar />
-
             <div className="container py-5">
                 <div className="row justify-content-center">
                     <div className="col-lg-10 col-xl-9">
@@ -130,7 +137,7 @@ export const Orderhistory = () => {
                                                                 {order.items.slice(0, 3).map((item, idx) => (
                                                                     <img
                                                                         key={idx}
-                                                                        src={`http://localhost:5000/images/${item.image}`}
+                                                                        src={`${IMAGES_URL}/${item.image}`}
                                                                         className="rounded shadow-sm border bg-white position-absolute"
                                                                         style={{
                                                                             width: '60px',
@@ -140,7 +147,7 @@ export const Orderhistory = () => {
                                                                             zIndex: 3 - idx,
                                                                             top: `${idx * 2}px`
                                                                         }}
-                                                                        alt="Product"
+                                                                        alt={item.product_name}
                                                                     />
                                                                 ))}
                                                             </div>
@@ -153,18 +160,29 @@ export const Orderhistory = () => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="col-md-4 text-md-end mt-3 mt-md-0">
+                                                    <div className="col-md-4 text-md-end mt-3 mt-md-0 d-flex justify-content-end gap-2 flex-wrap">
                                                         <button
-                                                            className="btn btn-outline-dark btn-sm rounded-pill px-4 me-2 fw-bold"
+                                                            className="btn btn-outline-dark btn-sm rounded-pill px-4 fw-bold"
                                                             onClick={() => navigate(`/orderdetails/${order.order_id}`)}
                                                         >
                                                             View Details
                                                         </button>
-                                                        <button className="btn btn-dark btn-sm rounded-pill px-4 fw-bold shadow-sm"
+                                                        <button
+                                                            className="btn btn-dark btn-sm rounded-pill px-4 fw-bold shadow-sm"
                                                             onClick={() => navigate(`/orderdetails/${order.order_id}`)}
                                                         >
                                                             Invoice
                                                         </button>
+
+                                                        {/* Delete button using common Deleteorder */}
+                                                        {['Placed', 'Shipped', 'Processed'].includes(order.order_status) && (
+                                                            <button
+                                                                className="btn btn-danger btn-sm rounded-pill px-4 fw-bold shadow-sm"
+                                                                onClick={() => handleDeleteOrder(order)}
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
