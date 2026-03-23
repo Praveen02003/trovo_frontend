@@ -8,137 +8,134 @@ import { IMAGES_URL } from '../../axios/Imageurl';
 import { Userauth } from '../../function/Userauth';
 
 export const Payment = () => {
+    const { id } = useParams();
+    const location = useLocation();
 
-    const { id } = useParams(); // ✅ get order id from URL
-    const location = useLocation(); // ✅ get passed data
-
-    const {
-        loginuser,
-        Setloginuser
-    } = useContext(maincontext);
-
+    const { loginuser, Setloginuser } = useContext(maincontext);
     const [orderedItems, setOrderedItems] = useState([]);
 
     useEffect(() => {
         const loadData = async () => {
-            // 1️⃣ Check if user is authenticated
             const isUser = await Userauth();
-            if (!isUser) return; // stop if not logged in
-
-            // 2️⃣ Set login user
+            if (!isUser) return;
             const user = Getloginuser();
             Setloginuser(user);
-
-            // 3️⃣ Get ordered items from checkout
-            if (location.state?.orderedItems) {
-                setOrderedItems(location.state.orderedItems);
-            }
+            if (location.state?.orderedItems) setOrderedItems(location.state.orderedItems);
         };
-
         loadData();
     }, [location.state]);
-    // ✅ TOTAL CALCULATION
-    const subtotal = orderedItems.reduce(
-        (acc, item) => acc + (Number(item.price) * (item.quantity || 1)),
-        0
-    );
 
+    /* ── Totals ── */
+    const subtotal = orderedItems.reduce((acc, item) => acc + Number(item.price) * (item.quantity || 1), 0);
     const tax = subtotal * 0.03;
     const total = subtotal + tax;
+    const fmt = (n) => n.toLocaleString('en-IN', { minimumFractionDigits: 2 });
 
     return (
-        <div className="bg-light min-vh-100">
+        <div className="payment-page">
             <Navbar />
 
             <div className="container py-4">
                 <div className="row justify-content-center">
-                    <div className="col-12 col-md-8 col-lg-6">
+                    <div className="col-12 col-md-9 col-lg-6 col-xl-5">
 
-                        <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
-                            <div className="card-body p-5 text-center">
+                        <div className="payment-card">
 
-                                {/* SUCCESS ICON */}
-                                <div
-                                    className="mb-4 d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle"
-                                    style={{ width: '100px', height: '100px' }}
-                                >
-                                    <i className="bi bi-check-lg display-1"></i>
+                            {/* ── Top Dark Banner ── */}
+                            <div className="payment-banner">
+                                <div className="banner-orb banner-orb-1"></div>
+                                <div className="banner-orb banner-orb-2"></div>
+
+                                <div className="success-orb">
+                                    <i className="bi bi-check-lg"></i>
                                 </div>
 
-                                <h2 className="fw-bold text-dark mb-2">
-                                    Payment Successful!
-                                </h2>
-
-                                <p className="text-secondary mb-4">
-                                    Order confirmed for{" "}
-                                    <strong>{loginuser?.email}</strong>
+                                <h2 className="payment-title">Payment Successful!</h2>
+                                <p className="payment-subtitle">
+                                    Order confirmed for <strong>{loginuser?.email}</strong>
                                 </p>
+                            </div>
 
-                                {/* ORDER DETAILS */}
-                                <div className="bg-light rounded-3 p-4 mb-4 text-start">
+                            {/* ── Body ── */}
+                            <div className="payment-body">
 
-                                    <div className="d-flex justify-content-between mb-2">
-                                        <span>Order ID:</span>
-                                        <strong>#{id}</strong>
+                                {/* Order details */}
+                                <div className="order-details-box">
+                                    <div className="order-detail-row">
+                                        <span className="detail-label">Order ID</span>
+                                        <span className="order-id-pill">
+                                            <i className="bi bi-hash"></i>{id}
+                                        </span>
                                     </div>
-
-                                    <div className="d-flex justify-content-between mb-2">
-                                        <span>Payment Method:</span>
-                                        <strong>Cash on Delivery</strong>
+                                    <div className="order-detail-row">
+                                        <span className="detail-label">Payment Method</span>
+                                        <span className="cod-pill">
+                                            <i className="bi bi-cash-coin"></i> Cash on Delivery
+                                        </span>
                                     </div>
-
-                                    <div className="d-flex justify-content-between">
-                                        <span>Total Paid:</span>
-                                        <strong className="text-primary">
-                                            ₹{total.toFixed(2)}
-                                        </strong>
+                                    <div className="order-detail-row">
+                                        <span className="detail-label">Shipping</span>
+                                        <span className="detail-val" style={{ color: 'var(--green)' }}>
+                                            <i className="bi bi-check-circle-fill me-1"></i>Free
+                                        </span>
                                     </div>
-
+                                    <div className="order-detail-row">
+                                        <span className="detail-label">Total Paid</span>
+                                        <span className="detail-val accent">₹{fmt(total)}</span>
+                                    </div>
                                 </div>
 
+                                {/* Ordered items */}
+                                <span className="items-label">
+                                    <i className="bi bi-bag-check me-1"></i>
+                                    Ordered Items ({orderedItems.length})
+                                </span>
 
-                                {/* ORDERED ITEMS */}
-                                <div className="text-start mb-4">
-                                    <h6 className="fw-bold mb-3">Ordered Items</h6>
-
-                                    {orderedItems.length > 0 ? (
-                                        orderedItems.map((item, index) => (
-                                            <div key={index} className="d-flex align-items-center mb-3">
-
+                                {orderedItems.length > 0 ? (
+                                    orderedItems.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            className="payment-item-row"
+                                            style={{ animationDelay: `${0.3 + index * 0.06}s` }}
+                                        >
+                                            <div className="pay-img-box">
                                                 <img
                                                     src={`${IMAGES_URL}/${item.image}`}
                                                     alt={item.product_name}
-                                                    style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                                                    className="me-3 rounded"
+                                                    loading="lazy"
                                                 />
-
-                                                <div className="flex-grow-1">
-                                                    <div className="fw-bold small">
-                                                        {item.product_name}
-                                                    </div>
-                                                    <div className="text-muted extra-small">
-                                                        Qty: {item.quantity || 1}
-                                                    </div>
-                                                </div>
-
-                                                <div className="fw-bold text-primary">
-                                                    ₹{item.price}
-                                                </div>
-
                                             </div>
-                                        ))
-                                    ) : (
-                                        <p className="text-muted">No items found</p>
-                                    )}
-                                </div>
 
-                                {/* BUTTONS */}
-                                <div className="d-grid gap-3">
-                                    <a href={`/trackorder/${loginuser.user_id}`} className="btn btn-dark">
-                                        Track Order
+                                            <div className="flex-grow-1">
+                                                <p className="pay-item-name">{item.product_name}</p>
+                                                <span className="pay-item-qty">
+                                                    <i className="bi bi-box-seam"></i>
+                                                    Qty: {item.quantity || 1}
+                                                </span>
+                                            </div>
+
+                                            <span className="pay-item-price">
+                                                ₹{fmt(Number(item.price) * (item.quantity || 1))}
+                                            </span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p style={{ fontSize: '0.85rem', color: 'var(--muted)', textAlign: 'center', padding: '20px 0' }}>
+                                        No items found.
+                                    </p>
+                                )}
+
+                                {/* Action buttons */}
+                                <div className="payment-actions">
+                                    <a
+                                        href={`/trackorder/${loginuser?.user_id}`}
+                                        className="btn-track"
+                                    >
+                                        <i className="bi bi-geo-alt-fill"></i>
+                                        Track My Order
                                     </a>
-
-                                    <a href="/" className="btn btn-outline-secondary">
+                                    <a href="/" className="btn-back">
+                                        <i className="bi bi-arrow-left"></i>
                                         Back to Shop
                                     </a>
                                 </div>

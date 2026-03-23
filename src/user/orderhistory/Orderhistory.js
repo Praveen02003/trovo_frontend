@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../navbar/Navbar';
 import '../orderhistory/Orderhistory.css';
 import { maincontext } from '../../App';
 import { Getloginuser } from '../../function/Getloginuser';
-import { Deleteorder } from '../../function/Deleteorder'; // Correct import
+import { Deleteorder } from '../../function/Deleteorder';
 import api from '../../axios/Axios';
 import { IMAGES_URL } from '../../axios/Imageurl';
 import { Userauth } from '../../function/Userauth';
@@ -17,29 +17,20 @@ export const Orderhistory = () => {
 
     useEffect(() => {
         const loadData = async () => {
-            // 1️⃣ Check if user is authenticated
             const isUser = await Userauth();
-            if (!isUser) return; // stop if not logged in
-
-            // 2️⃣ Get login user from localStorage
+            if (!isUser) return;
             const user = Getloginuser();
             Setloginuser(user);
-
-            // 3️⃣ Fetch user orders if user exists
-            if (user?.user_id) {
-                await fetchOrders(user.user_id);
-            }
+            if (user?.user_id) await fetchOrders(user.user_id);
         };
-
         loadData();
     }, []);
 
     const fetchOrders = async (userId) => {
         try {
             const res = await api.get(`/getorders/${userId}`);
-            const grouped = {};
             const data = Array.isArray(res.data) ? res.data : [];
-
+            const grouped = {};
             data.forEach(row => {
                 if (!grouped[row.order_id]) {
                     grouped[row.order_id] = {
@@ -47,17 +38,17 @@ export const Orderhistory = () => {
                         total_amount: row.total_amount,
                         order_status: row.order_status,
                         created_at: row.created_at,
-                        items: []
+                        items: [],
                     };
                 }
                 grouped[row.order_id].items.push({
                     product_name: row.product_name,
                     image: row.image,
                     quantity: row.quantity,
-                    price: row.price
+                    price: row.price,
                 });
             });
-            setOrders(Object.values(grouped).reverse()); // Newest first
+            setOrders(Object.values(grouped).reverse());
         } catch (err) {
             console.error(err);
         } finally {
@@ -65,146 +56,170 @@ export const Orderhistory = () => {
         }
     };
 
-    // ✅ Use the common Deleteorder function
     const handleDeleteOrder = (order) => {
         Deleteorder({
             order,
             allowedStatuses: ['Placed', 'Shipped', 'Processed'],
-            onSuccess: () => setOrders(prev => prev.filter(o => o.order_id !== order.order_id))
+            onSuccess: () => setOrders(prev => prev.filter(o => o.order_id !== order.order_id)),
         });
     };
-    const getStatusStyles = (status) => {
-        switch (status) {
-            case 'Placed': return { bg: '#fff4e5', color: '#b76e00' };
-            case 'Shipped': return { bg: '#e5f6fd', color: '#014361' };
-            case 'Delivered': return { bg: '#edf7ed', color: '#1e4620' };
-            default: return { bg: '#f5f5f5', color: '#616161' };
+
+    /* Status pill class */
+    const statusClass = (s) => {
+        switch (s) {
+            case 'Placed': return 'status-placed';
+            case 'Shipped': return 'status-shipped';
+            case 'Delivered': return 'status-delivered';
+            case 'Processed': return 'status-processed';
+            default: return 'status-default';
         }
     };
 
+    /* Loading */
     if (loading) return (
-        <div className="d-flex justify-content-center align-items-center vh-100 bg-white">
-            <div className="spinner-border text-dark" role="status"></div>
+        <div className="oh-loading">
+            <div className="oh-spinner"></div>
+            <p>Loading Orders…</p>
         </div>
     );
 
     return (
-        <div className="bg-light min-vh-100 pb-5">
+        <div className="orderhistory-page">
             <Navbar />
-            <div className="container py-5">
+
+            <div className="container py-4 mt-2">
                 <div className="row justify-content-center">
                     <div className="col-lg-10 col-xl-9">
 
-                        <div className="d-flex align-items-end justify-content-between mb-4">
+                        {/* ── Header ── */}
+                        <div className="oh-header">
                             <div>
-                                <h2 className="fw-bold mb-1">Your Orders</h2>
-                                <p className="text-muted mb-0 small uppercase tracking-wider">Review your past purchases and tracking</p>
+                                <h2 className="oh-title">
+                                    Your Orders
+                                    <span className="oh-count-badge">{orders.length}</span>
+                                </h2>
+                                <p className="oh-sub">Review your past purchases and track deliveries</p>
                             </div>
-                            <button onClick={() => navigate('/')} className="btn btn-link text-dark text-decoration-none fw-bold p-0">
-                                <i className="bi bi-arrow-left me-2"></i>Back to Shop
+                            <button className="oh-back-btn" onClick={() => navigate('/')}>
+                                <i className="bi bi-arrow-left"></i> Back to Shop
                             </button>
                         </div>
 
+                        {/* ── Empty ── */}
                         {orders.length === 0 ? (
-                            <div className="card border-0 shadow-sm p-5 text-center rounded-4">
-                                <i className="bi bi-bag-x text-muted display-4 mb-3"></i>
-                                <h5>No orders found yet</h5>
-                                <button onClick={() => navigate('/')} className="btn btn-dark mt-3 px-4 rounded-pill">Start Shopping</button>
+                            <div className="oh-empty">
+                                <i className="bi bi-bag-x oh-empty-icon"></i>
+                                <h5>No orders yet</h5>
+                                <p>Looks like you haven't placed any orders. Start shopping!</p>
+                                <button className="oh-empty-btn" onClick={() => navigate('/')}>
+                                    <i className="bi bi-bag"></i> Start Shopping
+                                </button>
                             </div>
                         ) : (
-                            <div className="d-grid gap-4">
+                            <div className="d-flex flex-column gap-3">
                                 {orders.map(order => {
-                                    const status = getStatusStyles(order.order_status);
-                                    return (
-                                        <div key={order.order_id} className="card border-0 shadow-sm rounded-4 overflow-hidden order-card-hover">
+                                    const totalQty = order.items.reduce((a, i) => a + i.quantity, 0);
+                                    const canDelete = ['Placed', 'Shipped', 'Processed'].includes(order.order_status);
 
-                                            {/* HEADER SECTION */}
-                                            <div className="bg-white px-4 py-3 border-bottom border-light">
-                                                <div className="row align-items-center">
-                                                    <div className="col-6 col-md-3">
-                                                        <label className="text-muted tiny-label d-block text-uppercase">Order ID</label>
-                                                        <span className="fw-bold">#{order.order_id}</span>
-                                                    </div>
-                                                    <div className="col-6 col-md-3">
-                                                        <label className="text-muted tiny-label d-block text-uppercase">Date Placed</label>
-                                                        <span className="fw-medium">{new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                                                    </div>
-                                                    <div className="col-6 col-md-3 mt-3 mt-md-0">
-                                                        <label className="text-muted tiny-label d-block text-uppercase">Total Amount</label>
-                                                        <span className="fw-bold text-dark">₹{Number(order.total_amount).toLocaleString()}</span>
-                                                    </div>
-                                                    <div className="col-6 col-md-3 mt-3 mt-md-0 text-md-end">
-                                                        <span className="px-3 py-1 rounded-pill small fw-bold" style={{ backgroundColor: status.bg, color: status.color, fontSize: '0.75rem' }}>
-                                                            {order.order_status.toUpperCase()}
-                                                        </span>
-                                                    </div>
+                                    return (
+                                        <div key={order.order_id} className="order-card">
+
+                                            {/* ── Card Header ── */}
+                                            <div className="order-card-header">
+                                                <div>
+                                                    <span className="oh-field-label">Order ID</span>
+                                                    <span className="order-id-pill">
+                                                        <i className="bi bi-hash"></i>{order.order_id}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span className="oh-field-label">Date Placed</span>
+                                                    <span className="oh-field-val">
+                                                        {new Date(order.created_at).toLocaleDateString('en-GB', {
+                                                            day: 'numeric', month: 'short', year: 'numeric'
+                                                        })}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span className="oh-field-label">Total</span>
+                                                    <span className="oh-field-val accent">
+                                                        ₹{Number(order.total_amount).toLocaleString('en-IN')}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span className="oh-field-label">Status</span>
+                                                    <span className={`status-pill ${statusClass(order.order_status)}`}>
+                                                        <span className="status-dot"></span>
+                                                        {order.order_status}
+                                                    </span>
                                                 </div>
                                             </div>
 
-                                            {/* BODY SECTION */}
-                                            <div className="card-body p-4 bg-white">
-                                                <div className="row align-items-center">
-                                                    <div className="col-md-8">
-                                                        <div className="d-flex align-items-center">
-                                                            {/* Stacked Images for multiple items */}
-                                                            <div className="position-relative me-4" style={{ height: '70px', width: '85px' }}>
-                                                                {order.items.slice(0, 3).map((item, idx) => (
-                                                                    <img
-                                                                        key={idx}
-                                                                        src={`${IMAGES_URL}/${item.image}`}
-                                                                        className="rounded shadow-sm border bg-white position-absolute"
-                                                                        style={{
-                                                                            width: '60px',
-                                                                            height: '60px',
-                                                                            objectFit: 'cover',
-                                                                            left: `${idx * 12}px`,
-                                                                            zIndex: 3 - idx,
-                                                                            top: `${idx * 2}px`
-                                                                        }}
-                                                                        alt={item.product_name}
-                                                                    />
-                                                                ))}
-                                                            </div>
-                                                            <div>
-                                                                <h6 className="mb-1 fw-bold text-truncate" style={{ maxWidth: '250px' }}>
-                                                                    {order.items[0].product_name}
-                                                                    {order.items.length > 1 && <span className="text-muted small"> +{order.items.length - 1} more</span>}
-                                                                </h6>
-                                                                <p className="text-muted small mb-0">Total items: {order.items.reduce((acc, curr) => acc + curr.quantity, 0)}</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-4 text-md-end mt-3 mt-md-0 d-flex justify-content-end gap-2 flex-wrap">
-                                                        <button
-                                                            className="btn btn-outline-dark btn-sm rounded-pill px-4 fw-bold"
-                                                            onClick={() => navigate(`/orderdetails/${order.order_id}`)}
-                                                        >
-                                                            View Details
-                                                        </button>
-                                                        <button
-                                                            className="btn btn-dark btn-sm rounded-pill px-4 fw-bold shadow-sm"
-                                                            onClick={() => navigate(`/orderdetails/${order.order_id}`)}
-                                                        >
-                                                            Invoice
-                                                        </button>
+                                            {/* ── Card Body ── */}
+                                            <div className="order-card-body">
 
-                                                        {/* Delete button using common Deleteorder */}
-                                                        {['Placed', 'Shipped', 'Processed'].includes(order.order_status) && (
-                                                            <button
-                                                                className="btn btn-danger btn-sm rounded-pill px-4 fw-bold shadow-sm"
-                                                                onClick={() => handleDeleteOrder(order)}
-                                                            >
-                                                                Delete
-                                                            </button>
-                                                        )}
+                                                {/* Product preview */}
+                                                <div className="d-flex align-items-center gap-4 flex-grow-1 min-w-0">
+                                                    <div className="order-img-stack">
+                                                        {order.items.slice(0, 3).map((item, idx) => (
+                                                            <img
+                                                                key={idx}
+                                                                src={`${IMAGES_URL}/${item.image}`}
+                                                                alt={item.product_name}
+                                                                className="order-stack-img"
+                                                                loading="lazy"
+                                                                style={{ zIndex: 3 - idx }}
+                                                            />
+                                                        ))}
+                                                    </div>
+
+                                                    <div className="order-prod-info">
+                                                        <p className="order-prod-name">
+                                                            {order.items[0].product_name}
+                                                            {order.items.length > 1 && (
+                                                                <span className="order-more-tag">
+                                                                    +{order.items.length - 1} more
+                                                                </span>
+                                                            )}
+                                                        </p>
+                                                        <p className="order-items-count">
+                                                            <i className="bi bi-box-seam"></i>
+                                                            {totalQty} item{totalQty > 1 ? 's' : ''} in this order
+                                                        </p>
                                                     </div>
                                                 </div>
+
+                                                {/* Actions */}
+                                                <div className="order-actions">
+                                                    <button
+                                                        className="oh-btn oh-btn-outline"
+                                                        onClick={() => navigate(`/orderdetails/${order.order_id}`)}
+                                                    >
+                                                        <i className="bi bi-eye"></i> Details
+                                                    </button>
+                                                    <button
+                                                        className="oh-btn oh-btn-dark"
+                                                        onClick={() => navigate(`/orderdetails/${order.order_id}`)}
+                                                    >
+                                                        <i className="bi bi-receipt"></i> Invoice
+                                                    </button>
+                                                    {canDelete && (
+                                                        <button
+                                                            className="oh-btn oh-btn-danger"
+                                                            onClick={() => handleDeleteOrder(order)}
+                                                        >
+                                                            <i className="bi bi-trash3"></i> Cancel
+                                                        </button>
+                                                    )}
+                                                </div>
+
                                             </div>
                                         </div>
                                     );
                                 })}
                             </div>
                         )}
+
                     </div>
                 </div>
             </div>

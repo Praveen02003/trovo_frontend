@@ -6,107 +6,164 @@ import { Getcurrentcustomer } from "../../function/Getcurrentcustomer";
 import { Blockcustomer } from "../../function/Blockcustomer";
 import { IMAGES_URL } from "../../axios/Imageurl";
 import { Adminauth } from "../../function/Adminauth";
+import '../vieweachcustomer/Vieweachcustomer.css';
+
+/* Initials helper */
+const initials = (name = '') =>
+    name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+
+/* Status pill class */
+const spClass = (s) => {
+    switch ((s || '').toLowerCase()) {
+        case 'active': return 'sp-active';
+        case 'blocked': return 'sp-blocked';
+        default: return 'sp-inactive';
+    }
+};
 
 export const Vieweachcustomer = () => {
     const { id } = useParams();
-    const {
-        eachcustomer,
-        Seteachcustomer,
-        Setallcustomers,
-    } = useContext(maincontext);
+    const { eachcustomer, Seteachcustomer, Setallcustomers } = useContext(maincontext);
 
     useEffect(() => {
         const loadData = async () => {
             const isAdmin = await Adminauth();
-            if (!isAdmin) return; // stop if not admin
+            if (!isAdmin) return;
             await Getcurrentcustomer(id, Seteachcustomer);
         };
-
         loadData();
     }, [id]);
 
+    if (!eachcustomer) return (
+        <div className="viewcustomer-loading">
+            <div className="vc-spinner"></div>
+            <p>Loading Customer…</p>
+        </div>
+    );
+
+    const isBlocked = eachcustomer?.status === 'blocked';
+
     return (
-        <div className="d-flex bg-light min-vh-100">
-            <Sidebar />
+        <div className="container-fluid p-0 viewcustomer-page">
+            <div className="d-flex">
+                <Sidebar />
 
-            <div className="flex-grow-1">
-                {/* Top Navbar */}
-                <nav className="navbar bg-white border-bottom px-4 py-3 sticky-top shadow-sm">
-                    <div className="container-fluid p-0 d-flex align-items-center">
-                        <Link to={'/customers'} className="btn btn-outline-primary btn-sm me-3 rounded-pill px-3">
-                            <i className="bi bi-arrow-left me-1"></i> Back
-                        </Link>
-                        <h5 className="fw-bold m-0 text-dark">Customer Details</h5>
-                    </div>
-                </nav>
+                <div className="flex-grow-1">
 
-                <div className="p-4 p-lg-5">
-                    <div className="row g-4 justify-content-center">
-                        <div className="col-lg-10 col-xl-8">
+                    {/* ── Top Navbar ── */}
+                    <nav className="navbar admin-topbar">
+                        <div className="admin-topbar-inner container-fluid p-0">
+                            <Link to="/customers" className="back-btn">
+                                <i className="bi bi-arrow-left"></i> Back
+                            </Link>
+                            <h5 className="topbar-title">
+                                <i className="bi bi-person-circle"></i> Customer Details
+                            </h5>
+                        </div>
+                    </nav>
 
-                            {/* Profile Card */}
-                            <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
-                                <div className="bg-primary p-5 text-center">
-                                    <img
-                                        src={eachcustomer?.profileimage ? `${IMAGES_URL}/${eachcustomer.profileimage}` : `https://ui-avatars.com{eachcustomer?.name || 'User'}&background=random&size=128`}
-                                        className="rounded-circle border border-4 border-white shadow-lg bg-white mb-3"
-                                        width="130" height="130" alt="Avatar"
-                                    />
-                                    <h3 className="fw-bold text-white mb-0">{eachcustomer?.name || "Loading..."}</h3>
-                                    <p className="text-white text-opacity-75 mb-0">Customer ID: #{eachcustomer?.user_id || id}</p>
-                                </div>
+                    <div className="p-4 p-lg-5">
+                        <div className="row justify-content-center">
+                            <div className="col-lg-9 col-xl-7">
 
-                                <div className="card-body p-4 p-md-5">
-                                    <div className="row g-4">
-                                        {/* Name Field */}
-                                        <div className="col-md-6 border-bottom pb-3">
-                                            <label className="text-muted small fw-bold text-uppercase d-block mb-1">Full Name</label>
-                                            <div className="text-dark fw-bold fs-5">{eachcustomer?.name || "N/A"}</div>
+                                <div className="customer-card">
+
+                                    {/* ── Dark Banner ── */}
+                                    <div className="customer-banner">
+                                        <div className="banner-orb-1"></div>
+                                        <div className="banner-orb-2"></div>
+
+                                        <div className="customer-avatar-wrap">
+                                            {eachcustomer.profileimage ? (
+                                                <div className="customer-avatar-ring">
+                                                    <img
+                                                        src={`${IMAGES_URL}/${eachcustomer.profileimage}`}
+                                                        alt={eachcustomer.name}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="customer-avatar-initials">
+                                                    {initials(eachcustomer.name)}
+                                                </div>
+                                            )}
                                         </div>
 
-                                        {/* Email Field */}
-                                        <div className="col-md-6 border-bottom pb-3">
-                                            <label className="text-muted small fw-bold text-uppercase d-block mb-1">Email Address</label>
-                                            <div className="text-dark fw-bold fs-5">{eachcustomer?.email || "N/A"}</div>
-                                        </div>
+                                        <h3 className="customer-banner-name">
+                                            {eachcustomer.name || 'Loading…'}
+                                        </h3>
+                                        <p className="customer-banner-id">
+                                            Customer ID: <strong style={{ color: 'rgba(255,255,255,0.7)' }}>#{eachcustomer.user_id || id}</strong>
+                                        </p>
+                                    </div>
 
-                                        {/* Mobile Field */}
-                                        <div className="col-md-6 border-bottom pb-3">
-                                            <label className="text-muted small fw-bold text-uppercase d-block mb-1">Mobile Number</label>
-                                            <div className="text-dark fw-bold fs-5">{eachcustomer?.mobilenumber || "N/A"}</div>
-                                        </div>
+                                    {/* ── Info grid ── */}
+                                    <div className="customer-body">
+                                        <div className="info-grid">
 
-                                        {/* Status Field */}
-                                        <div className="col-md-6 border-bottom pb-3">
-                                            <label className="text-muted small fw-bold text-uppercase d-block mb-1">Account Status</label>
-                                            <span className={`badge rounded-pill px-3 py-2 fw-bold ${eachcustomer?.status === 'active' ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger'}`}>
-                                                ● {eachcustomer?.status?.toUpperCase() || "UNKNOWN"}
-                                            </span>
-                                        </div>
-
-                                        {/* Address Field */}
-                                        <div className="col-12 border-bottom pb-3">
-                                            <label className="text-muted small fw-bold text-uppercase d-block mb-1">Shipping Address</label>
-                                            <div className="text-dark fw-semibold lh-base">
-                                                {eachcustomer?.address || "No specific address provided for this user."}
+                                            {/* Name */}
+                                            <div className="info-cell">
+                                                <div className="info-label">
+                                                    <i className="bi bi-person"></i> Full Name
+                                                </div>
+                                                <span className="info-value">{eachcustomer.name || '—'}</span>
                                             </div>
+
+                                            {/* Email */}
+                                            <div className="info-cell">
+                                                <div className="info-label">
+                                                    <i className="bi bi-envelope"></i> Email Address
+                                                </div>
+                                                <span className="info-value">{eachcustomer.email || '—'}</span>
+                                            </div>
+
+                                            {/* Mobile */}
+                                            <div className="info-cell">
+                                                <div className="info-label">
+                                                    <i className="bi bi-phone"></i> Mobile Number
+                                                </div>
+                                                <span className="info-value">{eachcustomer.mobilenumber || '—'}</span>
+                                            </div>
+
+                                            {/* Status */}
+                                            <div className="info-cell">
+                                                <div className="info-label">
+                                                    <i className="bi bi-shield-check"></i> Account Status
+                                                </div>
+                                                <span className={`status-pill ${spClass(eachcustomer.status)}`}>
+                                                    <span className="status-dot"></span>
+                                                    {eachcustomer.status?.toUpperCase() || 'UNKNOWN'}
+                                                </span>
+                                            </div>
+
+                                            {/* Address */}
+                                            <div className="info-cell full">
+                                                <div className="info-label">
+                                                    <i className="bi bi-geo-alt"></i> Shipping Address
+                                                </div>
+                                                <span className="info-value">
+                                                    {eachcustomer.address || 'No address provided.'}
+                                                </span>
+                                            </div>
+
                                         </div>
 
-                                        {/* Action Button */}
-
-                                        <div className="col-12 pt-3">
+                                        {/* ── Action button ── */}
+                                        <div className="customer-action-area">
                                             <button
-                                                className={`btn w-100 rounded-pill py-3 fw-bold shadow-sm ${eachcustomer?.status === 'blocked' ? 'btn-success' : 'btn-danger'}`}
-                                                onClick={() => Blockcustomer(
-                                                    eachcustomer.user_id,
-                                                    Setallcustomers, 1, 'all', '', Seteachcustomer// Defaulting refresh params
-                                                )}
+                                                className={`block-btn ${isBlocked ? 'unblock' : 'block'}`}
+                                                onClick={() =>
+                                                    Blockcustomer(
+                                                        eachcustomer.user_id,
+                                                        Setallcustomers, 1, 'all', '', Seteachcustomer
+                                                    )
+                                                }
                                             >
-                                                <i className={`bi ${eachcustomer?.status === 'blocked' ? 'bi-check-circle' : 'bi-slash-circle'} me-2`}></i>
-                                                {eachcustomer.status === 'blocked' ? 'Unblock Account' : 'Block Account'}
+                                                <i className={`bi ${isBlocked ? 'bi-check-circle' : 'bi-slash-circle'}`}></i>
+                                                {isBlocked ? 'Unblock Account' : 'Block Account'}
                                             </button>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>

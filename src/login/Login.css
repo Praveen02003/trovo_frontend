@@ -1,41 +1,427 @@
+/* ============================================================
+   TROVO — LOGIN PAGE
+   Aesthetic: Dark Luxury Left · Clean White Right
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+    --font-d: 'Syne', sans-serif;
+    --font-b: 'DM Sans', sans-serif;
+    --navy: #0b0f1a;
+    --accent: #6c63ff;
+    --accent-2: #9b59f5;
+    --accent-light: rgba(108, 99, 255, 0.09);
+    --accent-glow: rgba(108, 99, 255, 0.28);
+    --border: #ede9fe;
+    --bg: #faf9ff;
+    --muted: #999;
+    --r-md: 14px;
+    --r-lg: 20px;
+    --r-xl: 28px;
+    --r-pill: 999px;
+    --t: 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ── Full-screen wrapper ── */
 .login-wrapper {
-    background: #f5f6fa;
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    font-family: var(--font-b);
+    overflow: hidden;
 }
 
-/* left side brand */
+/* ══════════════════════
+   LEFT — Brand Panel
+══════════════════════ */
 .brand-section {
-    background: linear-gradient(135deg, #ff7a18, #ffb347);
+    flex: 0 0 48%;
+    width: 48%;
+    min-height: 100vh;
+    background: linear-gradient(145deg, #0b0f2e 0%, #1a0a3d 60%, #0d0d1a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
 }
 
-.brand-section h1 {
-    font-size: 3rem;
+.brand-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(108, 99, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108, 99, 255, 0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
 }
 
-/* login card */
+.brand-section::after {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(108, 99, 255, 0.16), transparent 70%);
+    bottom: -100px;
+    right: -100px;
+    pointer-events: none;
+}
+
+/* Orb top-left */
+.brand-orb {
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.08), transparent 70%);
+    top: -60px;
+    left: -60px;
+    pointer-events: none;
+}
+
+.brand-inner {
+    position: relative;
+    z-index: 2;
+    padding: 48px 44px;
+    width: 100%;
+    animation: fadeInLeft 0.6s ease both;
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.brand-name {
+    font-family: var(--font-d);
+    font-size: clamp(3rem, 5vw, 5rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    background: linear-gradient(90deg, #fff 30%, rgba(255, 255, 255, 0.4));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 14px;
+}
+
+.brand-dot {
+    -webkit-text-fill-color: var(--accent);
+    color: var(--accent);
+}
+
+.brand-tagline {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.38);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 44px;
+    max-width: 320px;
+}
+
+/* Stats row */
+.brand-stats {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 44px;
+    flex-wrap: wrap;
+}
+
+.brand-stat-item {}
+
+.bstat-num {
+    font-family: var(--font-d);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #fff;
+    display: block;
+    line-height: 1;
+    margin-bottom: 3px;
+}
+
+.bstat-label {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.35);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+}
+
+/* Divider */
+.brand-stat-divider {
+    width: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    align-self: stretch;
+}
+
+/* Trust pills */
+.brand-pills {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.brand-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: var(--r-pill);
+    padding: 10px 18px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 400;
+    transition: background var(--t), border-color var(--t);
+}
+
+.brand-pill:hover {
+    background: rgba(108, 99, 255, 0.12);
+    border-color: rgba(108, 99, 255, 0.3);
+}
+
+.brand-pill i {
+    color: var(--accent);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+/* ══════════════════════
+   RIGHT — Form Panel
+══════════════════════ */
+.form-section {
+    flex: 1;
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+}
+
 .login-card {
     width: 100%;
-    max-width: 400px;
-    padding: 40px;
-    border-radius: 10px;
-    background: white;
+    max-width: 420px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 42px 38px;
+    box-shadow: 0 8px 40px rgba(108, 99, 255, 0.09);
+    animation: fadeInRight 0.5s ease both;
 }
 
-/* input style */
-.login-card .form-control {
-    height: 45px;
-    border-radius: 8px;
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
-/* trovo button */
-.btn-trovo {
-    background: #ff7a18;
-    border: none;
-    color: white;
-    padding: 10px;
-    border-radius: 8px;
+/* Card icon */
+.login-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--r-md);
+    background: var(--accent-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--accent);
+    margin-bottom: 20px;
+}
+
+.login-title {
+    font-family: var(--font-d);
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    margin-bottom: 6px;
+}
+
+.login-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+    font-weight: 300;
+    line-height: 1.6;
+}
+
+/* Fields */
+.field-label {
+    font-family: var(--font-d);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+}
+
+.field-group {
+    margin-bottom: 16px;
+}
+
+.field-wrap {
+    position: relative;
+}
+
+.field-icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ccc;
+    font-size: 0.9rem;
+    pointer-events: none;
+    transition: color var(--t);
+}
+
+.field-wrap:focus-within .field-icon {
+    color: var(--accent);
+}
+
+.field-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 12px 14px 12px 40px;
+    font-family: var(--font-b);
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--navy);
+    outline: none;
+    transition: border-color var(--t), box-shadow var(--t), background var(--t);
+}
+
+.field-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+    background: #fff;
+}
+
+.field-input::placeholder {
+    color: #ccc;
+}
+
+/* Forgot password */
+.forgot-link {
+    font-size: 0.78rem;
     font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    float: right;
+    transition: color var(--t);
+}
+
+.forgot-link:hover {
+    color: var(--accent-2);
+}
+
+/* Submit button */
+.btn-trovo {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+    font-family: var(--font-d);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    box-shadow: 0 8px 24px var(--accent-glow);
+    transition: transform var(--t), box-shadow var(--t);
+    margin-bottom: 20px;
 }
 
 .btn-trovo:hover {
-    background: #ff5c00;
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px var(--accent-glow);
+}
+
+.btn-trovo:active {
+    transform: scale(0.98);
+}
+
+/* Signup link */
+.signup-prompt {
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-align: center;
+    margin: 0;
+}
+
+.trovo-link {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--t);
+}
+
+.trovo-link:hover {
+    color: var(--accent-2);
+}
+
+/* ── Responsive ── */
+@media (max-width: 991px) {
+    .login-wrapper {
+        flex-direction: column;
+    }
+
+    .brand-section {
+        display: none !important;
+    }
+
+    .form-section {
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+
+    .login-card {
+        max-width: 100%;
+        padding: 32px 22px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-title {
+        font-size: 1.3rem;
+    }
+
+    .login-card {
+        padding: 24px 16px;
+        border-radius: var(--r-lg);
+    }
 }

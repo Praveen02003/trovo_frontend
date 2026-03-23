@@ -1,0 +1,250 @@
+/* ============================================================
+   TROVO — ADMIN SIDEBAR
+   Aesthetic: Dark Luxury · Editorial · Fast
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+    --font-d: 'Syne', sans-serif;
+    --font-b: 'DM Sans', sans-serif;
+    --accent: #6c63ff;
+    --accent-2: #9b59f5;
+    --accent-light: rgba(108, 99, 255, 0.15);
+    --accent-glow: rgba(108, 99, 255, 0.3);
+    --cyan: #00d4ff;
+    --gold: #f5c842;
+    --border: rgba(255, 255, 255, 0.07);
+    --muted: rgba(255, 255, 255, 0.38);
+    --r-md: 12px;
+    --r-pill: 999px;
+    --t: 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Sidebar wrapper ── */
+.admin-sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: #08080f;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    overflow: hidden;
+    flex-shrink: 0;
+    z-index: 200;
+}
+
+/* Top gradient line */
+.admin-sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--cyan), transparent);
+    opacity: 0.5;
+}
+
+/* Subtle background grid */
+.admin-sidebar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(108, 99, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108, 99, 255, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+}
+
+/* ── Brand ── */
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 24px 20px 20px;
+    position: relative;
+    z-index: 2;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+}
+
+.sidebar-brand-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--cyan));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: #fff;
+    box-shadow: 0 0 14px var(--accent-glow);
+    flex-shrink: 0;
+    transition: transform var(--t), box-shadow var(--t);
+}
+
+.sidebar-brand:hover .sidebar-brand-icon {
+    transform: rotate(-6deg) scale(1.08);
+    box-shadow: 0 0 22px var(--accent-glow);
+}
+
+.sidebar-brand-text {
+    
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #fff;
+    line-height: 1;
+}
+
+.sidebar-brand-sub {
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-top: 2px;
+}
+
+/* ── Nav body ── */
+.sidebar-nav {
+    flex: 1;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: relative;
+    z-index: 2;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+    display: none;
+}
+
+/* Section label */
+.sidebar-section-label {
+    
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.2);
+    padding: 12px 10px 6px;
+    display: block;
+}
+
+/* Nav link */
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--r-md);
+    text-decoration: none;
+    color: var(--muted);
+    font-family: var(--font-b);
+    font-size: 0.84rem;
+    font-weight: 400;
+    transition: all var(--t);
+    position: relative;
+    overflow: hidden;
+    border: none;
+    background: none;
+    width: 100%;
+    cursor: pointer;
+}
+
+.sidebar-link i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+    transition: color var(--t);
+}
+
+.sidebar-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-link:hover i {
+    color: var(--accent);
+}
+
+/* Active state */
+.sidebar-link.active {
+    background: linear-gradient(135deg, rgba(108, 99, 255, 0.22), rgba(155, 89, 245, 0.14));
+    color: #fff;
+    font-weight: 500;
+    box-shadow: inset 0 0 0 1px rgba(108, 99, 255, 0.3);
+}
+
+.sidebar-link.active i {
+    color: var(--accent);
+}
+
+/* Active left bar */
+.sidebar-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20%;
+    bottom: 20%;
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+    background: linear-gradient(180deg, var(--accent), var(--accent-2));
+}
+
+/* Sign out */
+.sidebar-link.danger {
+    color: rgba(255, 100, 100, 0.6);
+}
+
+.sidebar-link.danger:hover {
+    color: #ff6464;
+    background: rgba(255, 77, 77, 0.10);
+}
+
+.sidebar-link.danger:hover i {
+    color: #ff6464;
+}
+
+/* ── Divider ── */
+.sidebar-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 10px;
+}
+
+/* ── Bottom user strip ── */
+.sidebar-footer {
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 2;
+}
+
+.sidebar-footer-icon {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent-glow);
+    flex-shrink: 0;
+}
+
+.sidebar-footer-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 0.06em;
+}

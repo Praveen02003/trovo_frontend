@@ -4,30 +4,25 @@ import { Navbar } from '../navbar/Navbar';
 import api from '../../axios/Axios';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import Swal from "sweetalert2";
 import { Deleteorder } from '../../function/Deleteorder';
 import { IMAGES_URL } from '../../axios/Imageurl';
 import { Userauth } from '../../function/Userauth';
+import '../viewparticularorder/Viewparticularorder.css';
 
 export const Viewparticularorder = () => {
     const { orderId } = useParams();
     const navigate = useNavigate();
+    const pdfRef = useRef();
+
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
-    const pdfRef = useRef();
 
     useEffect(() => {
         const loadData = async () => {
-            // 1️⃣ Check if user is authenticated
             const isUser = await Userauth();
-            if (!isUser) return; // stop if not logged in
-
-            // 2️⃣ Fetch order if orderId exists
-            if (orderId) {
-                await fetchOrder();
-            }
+            if (!isUser) return;
+            if (orderId) await fetchOrder();
         };
-
         loadData();
     }, [orderId]);
 
@@ -35,17 +30,15 @@ export const Viewparticularorder = () => {
         try {
             const res = await api.get(`/getorder/${orderId}`);
             if (!res.data || res.data.length === 0) return;
-
             const items = res.data;
-            const subtotal = items.reduce((acc, item) => acc + Number(item.price) * Number(item.quantity), 0);
+            const subtotal = items.reduce((acc, i) => acc + Number(i.price) * Number(i.quantity), 0);
             const tax = Number(items[0]?.tax || 0);
-            const total = Number(items[0]?.total_amount || (subtotal + tax));
-
+            const total = Number(items[0]?.total_amount || subtotal + tax);
             setOrder({
                 order_id: items[0].order_id,
                 created_at: items[0].created_at,
                 status: items[0].order_status || 'Placed',
-                subtotal, tax, total_amount: total, items
+                subtotal, tax, total_amount: total, items,
             });
         } catch (err) {
             console.error(err);
@@ -55,13 +48,11 @@ export const Viewparticularorder = () => {
     };
 
     const downloadPDF = async () => {
-        const element = pdfRef.current;
-        const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+        const canvas = await html2canvas(pdfRef.current, { scale: 2, useCORS: true, backgroundColor: '#fff' });
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        const w = pdf.internal.pageSize.getWidth();
+        pdf.addImage(imgData, 'PNG', 0, 0, w, (canvas.height * w) / canvas.width);
         pdf.save(`Invoice_${order.order_id}.pdf`);
     };
 
@@ -69,124 +60,174 @@ export const Viewparticularorder = () => {
         Deleteorder({
             order,
             allowedStatuses: ['Placed', 'Shipped', 'Processed'],
-            onSuccess: () => navigate(-1)  // Go back after deletion
+            onSuccess: () => navigate(-1),
         });
-    }
+    };
 
-    if (loading) return <div className="d-flex justify-content-center align-items-center vh-100"><div className="spinner-border text-dark"></div></div>;
+    /* Status pill class */
+    const spClass = (s) => {
+        switch (s) {
+            case 'Delivered': return 'isp-delivered';
+            case 'Placed': return 'isp-placed';
+            case 'Shipped': return 'isp-shipped';
+            default: return 'isp-default';
+        }
+    };
+
+    const fmt = (n) => Number(n).toLocaleString('en-IN');
+
+    /* Loading */
+    if (loading) return (
+        <div className="invoice-loading">
+            <div className="inv-spinner"></div>
+        </div>
+    );
 
     return (
-        <div className="bg-white min-vh-100 pb-5">
+        <div className="invoice-page">
             <Navbar />
 
-            <div className="container py-5">
+            <div className="container">
                 <div className="row justify-content-center">
-                    <div className="col-lg-8">
+                    <div className="col-lg-9 col-xl-8">
 
-                        {/* TOP ACTION BAR */}
-                        <div className="d-flex justify-content-between align-items-center mb-5 no-print">
-                            <button onClick={() => navigate(-1)} className="btn btn-link text-dark fw-bold text-decoration-none p-0">
-                                <i className="bi bi-arrow-left me-2"></i>BACK
+                        {/* ── Action Bar ── */}
+                        <div className="inv-action-bar no-print">
+                            <button className="inv-back-btn" onClick={() => navigate(-1)}>
+                                <i className="bi bi-arrow-left"></i> Back
                             </button>
-                            <div>
-                                <button onClick={downloadPDF} className="btn btn-dark rounded-0 px-4 fw-bold shadow-sm me-2">
-                                    DOWNLOAD INVOICE
+                            <div className="inv-actions">
+                                <button className="inv-btn-pdf" onClick={downloadPDF}>
+                                    <i className="bi bi-file-earmark-pdf"></i> Download Invoice
                                 </button>
-
-                                {/* Show Delete button only for Placed, Shipped, or Processed */}
-                                {['Placed', 'Shipped', 'Processed'].includes(order.status) && (
-                                    <button onClick={handleDeleteOrder} className="btn btn-danger rounded-0 px-4 fw-bold shadow-sm">
-                                        DELETE ORDER
+                                {['Placed', 'Shipped', 'Processed'].includes(order?.status) && (
+                                    <button className="inv-btn-delete" onClick={handleDeleteOrder}>
+                                        <i className="bi bi-x-circle"></i> Cancel Order
                                     </button>
                                 )}
                             </div>
                         </div>
 
-                        {/* INVOICE CONTENT */}
-                        <div ref={pdfRef} className="p-4 p-md-5 border shadow-sm bg-white" style={{ borderRadius: '2px' }}>
-                            {/* LOGO & STATUS */}
-                            <div className="d-flex justify-content-between border-bottom border-2 border-dark pb-4 mb-5">
-                                <div>
-                                    <h2 className="fw-black mb-0 letter-spacing-tight">YOUR BRAND</h2>
-                                    <p className="text-muted small mb-0">Official Purchase Receipt</p>
-                                </div>
-                                <div className="text-end">
-                                    <div className={`badge rounded-0 px-3 py-2 ${order.status === 'Delivered' ? 'bg-success' : 'bg-dark'}`}>
-                                        {order.status.toUpperCase()}
-                                    </div>
-                                    <div className="mt-2 small fw-bold">#{order.order_id}</div>
-                                </div>
-                            </div>
+                        {/* ── Invoice Card ── */}
+                        <div className="invoice-card" ref={pdfRef}>
 
-                            {/* ORDER METADATA */}
-                            <div className="row mb-5">
-                                <div className="col-6">
-                                    <h6 className="text-uppercase fw-bold small text-muted mb-3">Billed To</h6>
-                                    <p className="fw-bold mb-1">Customer ID: {order.items[0]?.user_id || 'N/A'}</p>
-                                    <p className="text-muted small">Digital Transaction</p>
+                            {/* Dark Banner Header */}
+                            <div className="invoice-banner">
+                                <div className="inv-brand">
+                                    <h2 className="inv-brand-name">TROVO</h2>
+                                    <p className="inv-brand-sub">Official Purchase Receipt</p>
                                 </div>
-                                <div className="col-6 text-end">
-                                    <h6 className="text-uppercase fw-bold small text-muted mb-3">Order Date</h6>
-                                    <p className="fw-bold mb-0">{new Date(order.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
-                                </div>
-                            </div>
-
-                            {/* PRODUCT TABLE */}
-                            <table className="table table-borderless mb-5">
-                                <thead className="border-bottom border-dark">
-                                    <tr className="small text-uppercase fw-bold">
-                                        <th className="ps-0 py-3">Item Description</th>
-                                        <th className="text-center py-3">Qty</th>
-                                        <th className="text-end pe-0 py-3">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {order.items.map((item, index) => (
-                                        <tr key={index} className="border-bottom border-light align-middle">
-                                            <td className="ps-0 py-4">
-                                                <div className="d-flex align-items-center">
-                                                    <img
-                                                        crossOrigin="anonymous"
-                                                        src={`${IMAGES_URL}/${item.image}`}
-                                                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                                                        className="border me-3" alt=""
-                                                    />
-                                                    <div>
-                                                        <div className="fw-bold">{item.product_name}</div>
-                                                        <div className="text-muted small">₹{Number(item.price).toLocaleString()} / unit</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="text-center">{item.quantity}</td>
-                                            <td className="text-end pe-0 fw-bold">₹{(item.price * item.quantity).toLocaleString()}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-
-                            {/* SUMMARY BOX */}
-                            <div className="row justify-content-end mt-5">
-                                <div className="col-md-5">
-                                    <div className="d-flex justify-content-between mb-2">
-                                        <span className="text-muted small">Subtotal</span>
-                                        <span className="fw-medium">₹{order.subtotal.toLocaleString()}</span>
+                                <div className="inv-header-right">
+                                    <div>
+                                        <span className={`inv-status-pill ${spClass(order?.status)}`}>
+                                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'currentColor', display: 'inline-block', flexShrink: 0 }}></span>
+                                            {order?.status}
+                                        </span>
                                     </div>
-                                    <div className="d-flex justify-content-between mb-3">
-                                        <span className="text-muted small">Tax (GST 18%)</span>
-                                        <span className="fw-medium">₹{order.tax.toLocaleString()}</span>
-                                    </div>
-                                    <div className="border-top border-2 border-dark pt-3 d-flex justify-content-between align-items-center">
-                                        <h5 className="fw-black mb-0">TOTAL</h5>
-                                        <h4 className="fw-black mb-0 text-primary">₹{order.total_amount.toLocaleString()}</h4>
+                                    <div className="inv-order-id">
+                                        Order <strong>#{order?.order_id}</strong>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="mt-5 pt-5 text-center text-muted border-top border-light">
-                                <p className="small mb-0 fw-bold">Thank you for your purchase.</p>
-                                <p className="tiny" style={{ fontSize: '10px' }}>This is a computer generated invoice and does not require a physical signature.</p>
+                            {/* Body */}
+                            <div className="invoice-body">
+
+                                {/* Meta Grid */}
+                                <div className="inv-meta-grid">
+                                    <div className="inv-meta-block">
+                                        <span className="inv-meta-label">Billed To</span>
+                                        <span className="inv-meta-val">
+                                            Customer #{order?.items[0]?.user_id || 'N/A'}
+                                        </span>
+                                        <span className="inv-meta-sub">Digital Transaction · Cash on Delivery</span>
+                                    </div>
+                                    <div className="inv-meta-block right">
+                                        <span className="inv-meta-label">Order Date</span>
+                                        <span className="inv-meta-val">
+                                            {new Date(order?.created_at).toLocaleDateString('en-GB', {
+                                                day: '2-digit', month: 'long', year: 'numeric'
+                                            })}
+                                        </span>
+                                        <span className="inv-meta-sub">
+                                            {new Date(order?.created_at).toLocaleTimeString('en-IN', {
+                                                hour: '2-digit', minute: '2-digit'
+                                            })}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Table Header */}
+                                <div className="inv-table-header">
+                                    <span>Item Description</span>
+                                    <span>Qty</span>
+                                    <span>Total</span>
+                                </div>
+
+                                {/* Items */}
+                                {order?.items.map((item, idx) => (
+                                    <div key={idx} className="inv-item-row">
+                                        {/* Product */}
+                                        <div className="inv-item-product">
+                                            <img
+                                                crossOrigin="anonymous"
+                                                src={`${IMAGES_URL}/${item.image}`}
+                                                alt={item.product_name}
+                                                className="inv-item-img"
+                                                loading="lazy"
+                                            />
+                                            <div>
+                                                <p className="inv-item-name">{item.product_name}</p>
+                                                <p className="inv-item-unit-price">₹{fmt(item.price)} / unit</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Qty */}
+                                        <div className="inv-item-qty">
+                                            <span className="inv-qty-pill">{item.quantity}</span>
+                                        </div>
+
+                                        {/* Total */}
+                                        <div className="inv-item-total">
+                                            ₹{fmt(item.price * item.quantity)}
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {/* Summary */}
+                                <div className="inv-summary-wrap">
+                                    <div className="inv-summary-box">
+                                        <div className="inv-sum-row">
+                                            <span>Subtotal</span>
+                                            <span className="sv">₹{fmt(order?.subtotal)}</span>
+                                        </div>
+                                        <div className="inv-sum-row">
+                                            <span>Tax (GST)</span>
+                                            <span className="sv">₹{fmt(order?.tax)}</span>
+                                        </div>
+                                        <div className="inv-sum-row">
+                                            <span>Shipping</span>
+                                            <span style={{ color: 'var(--green)', fontWeight: 700 }}>
+                                                <i className="bi bi-check-circle-fill me-1"></i>Free
+                                            </span>
+                                        </div>
+                                        <hr className="inv-sum-divider" />
+                                        <div className="inv-total-row">
+                                            <span className="inv-total-label">Grand Total</span>
+                                            <span className="inv-total-val">₹{fmt(order?.total_amount)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Footer note */}
+                                <div className="inv-footer-note">
+                                    <p>Thank you for shopping with <strong>TROVO</strong>.</p>
+                                    <p className="tiny">This is a computer-generated invoice and does not require a physical signature.</p>
+                                </div>
+
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>

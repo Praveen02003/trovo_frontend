@@ -1,238 +1,564 @@
+/* ============================================================
+   TROVO — SHOP / PRODUCT PAGE
+   Aesthetic: Clean Editorial · Light & Fast · Premium Commerce
+   Fonts: Syne (display) + DM Sans (body)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+    --font-d: 'Syne', sans-serif;
+    --font-b: 'DM Sans', sans-serif;
+    --navy: #0b0f1a;
+    --accent: #6c63ff;
+    --accent-2: #9b59f5;
+    --accent-light: rgba(108, 99, 255, 0.10);
+    --accent-glow: rgba(108, 99, 255, 0.28);
+    --pink: #ff4d7d;
+    --gold: #f5c842;
+    --border: #ede9fe;
+    --bg-soft: #faf9ff;
+    --text-muted: #888;
+    --r-sm: 8px;
+    --r-md: 14px;
+    --r-lg: 20px;
+    --r-xl: 28px;
+    --r-pill: 999px;
+    --t: 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    --shadow-card: 0 2px 16px rgba(108, 99, 255, 0.07);
+    --shadow-hover: 0 16px 40px rgba(108, 99, 255, 0.14);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 .products-page-wrapper {
-    background: #ffffff;
+    font-family: var(--font-b);
+    background: var(--bg-soft);
     min-height: 100vh;
-    color: #0f172a;
+    color: var(--navy);
 }
 
-/* Sidebar Styling */
-.sticky-filter {
-    position: sticky;
-    top: 100px;
+/* ── Page header row ───────────────────────────────────── */
+.page-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 32px;
+    padding: 0 4px;
 }
 
-.sidebar-label {
-    font-size: 0.65rem;
-    font-weight: 900;
-    letter-spacing: 2px;
-    color: #94a3b8;
-    margin-bottom: 20px;
-}
-
-.sidebar-menu li {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #64748b;
-    margin-bottom: 12px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.sidebar-menu li:hover,
-.sidebar-menu li.active {
-    color: #0d6efd;
-    padding-left: 5px;
+.page-title {
+    font-family: var(--font-d);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
 }
 
 .count-dot {
-    font-size: 0.8rem;
-    background: #f1f5f9;
-    padding: 2px 8px;
-    border-radius: 50px;
-    color: #0d6efd;
-    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border-radius: var(--r-pill);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0 8px;
+    font-family: var(--font-d);
 }
 
-/* Card Styling */
-.boutique-card {
+/* ── Search box ────────────────────────────────────────── */
+.search-box-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1.5px solid var(--border) !important;
+    border-radius: var(--r-pill) !important;
+    padding: 10px 18px !important;
+    min-width: 280px;
+    box-shadow: 0 2px 12px rgba(108, 99, 255, 0.06) !important;
+    transition: border-color var(--t), box-shadow var(--t);
+}
+
+.search-box-container:focus-within {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px var(--accent-light), 0 2px 12px rgba(108, 99, 255, 0.1) !important;
+}
+
+.search-box-container .bi-search {
+    color: var(--accent);
+    font-size: 0.95rem;
+}
+
+.search-box-container input {
+    font-family: var(--font-b);
+    font-size: 0.875rem;
+    color: var(--navy);
+    background: transparent;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none;
+    flex: 1;
+    padding: 0 !important;
+}
+
+.search-box-container input::placeholder {
+    color: #bbb;
+}
+
+.search-box-container .bi-x-lg {
+    color: #bbb;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: color var(--t);
+}
+
+.search-box-container .bi-x-lg:hover {
+    color: var(--accent);
+}
+
+/* ── SIDEBAR ───────────────────────────────────────────── */
+.filter-sidebar {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 28px 20px;
+    box-shadow: var(--shadow-card);
+    position: sticky;
+    top: 90px;
+}
+
+.sidebar-label {
+    font-family: var(--font-d);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: block;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sidebar-menu li {
+    font-family: var(--font-b);
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    padding: 9px 14px;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    transition: all var(--t);
+    display: flex;
+    align-items: center;
+    gap: 8px;
     position: relative;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
 
+.sidebar-menu li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    background: var(--accent);
+    border-radius: 0 2px 2px 0;
+    transition: height var(--t);
+}
+
+.sidebar-menu li:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+    padding-left: 18px;
+}
+
+.sidebar-menu li.active {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.sidebar-menu li.active::before {
+    height: 60%;
+}
+
+/* cat image thumbnail in sidebar */
+.sidebar-cat-img {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+}
+
+/* ── PRODUCT GRID HEADER ───────────────────────────────── */
+.grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* ── BOUTIQUE CARD ─────────────────────────────────────── */
+.boutique-card {
+    background: #fff;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+    transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.boutique-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(108, 99, 255, 0.25);
+}
+
+/* Image wrap */
 .image-wrap {
     position: relative;
-    height: 340px;
-    background: #f8fafc;
-    border-radius: 20px;
+    background: var(--bg-soft);
+    aspect-ratio: 1 / 1.1;
     overflow: hidden;
 }
 
 .img-placeholder {
+    width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-    font-size: 4rem;
+    padding: 20px;
 }
 
-/* Actions & Tags */
+.img-placeholder img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    display: block;
+}
+
+.boutique-card:hover .img-placeholder img {
+    transform: scale(1.07);
+}
+
+/* Badge top-left */
 .card-tag {
     position: absolute;
-    top: 15px;
-    left: 15px;
+    top: 12px;
+    left: 12px;
     z-index: 3;
-    background: #000;
+    font-family: var(--font-d);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: #fff;
-    font-size: 0.6rem;
-    font-weight: 900;
-    padding: 4px 10px;
-    border-radius: 4px;
+    padding: 5px 11px;
+    border-radius: var(--r-pill);
 }
 
+.card-tag.bg-danger {
+    background: #ff4d4d !important;
+}
+
+.new-tag {
+    background: var(--accent);
+    box-shadow: 0 3px 10px var(--accent-glow);
+}
+
+/* Action icons top-right */
 .card-actions {
     position: absolute;
-    top: 15px;
-    right: -50px;
+    top: 12px;
+    right: 12px;
     z-index: 3;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    transition: 0.4s ease;
+    gap: 6px;
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity var(--t), transform var(--t);
 }
 
 .boutique-card:hover .card-actions {
-    right: 15px;
+    opacity: 1;
+    transform: translateX(0);
 }
 
+.circle-icon,
 .action-btn {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    border: none;
     background: #fff;
-    color: #000;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    transition: 0.3s;
-
-    /* ADD THESE TO FIX THE LINK ALIGNMENT */
+    border: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    cursor: pointer;
     text-decoration: none;
-    /* Removes underline */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+    transition: all var(--t);
 }
 
+.circle-icon:hover,
 .action-btn:hover {
-    background: #0d6efd;
-    color: #fff;
-    text-decoration: none;
-    /* Keeps it clean on hover */
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 4px 14px var(--accent-glow);
+    transform: scale(1.08);
 }
 
+.circle-icon.active-wishlist {
+    color: var(--pink);
+    border-color: var(--pink);
+    background: #fff0f4;
+}
 
-/* Quick Add Button */
+.circle-icon:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Quick add bar */
 .quick-add-btn {
     position: absolute;
-    bottom: -60px;
+    bottom: 0;
     left: 0;
-    width: 100%;
-    background: #000;
-    color: #fff;
-    border: none;
-    padding: 15px;
-    font-weight: 800;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
-    transition: 0.4s ease;
-
-    /* ADD THESE TO FIX LINK BEHAVIOUR */
+    right: 0;
+    z-index: 3;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-decoration: none;
-    text-align: center;
-}
-
-.quick-add-btn:hover {
-    background: #333;
-    /* Slight lighten on hover */
+    gap: 6px;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
     color: #fff;
     text-decoration: none;
+    font-family: var(--font-d);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transform: translateY(100%);
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Ensure the parent has overflow hidden to hide the button initially */
-.image-wrap {
-    position: relative;
-    overflow: hidden;
+.image-wrap:hover .quick-add-btn {
+    transform: translateY(0);
 }
 
-/* Show button on hover */
-.boutique-card:hover .quick-add-btn {
-    bottom: 0;
+.quick-add-btn.disabled {
+    background: #aaa;
+    pointer-events: none;
 }
 
-/* Details Styling */
+/* Card body */
 .card-body-custom {
-    padding: 15px 5px;
+    padding: 16px 18px 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .cat-label {
-    font-size: 0.6rem;
-    font-weight: 800;
-    color: #94a3b8;
-    letter-spacing: 1px;
+    font-family: var(--font-d);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
 }
 
 .rating-pill {
-    font-size: 0.65rem;
-    font-weight: 800;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 3px;
 }
 
-.rating-pill i {
-    color: #ffc107;
+.rating-pill .bi-star-fill {
+    color: var(--gold);
+    font-size: 0.62rem;
 }
 
 .product-title {
-    font-weight: 800;
-    color: #0f172a;
-    margin: 4px 0;
+    font-family: var(--font-d);
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 6px 0 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+
+.price-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
 }
 
 .price-now {
-    font-weight: 900;
-    font-size: 1.1rem;
-    color: #0d6efd;
-    margin-right: 8px;
+    font-family: var(--font-d);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--accent);
 }
 
 .price-old {
     font-size: 0.8rem;
-    color: #cbd5e1;
+    color: #ccc;
     text-decoration: line-through;
 }
 
-/* Select Styling */
-.boutique-select {
-    border: none;
-    background: #f8fafc;
-    font-size: 0.8rem;
+/* ── EMPTY STATE ───────────────────────────────────────── */
+.no-product-icon {
+    opacity: 0.2;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.empty-state h2 {
+    font-family: var(--font-d);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+.empty-state .clear-btn {
+    font-family: var(--font-d);
+    font-size: 0.78rem;
     font-weight: 700;
-    padding: 10px 20px;
-    border-radius: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 14px 32px;
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    transition: all var(--t);
+    box-shadow: 0 6px 20px rgba(11, 15, 26, 0.2);
 }
 
-.no-product-icon i {
-    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.05));
-    animation: float 3s ease-in-out infinite;
+.empty-state .clear-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(11, 15, 26, 0.28);
 }
 
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
+/* ── MOBILE CATEGORY CHIPS ─────────────────────────────── */
+.mobile-cat-chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 0 12px;
+    scrollbar-width: none;
 }
 
-.fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
+.mobile-cat-chips::-webkit-scrollbar {
+    display: none;
 }
 
-@keyframes fadeIn {
+.cat-chip {
+    font-family: var(--font-d);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: var(--r-pill);
+    border: 1.5px solid var(--border);
+    background: #fff;
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--t);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cat-chip img {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.cat-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+}
+
+.cat-chip.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+/* ── TOAST ─────────────────────────────────────────────── */
+.toast {
+    border-radius: var(--r-md) !important;
+    min-width: 260px;
+}
+
+/* ── FADE IN ───────────────────────────────────────────── */
+@keyframes fadeUp {
     from {
         opacity: 0;
         transform: translateY(20px);
@@ -244,23 +570,64 @@
     }
 }
 
-.fw-black {
-    font-weight: 900;
-    letter-spacing: -1px;
+.fade-in {
+    animation: fadeUp 0.4s ease both;
 }
 
+/* product cards stagger */
+.boutique-card {
+    animation: fadeUp 0.4s ease both;
+}
 
+/* ── RESPONSIVE ────────────────────────────────────────── */
+@media (max-width: 991px) {
+    .filter-sidebar {
+        display: none;
+    }
+}
 
-@media (max-width: 768px) {
-    .image-wrap {
-        height: 240px;
+@media (max-width: 767px) {
+    .page-header-row {
+        flex-direction: column;
+        align-items: stretch;
     }
 
-    .quick-add-btn {
-        display: none;
+    .search-box-container {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .grid-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .image-wrap {
+        aspect-ratio: 1 / 1;
     }
 
     .card-actions {
-        right: 10px;
+        opacity: 1;
+        transform: none;
+    }
+
+    .quick-add-btn {
+        transform: translateY(0);
+        font-size: 0.62rem;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-title {
+        font-size: 0.82rem;
+    }
+
+    .price-now {
+        font-size: 0.95rem;
+    }
+
+    .card-body-custom {
+        padding: 12px 14px 14px;
     }
 }

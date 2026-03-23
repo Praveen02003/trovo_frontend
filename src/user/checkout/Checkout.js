@@ -4,171 +4,192 @@ import { Navbar } from '../navbar/Navbar';
 import { maincontext } from '../../App';
 import { Getloginuser } from '../../function/Getloginuser';
 import { Getcartdata } from '../../function/Getcartdata';
-import { useNavigate } from 'react-router-dom';
-import api from '../../axios/Axios';
+import { useNavigate, Link } from 'react-router-dom';
 import { Handlecheckout } from '../../function/Handlecheckout';
 import { IMAGES_URL } from '../../axios/Imageurl';
 import { Userauth } from '../../function/Userauth';
 
 export const Checkout = () => {
-
     const navigate = useNavigate();
 
     const {
-        loginuser,
-        Setloginuser,
+        loginuser, Setloginuser,
         cartdata,
-        Setcartids,
-        Setcartdata,
-        Settoastmessage,
-        Settoastcolor,
-        Setshowtoast
+        Setcartids, Setcartdata,
+        Settoastmessage, Settoastcolor, Setshowtoast,
     } = useContext(maincontext);
 
     useEffect(() => {
         const loadData = async () => {
-            // 1️⃣ Check if the user is authenticated
             const isUser = await Userauth();
-            if (!isUser) return; // stop if not logged in
-
-            // 2️⃣ Set login user
+            if (!isUser) return;
             const user = Getloginuser();
             Setloginuser(user);
-
-            // 3️⃣ Fetch cart data if user exists
-            if (user?.user_id) {
-                await Getcartdata(Setcartids, Setcartdata);
-            }
+            if (user?.user_id) await Getcartdata(Setcartids, Setcartdata);
         };
-
         loadData();
     }, []);
 
-    // ✅ TOTAL CALCULATION
-    const subtotal = cartdata.reduce(
-        (acc, item) => acc + (Number(item.price) * (item.quantity || 1)),
-        0
-    );
-
+    /* ── Totals ── */
+    const subtotal = cartdata.reduce((acc, item) => acc + Number(item.price) * (item.quantity || 1), 0);
     const tax = subtotal * 0.03;
     const total = subtotal + tax;
+
+    const fmt = (n) => n.toLocaleString('en-IN', { minimumFractionDigits: 2 });
 
     return (
         <div className="checkout-page">
             <Navbar />
 
-            <div className="container mt-5 pt-5">
+            <div className="container mt-4 pt-4">
 
-                {/* HEADER */}
-                <div className="row mb-4">
-                    <div className="col-12">
-                        <div className="d-flex justify-content-between align-items-end border-bottom pb-3">
-                            <div>
-                                <h1 className="fw-bold m-0">Review Order</h1>
-                                <p className="text-muted small mb-0">
-                                    Please confirm your items before proceeding to payment.
-                                </p>
-                            </div>
+                {/* ── Header ── */}
+                <div className="checkout-header">
+                    <div>
+                        <h1 className="checkout-title">Review Order</h1>
+                        <p className="checkout-sub">Confirm your items before proceeding to payment.</p>
+                    </div>
+                    <span className="checkout-badge">{cartdata.length} Items</span>
+                </div>
 
-                            <span className="badge bg-dark rounded-pill px-3 py-2">
-                                {cartdata.length} Products
-                            </span>
-                        </div>
+                {/* ── Step indicator ── */}
+                <div className="checkout-steps">
+                    <div className="step done">
+                        <div className="step-num"><i className="bi bi-check"></i></div>
+                        Cart
+                    </div>
+                    <div className="step-sep"></div>
+                    <div className="step active">
+                        <div className="step-num">2</div>
+                        Review
+                    </div>
+                    <div className="step-sep"></div>
+                    <div className="step">
+                        <div className="step-num">3</div>
+                        Payment
                     </div>
                 </div>
 
-                <div className="row g-4">
+                <div className="row g-4 align-items-start">
 
-                    {/* LEFT */}
+                    {/* ══ LEFT — Items ══ */}
                     <div className="col-lg-7">
-
                         {cartdata.length > 0 ? (
                             cartdata.map((item, index) => (
-                                <div
-                                    key={index}
-                                    className="item-card-separate mb-3 shadow-sm d-flex align-items-center p-3"
-                                >
+                                <div key={index} className="item-card-separate mb-3">
 
-                                    <div className="me-3">
+                                    {/* Image */}
+                                    <div className="checkout-img-box">
                                         <img
                                             src={`${IMAGES_URL}/${item.image}`}
                                             alt={item.product_name}
-                                            style={{ width: "60px", height: "60px", objectFit: "cover" }}
+                                            loading="lazy"
                                         />
                                     </div>
 
+                                    {/* Info */}
                                     <div className="flex-grow-1">
-                                        <h6 className="fw-bold mb-0">
-                                            {item.product_name}
-                                        </h6>
-                                        <p className="text-muted small mb-0">
-                                            {item.brand_name}
-                                        </p>
+                                        <p className="item-name">{item.product_name}</p>
+                                        <p className="item-brand">{item.brand_name}</p>
+                                        <span className="item-qty-pill">
+                                            <i className="bi bi-box-seam"></i>
+                                            Qty: {item.quantity || 1}
+                                        </span>
                                     </div>
 
-                                    <div className="text-end">
-                                        <div className="fw-bold text-primary">
-                                            ₹{Number(item.price).toFixed(2)}
+                                    {/* Price */}
+                                    <div className="text-end flex-shrink-0">
+                                        <div className="item-price">
+                                            ₹{fmt(Number(item.price) * (item.quantity || 1))}
                                         </div>
-                                        <div className="text-muted small">
-                                            QTY: {item.quantity || 1}
+                                        <div className="item-unit-price">
+                                            ₹{fmt(Number(item.price))} each
                                         </div>
                                     </div>
 
                                 </div>
                             ))
                         ) : (
-                            <div className="text-center py-5">
+                            <div className="checkout-empty">
+                                <i className="bi bi-bag-x"></i>
                                 <h5>No items to checkout</h5>
+                                <p>Your cart is empty.</p>
+                                <Link to="/shop" style={{
+                                    display: 'inline-flex', alignItems: 'center', gap: '6px',
+                                    background: 'var(--accent)', color: '#fff', padding: '12px 24px',
+                                    borderRadius: '999px', textDecoration: 'none',
+                                    fontFamily: 'var(--font-d)', fontSize: '0.75rem', fontWeight: '700',
+                                    letterSpacing: '0.1em', textTransform: 'uppercase'
+                                }}>
+                                    <i className="bi bi-arrow-left"></i> Shop Now
+                                </Link>
                             </div>
                         )}
-
                     </div>
 
-                    {/* RIGHT */}
+                    {/* ══ RIGHT — Summary ══ */}
                     <div className="col-lg-5 col-xl-4 ms-auto">
+                        <div className="summary-floating-card">
 
-                        <div className="summary-floating-card p-4 shadow-lg border-0 sticky-top">
+                            <h6 className="summary-title">Order Summary</h6>
 
-                            <h4 className="fw-bold mb-4">Order Summary</h4>
-
-                            <div className="d-flex justify-content-between mb-2">
-                                <span>Subtotal</span>
-                                <span>₹{subtotal.toFixed(2)}</span>
+                            <div className="summary-row">
+                                <span>Subtotal ({cartdata.length} items)</span>
+                                <span className="val">₹{fmt(subtotal)}</span>
                             </div>
-
-                            <div className="d-flex justify-content-between mb-2">
-                                <span>Tax</span>
-                                <span>₹{tax.toFixed(2)}</span>
+                            <div className="summary-row">
+                                <span>Tax (3%)</span>
+                                <span className="val">₹{fmt(tax)}</span>
                             </div>
-
-                            <div className="d-flex justify-content-between mb-3">
+                            <div className="summary-row">
                                 <span>Shipping</span>
-                                <span className="text-success">FREE</span>
+                                <span className="free"><i className="bi bi-check-circle-fill me-1"></i>Free</span>
                             </div>
 
-                            <hr />
-
-                            <div className="d-flex justify-content-between mb-4">
-                                <strong>Total</strong>
-                                <strong className="text-primary">
-                                    ₹{total.toFixed(2)}
-                                </strong>
+                            {/* Promo */}
+                            <div className="promo-strip">
+                                <i className="bi bi-tag-fill"></i>
+                                Free shipping applied on this order!
                             </div>
 
-                            {/* ✅ BUTTON FIXED */}
+                            <hr className="summary-divider" />
+
+                            <div className="summary-total-row">
+                                <span className="summary-total-label">Total</span>
+                                <span className="summary-total-val">₹{fmt(total)}</span>
+                            </div>
+
+                            {/* Pay button */}
                             <button
-                                className="btn btn-primary w-100 py-3 rounded-pill fw-bold"
-                                onClick={() => {
-                                    Handlecheckout(loginuser, Setloginuser, cartdata, Settoastcolor, Settoastmessage, Setshowtoast, Setcartids, Setcartdata, navigate);
-                                }}
+                                className="pay-btn"
+                                onClick={() =>
+                                    Handlecheckout(
+                                        loginuser, Setloginuser, cartdata,
+                                        Settoastcolor, Settoastmessage, Setshowtoast,
+                                        Setcartids, Setcartdata, navigate
+                                    )
+                                }
                             >
-                                CONFIRM & PAY
-                                <i className="bi bi-chevron-right ms-2"></i>
+                                <i className="bi bi-lock-fill"></i>
+                                Confirm &amp; Pay
+                                <i className="bi bi-chevron-right"></i>
                             </button>
 
+                            {/* Trust badges */}
+                            <div className="trust-micro">
+                                <div className="trust-micro-item">
+                                    <i className="bi bi-shield-lock-fill"></i> Secure Payment
+                                </div>
+                                <div className="trust-micro-item">
+                                    <i className="bi bi-arrow-repeat"></i> Easy Returns
+                                </div>
+                                <div className="trust-micro-item">
+                                    <i className="bi bi-truck"></i> Free Shipping
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

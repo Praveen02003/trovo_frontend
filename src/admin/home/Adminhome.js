@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import './Adminhome.css';
 import { Sidebar } from "../sidebar/Sidebar";
 import { Getadmindashboarddata } from "../../function/Getadmindashboarddata";
 import { maincontext } from "../../App";
@@ -12,269 +13,254 @@ import { Adminauth } from "../../function/Adminauth";
 
 export const Adminhome = () => {
     const {
-        loginuser,
-        Setloginuser,
-        customerscount,
-        Setcustomerscount,
-        productscount,
-        Setproductscount,
-        activeproductscount,
-        Setactiveproductscount,
-        inactiveproductscount,
-        Setinactiveproductscount,
-        brandscount,
-        Setbrandscount,
-        categoriescount,
-        Setcategoriescount,
-        activecustomerscont,
-        Setactivecustomerscont,
-        blockedcustomerscont,
-        Setblockedcustomerscont,
-        orderscount,
-        Setorderscount,
-        totalrevenue,
-        Settotalrevenue,
-        recenttransactions,
-        Setrecenttransactions,
-        avgsale,
-        Setavgsale,
+        loginuser, Setloginuser,
+        customerscount, Setcustomerscount,
+        productscount, Setproductscount,
+        activeproductscount, Setactiveproductscount,
+        inactiveproductscount, Setinactiveproductscount,
+        brandscount, Setbrandscount,
+        categoriescount, Setcategoriescount,
+        activecustomerscont, Setactivecustomerscont,
+        blockedcustomerscont, Setblockedcustomerscont,
+        orderscount, Setorderscount,
+        totalrevenue, Settotalrevenue,
+        recenttransactions, Setrecenttransactions,
+        avgsale, Setavgsale,
     } = useContext(maincontext);
 
     useEffect(() => {
         const loadData = async () => {
-            const isAdmin = await Adminauth(); // Wait until admin is verified
-            if (!isAdmin) return; // Stop if not admin
-
-            // Set logged-in user (synchronous)
+            const isAdmin = await Adminauth();
+            if (!isAdmin) return;
             Setloginuser(Getloginuser());
-
-            // Call async dashboard data function and wait for it
             await Getadmindashboarddata(
-                Setcustomerscount,
-                Setproductscount,
-                Setactiveproductscount,
-                Setinactiveproductscount,
-                Setbrandscount,
-                Setcategoriescount,
-                Setactivecustomerscont,
-                Setblockedcustomerscont,
-                Setorderscount,
-                Settotalrevenue,
-                Setrecenttransactions,
-                Setavgsale
+                Setcustomerscount, Setproductscount,
+                Setactiveproductscount, Setinactiveproductscount,
+                Setbrandscount, Setcategoriescount,
+                Setactivecustomerscont, Setblockedcustomerscont,
+                Setorderscount, Settotalrevenue,
+                Setrecenttransactions, Setavgsale
             );
         };
-
         loadData();
     }, []);
+
+    /* Status badge class */
+    const statusClass = (s) => {
+        switch ((s || '').toLowerCase()) {
+            case 'placed': return 'placed';
+            case 'shipped': return 'shipped';
+            case 'delivered': return 'delivered';
+            default: return 'default';
+        }
+    };
+
     return (
-        <div className="container-fluid p-0 bg-light">
-            <div className="d-flex min-vh-0">
+        <div className="container-fluid p-0 admin-page">
+            <div className="d-flex">
                 <Sidebar />
 
                 <div className="flex-grow-1 overflow-hidden">
-                    {/* Top Navbar */}
-                    <nav className="navbar navbar-white bg-white border-bottom px-4 py-3 sticky-top shadow-sm">
+
+                    {/* ── Top Navbar ── */}
+                    <nav className="navbar admin-topbar">
                         <div className="container-fluid p-0">
-                            <h5 className="fw-bold m-0 text-dark"><i className="bi bi-speedometer2 me-2 text-primary"></i>Admin Dashboard</h5>
-                            <div className="ms-auto d-flex align-items-center gap-3">
-                                <div className="text-end d-none d-sm-block">
-                                    <p className="m-0 small fw-bold text-dark">{loginuser.name}</p>
-                                    <small className="text-muted" style={{ fontSize: '0.65rem' }}>Super Admin</small>
+                            <h5 className="admin-topbar-title">
+                                <i className="bi bi-speedometer2"></i>
+                                Admin Dashboard
+                            </h5>
+                            <div className="admin-topbar-profile ms-auto">
+                                <div className="admin-profile-info d-none d-sm-block">
+                                    <span className="admin-profile-name">{loginuser?.name}</span>
+                                    <span className="admin-profile-role">Super Admin</span>
                                 </div>
-                                <img src={`${IMAGES_URL}/${loginuser.profileimage}`} alt="Profile" className="rounded-circle border shadow-sm" width="38" height="38" />
+                                <img
+                                    src={`${IMAGES_URL}/${loginuser?.profileimage}`}
+                                    alt="Profile"
+                                    className="admin-profile-img"
+                                />
                             </div>
                         </div>
                     </nav>
 
-                    <div className="p-4">
-                        <div className="mb-4">
-                            <h4 className="fw-bold text-dark m-0">Inventory & Sales Overview</h4>
-                            <p className="text-muted small">Comprehensive summary of your store's performance</p>
+                    <div className="admin-content">
+
+                        {/* Page heading */}
+                        <div className="admin-page-heading">
+                            <h4>Inventory & Sales Overview</h4>
+                            <p>Comprehensive summary of your store's performance</p>
                         </div>
 
-                        {/* --- TOP ROW: SALES STATS --- */}
-                        <div className="row g-4 mb-4">
+                        {/* ══ ROW 1 — Sales Stats ══ */}
+                        <div className="row g-3 mb-4">
+                            {/* Revenue */}
                             <div className="col-sm-6 col-xl-3">
-                                <div className="card border-0 shadow-sm rounded-4 p-2 h-100">
-                                    <div className="card-body">
-                                        <div className="d-flex justify-content-between align-items-center mb-3">
-                                            <div className="bg-primary bg-opacity-10 text-primary p-3 rounded-4"><i className="bi bi-currency-dollar fs-4"></i></div>
-                                            <span className="badge bg-success bg-opacity-10 text-success rounded-pill">+12%</span>
-                                        </div>
-                                        <h6 className="text-muted small fw-bold text-uppercase">Total Revenue</h6>
-                                        <h3 className="fw-bold m-0 text-dark">${parseFloat(totalrevenue || 0).toLocaleString()}</h3>
+                                <div className="stat-card" style={{ "--sc-color": "var(--accent)" }}>
+                                    <div className="stat-card-top">
+                                        <div className="stat-icon purple"><i className="bi bi-currency-dollar"></i></div>
+                                        <span className="stat-badge badge-up"><i className="bi bi-arrow-up me-1"></i>12%</span>
                                     </div>
+                                    <span className="stat-label">Total Revenue</span>
+                                    <span className="stat-value">$ {parseFloat(totalrevenue || 0).toLocaleString()}</span>
                                 </div>
                             </div>
+                            {/* Orders */}
                             <div className="col-sm-6 col-xl-3">
-                                <div className="card border-0 shadow-sm rounded-4 p-2 h-100">
-                                    <div className="card-body">
-                                        <div className="d-flex justify-content-between align-items-center mb-3">
-                                            <div className="bg-success bg-opacity-10 text-success p-3 rounded-4"><i className="bi bi-cart-check fs-4"></i></div>
-                                            <span className="badge bg-success bg-opacity-10 text-success rounded-pill">+5%</span>
-                                        </div>
-                                        <h6 className="text-muted small fw-bold text-uppercase">Active Orders</h6>
-                                        <h3 className="fw-bold m-0 text-dark">{orderscount}</h3>
+                                <div className="stat-card" style={{ "--sc-color": "var(--green)" }}>
+                                    <div className="stat-card-top">
+                                        <div className="stat-icon green"><i className="bi bi-cart-check"></i></div>
+                                        <span className="stat-badge badge-up"><i className="bi bi-arrow-up me-1"></i>5%</span>
                                     </div>
+                                    <span className="stat-label">Active Orders</span>
+                                    <span className="stat-value">{orderscount}</span>
                                 </div>
                             </div>
+                            {/* Customers */}
                             <div className="col-sm-6 col-xl-3">
-                                <div className="card border-0 shadow-sm rounded-4 p-2 h-100">
-                                    <div className="card-body">
-                                        <div className="d-flex justify-content-between align-items-center mb-3">
-                                            <div className="bg-info bg-opacity-10 text-info p-3 rounded-4"><i className="bi bi-people fs-4"></i></div>
-                                            <span className="badge bg-success bg-opacity-10 text-success rounded-pill">+18%</span>
-                                        </div>
-                                        <h6 className="text-muted small fw-bold text-uppercase">Our Customers</h6>
-                                        <h3 className="fw-bold m-0 text-dark">{customerscount}</h3>
+                                <div className="stat-card" style={{ "--sc-color": "var(--cyan)" }}>
+                                    <div className="stat-card-top">
+                                        <div className="stat-icon cyan"><i className="bi bi-people"></i></div>
+                                        <span className="stat-badge badge-up"><i className="bi bi-arrow-up me-1"></i>18%</span>
                                     </div>
+                                    <span className="stat-label">Our Customers</span>
+                                    <span className="stat-value">{customerscount}</span>
                                 </div>
                             </div>
+                            {/* Avg Sale */}
                             <div className="col-sm-6 col-xl-3">
-                                <div className="card border-0 shadow-sm rounded-4 p-2 h-100">
-                                    <div className="card-body">
-                                        <div className="d-flex justify-content-between align-items-center mb-3">
-                                            <div className="bg-warning bg-opacity-10 text-warning p-3 rounded-4"><i className="bi bi-graph-up-arrow fs-4"></i></div>
-                                            <span className="badge bg-danger bg-opacity-10 text-danger rounded-pill">-2%</span>
-                                        </div>
-                                        <h6 className="text-muted small fw-bold text-uppercase">Avg. Sale</h6>
-                                        <h3 className="fw-bold m-0 text-dark">${parseFloat(avgsale || 0).toFixed(2)}</h3>
+                                <div className="stat-card" style={{ "--sc-color": "var(--gold)" }}>
+                                    <div className="stat-card-top">
+                                        <div className="stat-icon gold"><i className="bi bi-graph-up-arrow"></i></div>
+                                        <span className="stat-badge badge-down"><i className="bi bi-arrow-down me-1"></i>2%</span>
                                     </div>
+                                    <span className="stat-label">Avg. Sale</span>
+                                    <span className="stat-value">$ {parseFloat(avgsale || 0).toFixed(2)}</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* --- SECOND ROW: INVENTORY STATS --- */}
-                        <div className="row g-4 mb-5">
-                            {/* Total Products */}
+                        {/* ══ ROW 2 — Inventory Stats ══ */}
+                        <div className="row g-3 mb-4">
                             <div className="col-sm-6 col-lg-3">
-                                <div className="card border-0 shadow-sm rounded-4 p-2 h-100 bg-white border-start border-primary border-5">
-                                    <div className="card-body">
-                                        <div className="d-flex align-items-center">
-                                            <div className="bg-primary bg-opacity-10 text-primary p-3 rounded-circle me-3"><i className="bi bi-box-seam fs-4"></i></div>
-                                            <div>
-                                                <h6 className="text-muted small fw-bold m-0">TOTAL PRODUCTS</h6>
-                                                <h3 className="fw-bold m-0">{productscount}</h3>
-                                            </div>
-                                        </div>
+                                <div className="inv-card" style={{ "--ic-color": "var(--accent)" }}>
+                                    <div className="inv-icon purple"><i className="bi bi-box-seam"></i></div>
+                                    <div>
+                                        <span className="inv-label">Total Products</span>
+                                        <span className="inv-value">{productscount}</span>
                                     </div>
                                 </div>
                             </div>
-                            {/* Active Products */}
                             <div className="col-sm-6 col-lg-3">
-                                <div className="card border-0 shadow-sm rounded-4 p-2 h-100 bg-white border-start border-success border-5">
-                                    <div className="card-body">
-                                        <div className="d-flex align-items-center">
-                                            <div className="bg-success bg-opacity-10 text-success p-3 rounded-circle me-3"><i className="bi bi-check-circle fs-4"></i></div>
-                                            <div>
-                                                <h6 className="text-muted small fw-bold m-0">ACTIVE PRODUCTS</h6>
-                                                <h3 className="fw-bold m-0 text-success">{activeproductscount}</h3>
-                                            </div>
-                                        </div>
+                                <div className="inv-card" style={{ "--ic-color": "var(--green)" }}>
+                                    <div className="inv-icon green"><i className="bi bi-check-circle"></i></div>
+                                    <div>
+                                        <span className="inv-label">Active Products</span>
+                                        <span className="inv-value green">{activeproductscount}</span>
                                     </div>
                                 </div>
                             </div>
-                            {/* Inactive Products */}
                             <div className="col-sm-6 col-lg-3">
-                                <div className="card border-0 shadow-sm rounded-4 p-2 h-100 bg-white border-start border-danger border-5">
-                                    <div className="card-body">
-                                        <div className="d-flex align-items-center">
-                                            <div className="bg-danger bg-opacity-10 text-danger p-3 rounded-circle me-3"><i className="bi bi-x-circle fs-4"></i></div>
-                                            <div>
-                                                <h6 className="text-muted small fw-bold m-0">INACTIVE PRODUCTS</h6>
-                                                <h3 className="fw-bold m-0 text-danger">{inactiveproductscount}</h3>
-                                            </div>
-                                        </div>
+                                <div className="inv-card" style={{ "--ic-color": "var(--red)" }}>
+                                    <div className="inv-icon red"><i className="bi bi-x-circle"></i></div>
+                                    <div>
+                                        <span className="inv-label">Inactive Products</span>
+                                        <span className="inv-value red">{inactiveproductscount}</span>
                                     </div>
                                 </div>
                             </div>
-                            {/* Brands & Categories Combined or Separate */}
                             <div className="col-sm-6 col-lg-3">
-                                <div className="card border-0 shadow-sm rounded-4 p-2 h-100 bg-white border-start border-dark border-5">
-                                    <div className="card-body d-flex flex-column justify-content-center">
-                                        <div className="d-flex justify-content-between mb-2">
-                                            <span className="small text-muted fw-bold"><i className="bi bi-patch-check text-primary me-1"></i> BRANDS:</span>
-                                            <span className="fw-bold">{brandscount}</span>
-                                        </div>
-                                        <div className="d-flex justify-content-between">
-                                            <span className="small text-muted fw-bold"><i className="bi bi-grid text-primary me-1"></i> CATEGORIES:</span>
-                                            <span className="fw-bold">{categoriescount}</span>
-                                        </div>
+                                <div className="combo-card">
+                                    <div className="combo-row">
+                                        <span className="combo-label"><i className="bi bi-patch-check"></i>Brands</span>
+                                        <span className="combo-value">{brandscount}</span>
+                                    </div>
+                                    <div className="combo-divider"></div>
+                                    <div className="combo-row">
+                                        <span className="combo-label"><i className="bi bi-grid"></i>Categories</span>
+                                        <span className="combo-value">{categoriescount}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* --- NEW THIRD ROW: CUSTOMER STATS --- */}
-                        <div className="row g-4 mb-5">
+                        {/* ══ ROW 3 — Customer Stats ══ */}
+                        <div className="row g-3 mb-4">
                             <div className="col-sm-6 col-lg-4">
-                                <div className="card border-0 shadow-sm rounded-4 p-2 h-100 bg-white border-start border-success border-5">
-                                    <div className="card-body d-flex align-items-center">
-                                        <div className="bg-success bg-opacity-10 text-success p-3 rounded-circle me-3"><i className="bi bi-person-check fs-4"></i></div>
-                                        <div>
-                                            <h6 className="text-muted small fw-bold m-0 text-uppercase">Active Customers</h6>
-                                            <h3 className="fw-bold m-0">{activecustomerscont}</h3>
-                                        </div>
+                                <div className="cust-card">
+                                    <div className="cust-icon green"><i className="bi bi-person-check"></i></div>
+                                    <div>
+                                        <span className="cust-label">Active Customers</span>
+                                        <span className="cust-value">{activecustomerscont}</span>
                                     </div>
                                 </div>
                             </div>
                             <div className="col-sm-6 col-lg-4">
-                                <div className="card border-0 shadow-sm rounded-4 p-2 h-100 bg-white border-start border-danger border-5">
-                                    <div className="card-body d-flex align-items-center">
-                                        <div className="bg-danger bg-opacity-10 text-danger p-3 rounded-circle me-3"><i className="bi bi-person-slash fs-4"></i></div>
-                                        <div>
-                                            <h6 className="text-muted small fw-bold m-0 text-uppercase">Blocked Customers</h6>
-                                            <h3 className="fw-bold m-0">{blockedcustomerscont}</h3>
-                                        </div>
+                                <div className="cust-card">
+                                    <div className="cust-icon red"><i className="bi bi-person-slash"></i></div>
+                                    <div>
+                                        <span className="cust-label">Blocked Customers</span>
+                                        <span className="cust-value">{blockedcustomerscont}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-
-                        {/* Modern Recent Transactions Table */}
-                        <div className="card rounded-4 shadow-sm bg-white p-3">
-                            <div className="d-flex justify-content-between align-items-center mb-3">
-                                <h5 className="fw-bold m-0">Recent Transactions</h5>
-                                <Link to={'/orders'} className="btn btn-sm btn-outline-primary rounded-pill">View All</Link>
+                        {/* ══ Transactions Table ══ */}
+                        <div className="tx-card">
+                            <div className="tx-card-header">
+                                <h5 className="tx-card-title">Recent Transactions</h5>
+                                <Link to="/orders" className="view-all-btn">
+                                    View All <i className="bi bi-arrow-right ms-1"></i>
+                                </Link>
                             </div>
 
                             <div className="table-responsive">
-                                <table className="table align-middle mb-0 modern-table">
-                                    <thead className="bg-light">
+                                <table className="modern-table">
+                                    <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>CUSTOMER</th>
-                                            <th>AMOUNT</th>
-                                            <th>STATUS</th>
-                                            <th>DETAILS</th>
+                                            <th>Order</th>
+                                            <th>Customer</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {recenttransactions.length === 0 ? (
                                             <tr>
-                                                <td colSpan={5} className="text-center py-4 text-muted">
+                                                <td colSpan={5} className="tx-empty">
+                                                    <i className="bi bi-inbox" style={{ fontSize: '2rem', display: 'block', marginBottom: '8px', color: '#ddd' }}></i>
                                                     No recent transactions
                                                 </td>
                                             </tr>
                                         ) : (
                                             recenttransactions.map((tx) => (
-                                                <tr key={tx.order_id} className="align-middle">
+                                                <tr key={tx.order_id}>
                                                     <td>
-                                                        <div className="fw-bold text-dark">#{tx.order_id}</div>
-                                                        <small className="text-muted">{new Date(tx.created_at).toLocaleDateString()}</small>
-                                                    </td>
-                                                    <td className="text-dark fw-semibold">{tx.name}</td>
-                                                    <td className="fw-bold text-dark">${parseFloat(tx.total_amount).toFixed(2)}</td>
-                                                    <td>
-                                                        <span className={`text-white bg-success badge status-badge`}>
-                                                            ● {tx.order_status}
+                                                        <span className="tx-order-id">#{tx.order_id}</span>
+                                                        <span className="tx-order-date">
+                                                            {new Date(tx.created_at).toLocaleDateString('en-GB', {
+                                                                day: 'numeric', month: 'short', year: 'numeric'
+                                                            })}
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <Link to={`/vieworder/${tx.order_id}`} className="btn btn-primary btn-sm rounded-pill px-3">
-                                                            View <i className="bi bi-chevron-right ms-1"></i>
+                                                        <span className="tx-customer">{tx.name}</span>
+                                                    </td>
+                                                    <td>
+                                                        <span className="tx-amount">
+                                                            $ {parseFloat(tx.total_amount).toFixed(2)}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span className={`status-badge ${statusClass(tx.order_status)}`}>
+                                                            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'currentColor', display: 'inline-block' }}></span>
+                                                            {tx.order_status}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <Link to={`/vieworder/${tx.order_id}`} className="tx-view-btn">
+                                                            View <i className="bi bi-chevron-right"></i>
                                                         </Link>
                                                     </td>
                                                 </tr>
@@ -284,6 +270,7 @@ export const Adminhome = () => {
                                 </table>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>

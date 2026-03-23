@@ -4,181 +4,232 @@ import '../profile/Userprofile.css';
 import { maincontext } from '../../App';
 import { Getloginuser } from '../../function/Getloginuser';
 import { Updateprofile } from '../../function/Updateprofile';
-import { Closetoast } from '../../function/Closetoast';
 import { Logout } from '../../function/Logout';
 import { IMAGES_URL } from '../../axios/Imageurl';
 import { Userauth } from '../../function/Userauth';
 
 export const Userprofile = () => {
-    const {
-        loginuser,
-        Setloginuser
-    } = useContext(maincontext);
-
+    const { loginuser, Setloginuser } = useContext(maincontext);
     const [preview, setPreview] = useState(null);
 
     useEffect(() => {
         const loadUser = async () => {
-            const isUser = await Userauth(); // check authentication
-            if (!isUser) return;            // stop if not logged in
-
-            // set login user
+            const isUser = await Userauth();
+            if (!isUser) return;
             Setloginuser(Getloginuser());
         };
-
         loadUser();
     }, []);
-    if (!loginuser) return <div className="text-center mt-5 p-5">Loading Profile...</div>;
+
+    /* Loading state */
+    if (!loginuser) return (
+        <div className="profile-loading">
+            <div className="profile-loading-spinner"></div>
+            <p>Loading Profile…</p>
+        </div>
+    );
+
+    const avatarSrc = preview || `${IMAGES_URL}/${loginuser.profileimage}`;
 
     return (
-        <div className="bg-light min-vh-100">
+        <div className="profile-page">
             <Navbar />
 
-            <div className="container py-4">
-                <div className="row g-4">
-                    {/* LEFT PROFILE */}
-                    <div className="col-lg-4">
-                        <div className="card border-0 shadow-sm rounded-4 text-center p-4">
-                            <img
-                                src={preview ? preview : `${IMAGES_URL}/${loginuser.profileimage}`}
-                                className="rounded-circle mx-auto mb-3"
-                                style={{ width: "100px", objectFit: 'contain' }}
-                                alt="profile"
-                            />
+            <div className="container py-4 mt-2">
+                <div className="row g-4 align-items-start">
 
-                            <h5 className="fw-bold">{loginuser.name}</h5>
-                            <p className="text-muted small">{loginuser.email}</p>
+                    {/* ══ LEFT — Profile Card ══ */}
+                    <div className="col-lg-4 profile-left">
+                        <div className="profile-card">
 
-                            <button
-                                className="btn btn-primary w-100 mb-2"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editModal"
-                            >
-                                Edit Profile
-                            </button>
+                            {/* Dark banner */}
+                            <div className="profile-card-banner"></div>
 
-                            <button className="btn btn-outline-danger w-100" onClick={Logout}>
-                                Logout
-                            </button>
+                            {/* Avatar + info */}
+                            <div className="profile-avatar-wrap">
+                                <div className="profile-avatar-ring">
+                                    <img src={avatarSrc} alt={loginuser.name} />
+                                </div>
+                                <h5 className="profile-name">{loginuser.name}</h5>
+                                <p className="profile-email">{loginuser.email}</p>
+                                <span className="profile-badge">
+                                    <i className="bi bi-award-fill"></i> Gold Member
+                                </span>
+
+                                <div className="profile-divider"></div>
+
+                                {/* Quick stats */}
+                                {/* <div className="profile-stats w-100">
+                                    <div className="profile-stat">
+                                        <span className="stat-val">12</span>
+                                        <span className="stat-lbl">Orders</span>
+                                    </div>
+                                    <div className="profile-stat">
+                                        <span className="stat-val">5</span>
+                                        <span className="stat-lbl">Wishlist</span>
+                                    </div>
+                                    <div className="profile-stat">
+                                        <span className="stat-val">4.9</span>
+                                        <span className="stat-lbl">Rating</span>
+                                    </div>
+                                </div> */}
+
+                                <div className="profile-divider"></div>
+
+                                {/* Buttons */}
+                                <button
+                                    className="profile-btn-edit"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editModal"
+                                >
+                                    <i className="bi bi-pencil-fill"></i>
+                                    Edit Profile
+                                </button>
+                                <button className="profile-btn-logout" onClick={Logout}>
+                                    <i className="bi bi-power"></i>
+                                    Sign Out
+                                </button>
+                            </div>
+
                         </div>
                     </div>
 
-                    {/* RIGHT DETAILS */}
-                    <div className="col-lg-8">
-                        <div className="card border-0 shadow-sm rounded-4 p-4">
-                            <h5 className="fw-bold mb-4">Account Details</h5>
+                    {/* ══ RIGHT — Details Card ══ */}
+                    <div className="col-lg-8 profile-right">
+                        <div className="details-card">
+                            <h5 className="details-heading">Account Details</h5>
+                            <p className="details-sub">Your personal information is read-only. Click Edit Profile to update.</p>
+
                             <div className="row g-3">
                                 <div className="col-md-6">
-                                    <label className="form-label">Full Name</label>
-                                    <input className="form-control" value={loginuser.name} readOnly />
+                                    <label className="profile-field-label">Full Name</label>
+                                    <input
+                                        className="profile-field-input"
+                                        value={loginuser.name || ''}
+                                        readOnly
+                                    />
                                 </div>
                                 <div className="col-md-6">
-                                    <label className="form-label">Email</label>
-                                    <input className="form-control" value={loginuser.email} readOnly />
+                                    <label className="profile-field-label">Email Address</label>
+                                    <input
+                                        className="profile-field-input"
+                                        value={loginuser.email || ''}
+                                        readOnly
+                                    />
                                 </div>
                                 <div className="col-md-6">
-                                    <label className="form-label">Phone</label>
-                                    <input className="form-control" value={loginuser.mobilenumber || ""} readOnly />
+                                    <label className="profile-field-label">Phone Number</label>
+                                    <input
+                                        className="profile-field-input"
+                                        value={loginuser.mobilenumber || '—'}
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="profile-field-label">Member Since</label>
+                                    <input
+                                        className="profile-field-input"
+                                        value="2024"
+                                        readOnly
+                                    />
                                 </div>
                                 <div className="col-12">
-                                    <label className="form-label">Address</label>
-                                    <textarea className="form-control" rows="2" value={loginuser.address || ""} readOnly />
+                                    <label className="profile-field-label">Delivery Address</label>
+                                    <textarea
+                                        className="profile-field-input"
+                                        rows="3"
+                                        value={loginuser.address || '—'}
+                                        readOnly
+                                    />
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
-            {/* --- EDIT PROFILE MODAL --- */}
-            <div className="modal fade" id="editModal" tabIndex="-1">
+            {/* ══ EDIT MODAL ══ */}
+            <div className="modal fade profile-modal" id="editModal" tabIndex="-1">
                 <div className="modal-dialog modal-lg modal-dialog-centered">
-                    <div className="modal-content rounded-4 border-0">
+                    <div className="modal-content">
+
                         <div className="modal-header">
-                            <h5 className="modal-title fw-bold">Edit Profile</h5>
+                            <h5 className="modal-title">Edit Profile</h5>
                             <button className="btn-close" data-bs-dismiss="modal"></button>
                         </div>
 
                         <div className="modal-body">
+                            {/* Avatar upload */}
+                            <div className="avatar-upload-wrap mb-4">
+                                <div className="avatar-upload-ring">
+                                    <img src={avatarSrc} alt="Profile" />
+                                    <label htmlFor="fileInput" className="avatar-cam-btn">
+                                        <i className="bi bi-camera-fill"></i>
+                                    </label>
+                                </div>
+                                <span className="avatar-upload-hint">Click camera to change photo</span>
+                                <input
+                                    type="file" id="fileInput" className="d-none" accept="image/*"
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        Setloginuser({ ...loginuser, newimage: file });
+                                        setPreview(URL.createObjectURL(file));
+                                    }}
+                                />
+                            </div>
+
                             <div className="row g-3">
                                 <div className="col-md-6">
-                                    <label className="form-label">Full Name</label>
+                                    <label className="modal-field-label">Full Name</label>
                                     <input
-                                        className="form-control"
+                                        className="modal-field-input"
                                         value={loginuser.name || ''}
                                         onChange={(e) => Setloginuser({ ...loginuser, name: e.target.value })}
                                     />
                                 </div>
                                 <div className="col-md-6">
-                                    <label className="form-label">Email</label>
+                                    <label className="modal-field-label">Email Address</label>
                                     <input
-                                        className="form-control"
+                                        className="modal-field-input"
                                         value={loginuser.email || ''}
                                         onChange={(e) => Setloginuser({ ...loginuser, email: e.target.value })}
                                     />
                                 </div>
                                 <div className="col-md-6">
-                                    <label className="form-label">Phone</label>
+                                    <label className="modal-field-label">Phone Number</label>
                                     <input
-                                        className="form-control"
+                                        className="modal-field-input"
                                         value={loginuser.mobilenumber || ''}
                                         onChange={(e) => Setloginuser({ ...loginuser, mobilenumber: e.target.value })}
                                     />
                                 </div>
                                 <div className="col-12">
-                                    <label className="form-label">Address</label>
+                                    <label className="modal-field-label">Delivery Address</label>
                                     <textarea
-                                        className="form-control"
+                                        className="modal-field-input"
                                         rows="3"
                                         value={loginuser.address || ''}
                                         onChange={(e) => Setloginuser({ ...loginuser, address: e.target.value })}
-                                    />
-                                </div>
-
-                                <div className="col-12 text-center mt-3">
-                                    <label className="form-label d-block">Profile Image</label>
-                                    <div className="position-relative d-inline-block">
-                                        <img
-                                            src={preview ? preview : `${IMAGES_URL}/${loginuser.profileimage}`}
-                                            className="rounded-circle border border-2 border-primary p-1 shadow-sm mb-2"
-                                            width="100"
-                                            height="100"
-                                            style={{ objectFit: 'contain' }}
-                                        />
-                                        <label
-                                            htmlFor="fileInput"
-                                            className="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-1 cursor-pointer shadow"
-                                        >
-                                            <i className="bi bi-camera-fill small"></i>
-                                        </label>
-                                    </div>
-                                    <input
-                                        type="file"
-                                        id="fileInput"
-                                        className="d-none"
-                                        accept="image/*"
-                                        onChange={(e) => {
-                                            const file = e.target.files[0];
-                                            Setloginuser({ ...loginuser, newimage: file });
-                                            setPreview(URL.createObjectURL(file));
-                                        }}
                                     />
                                 </div>
                             </div>
                         </div>
 
                         <div className="modal-footer">
-                            <button className="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <button className="modal-btn-cancel" data-bs-dismiss="modal">
                                 Cancel
                             </button>
                             <button
-                                className="btn btn-primary"
+                                className="modal-btn-save"
                                 data-bs-dismiss="modal"
                                 onClick={() => Updateprofile(loginuser)}
                             >
+                                <i className="bi bi-check-lg"></i>
                                 Save Changes
                             </button>
                         </div>
+
                     </div>
                 </div>
             </div>

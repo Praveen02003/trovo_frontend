@@ -1,52 +1,239 @@
+/* ============================================================
+   TROVO — 404 NOT FOUND PAGE
+   Aesthetic: Dark Luxury · Dramatic · Fast
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+    --font-d: 'Syne', sans-serif;
+    --font-b: 'DM Sans', sans-serif;
+    --accent: #6c63ff;
+    --accent-2: #9b59f5;
+    --accent-light: rgba(108, 99, 255, 0.12);
+    --accent-glow: rgba(108, 99, 255, 0.35);
+    --cyan: #00d4ff;
+    --r-pill: 999px;
+    --t: 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Page ── */
 .notfound-container {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    animation: fadeIn 0.8s ease-in-out;
+    min-height: 100vh;
+    background: #08080f;
+    font-family: var(--font-b);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
 }
 
-.notfound-container h1 {
-    font-size: 10rem;
-    animation: bounce 1.2s infinite alternate;
+/* ── Background grid ── */
+.notfound-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(108, 99, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108, 99, 255, 0.05) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events: none;
 }
 
-.notfound-container h2 {
-    font-size: 2.5rem;
+/* Radial glow in center */
+.notfound-container::after {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(108, 99, 255, 0.12) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
 }
 
-.notfound-container p {
-    font-size: 1rem;
-    max-width: 450px;
+/* ── Content wrapper ── */
+.nf-content {
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.btn-primary {
-    background: #0d6efd;
-    border: none;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Animations */
-@keyframes bounce {
-    0% {
-        transform: translateY(0);
-    }
-
-    100% {
-        transform: translateY(-15px);
-    }
-}
-
-@keyframes fadeIn {
+@keyframes fadeUp {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(28px);
     }
 
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* ── 404 Number ── */
+.nf-number {
+    font-family: var(--font-d);
+    font-size: clamp(6rem, 20vw, 10rem);
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    background: linear-gradient(135deg, #fff 20%, rgba(255, 255, 255, 0.25) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0;
+    position: relative;
+    animation: fadeUp 0.5s ease both;
+}
+
+/* Accent underline glow below 404 */
+.nf-number::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    border-radius: var(--r-pill);
+    background: linear-gradient(90deg, var(--accent), var(--cyan));
+    margin: 12px auto 0;
+    box-shadow: 0 0 16px var(--accent-glow);
+}
+
+/* ── Title ── */
+.nf-title {
+    font-family: var(--font-d);
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 24px 0 12px;
+    animation: fadeUp 0.5s 0.08s ease both;
+}
+
+/* ── Subtitle ── */
+.nf-sub {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 300;
+    line-height: 1.7;
+    max-width: 420px;
+    margin: 0 auto 36px;
+    animation: fadeUp 0.5s 0.14s ease both;
+}
+
+/* ── Buttons ── */
+.nf-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.5s 0.2s ease both;
+}
+
+.nf-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-d);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+    border: none;
+    padding: 14px 28px;
+    border-radius: var(--r-pill);
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 8px 24px var(--accent-glow);
+    transition: transform var(--t), box-shadow var(--t);
+}
+
+.nf-btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px var(--accent-glow);
+    color: #fff;
+}
+
+.nf-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-d);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.45);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    padding: 13px 24px;
+    border-radius: var(--r-pill);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--t);
+}
+
+.nf-btn-ghost:hover {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* ── Floating orbs ── */
+.nf-orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.nf-orb-1 {
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(108, 99, 255, 0.18), transparent 70%);
+    top: -60px;
+    right: -60px;
+    animation: floatY 5s ease-in-out infinite;
+}
+
+.nf-orb-2 {
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.10), transparent 70%);
+    bottom: -40px;
+    left: -40px;
+    animation: floatY 6s ease-in-out infinite reverse;
+}
+
+@keyframes floatY {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-16px);
+    }
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+    .nf-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .nf-btn-primary,
+    .nf-btn-ghost {
+        justify-content: center;
     }
 }

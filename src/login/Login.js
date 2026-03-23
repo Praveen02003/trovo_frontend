@@ -1,95 +1,136 @@
 import React, { useContext, useEffect } from "react";
 import "../login/Login.css";
-import { useNavigate } from 'react-router-dom';
-
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { maincontext } from "../App";
 import { Verifyuser } from "../function/Verifyuser";
-import { Closetoast } from "../function/Closetoast";
 import { Authuser } from "../function/Authuser";
 
 export const Login = () => {
     const {
-        loginmail,
-        Setloginmail,
-        loginpassword,
-        Setloginpassword
-    } = useContext(maincontext)
+        loginmail, Setloginmail,
+        loginpassword, Setloginpassword,
+    } = useContext(maincontext);
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        Authuser();
-    }, [])
+    useEffect(() => { Authuser(); }, []);
+
     return (
-        <div className="container-fluid vh-100 login-wrapper">
-            <div className="row h-100">
+        <div className="login-wrapper">
 
-                {/* Left Brand Section */}
-                <div className="col-lg-6 d-none d-lg-flex align-items-center justify-content-center brand-section">
-                    <div className="text-center text-white">
-                        <h1 className="fw-bold">Trovo</h1>
-                        <p className="mt-3">Your one-stop shop for everything.</p>
+            {/* ══ LEFT — Brand Panel ══ */}
+            <div className="brand-section">
+                <div className="brand-orb"></div>
+                <div className="brand-inner">
+
+                    <h1 className="brand-name">
+                        TROVO<span className="brand-dot">.</span>
+                    </h1>
+                    <p className="brand-tagline">
+                        Your one-stop shop for everything premium.<br />
+                        Sign in to continue your journey.
+                    </p>
+
+                    {/* Stats */}
+                    <div className="brand-stats">
+                        <div className="brand-stat-item">
+                            <span className="bstat-num">50k+</span>
+                            <span className="bstat-label">Happy Customers</span>
+                        </div>
+                        <div className="brand-stat-divider"></div>
+                        <div className="brand-stat-item">
+                            <span className="bstat-num">10k+</span>
+                            <span className="bstat-label">Products</span>
+                        </div>
+                        <div className="brand-stat-divider"></div>
+                        <div className="brand-stat-item">
+                            <span className="bstat-num">98%</span>
+                            <span className="bstat-label">Satisfaction</span>
+                        </div>
                     </div>
+
+                    {/* Trust pills */}
+                    <div className="brand-pills">
+                        <div className="brand-pill">
+                            <i className="bi bi-shield-lock-fill"></i>
+                            100% Secure Login
+                        </div>
+                        <div className="brand-pill">
+                            <i className="bi bi-lightning-charge-fill"></i>
+                            Instant Order Access
+                        </div>
+                        <div className="brand-pill">
+                            <i className="bi bi-award-fill"></i>
+                            Exclusive Member Deals
+                        </div>
+                    </div>
+
                 </div>
+            </div>
 
-                {/* Login Form */}
-                <div className="col-lg-6 d-flex align-items-center justify-content-center bg-white">
-                    <div className="login-card shadow">
+            {/* ══ RIGHT — Form Panel ══ */}
+            <div className="form-section">
+                <div className="login-card">
 
-                        <h3 className="fw-bold mb-3">Welcome Back</h3>
-                        <p className="text-muted mb-4">
-                            Please enter your details to continue shopping
-                        </p>
+                    <div className="login-card-icon">
+                        <i className="bi bi-person-fill"></i>
+                    </div>
 
+                    <h3 className="login-title">Welcome Back</h3>
+                    <p className="login-sub">
+                        Enter your credentials to access your account and continue shopping.
+                    </p>
 
-                        <div className="mb-3">
+                    {/* Email */}
+                    <div className="field-group">
+                        <label className="field-label">Email Address</label>
+                        <div className="field-wrap">
+                            <i className="bi bi-envelope field-icon"></i>
                             <input
                                 type="email"
-                                className="form-control"
-                                placeholder="Email Address"
-                                onChange={(event) => {
-                                    Setloginmail(event.target.value)
-                                }}
-                                required
+                                className="field-input"
+                                placeholder="you@email.com"
+                                onChange={(e) => Setloginmail(e.target.value)}
                             />
                         </div>
+                    </div>
 
-                        <div className="mb-2">
-                            <input
-                                type="password"
-                                className="form-control"
-                                placeholder="Password"
-                                onChange={(event) => {
-                                    Setloginpassword(event.target.value)
-                                }}
-                                required
-                            />
-                        </div>
-
-                        {/* Forgot Password */}
-                        <div className="text-end mb-3">
-                            <Link to="/forgetpassword" className="trovo-link small">
+                    {/* Password */}
+                    <div className="field-group">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                            <label className="field-label" style={{ margin: 0 }}>Password</label>
+                            <Link to="/forgetpassword" className="forgot-link">
                                 Forgot Password?
                             </Link>
                         </div>
-
-                        <button type="submit" className="btn btn-trovo w-100 mb-3" onClick={() => {
-                            Verifyuser(loginmail, loginpassword, navigate)
-                        }}>
-                            Login
-                        </button>
-
-                        <p className="text-center small">
-                            Create an account?{" "}
-                            <Link to="/signup" className="trovo-link">
-                                Signup
-                            </Link>
-                        </p>
+                        <div className="field-wrap">
+                            <i className="bi bi-lock field-icon"></i>
+                            <input
+                                type="password"
+                                className="field-input"
+                                placeholder="Enter your password"
+                                onChange={(e) => Setloginpassword(e.target.value)}
+                            />
+                        </div>
                     </div>
-                </div>
 
+                    {/* Submit */}
+                    <button
+                        className="btn-trovo"
+                        onClick={() => Verifyuser(loginmail, loginpassword, navigate)}
+                    >
+                        <i className="bi bi-box-arrow-in-right"></i>
+                        Sign In
+                    </button>
+
+                    <p className="signup-prompt">
+                        Don't have an account?{" "}
+                        <Link to="/signup" className="trovo-link">Create one</Link>
+                    </p>
+
+                </div>
             </div>
+
         </div>
     );
 };

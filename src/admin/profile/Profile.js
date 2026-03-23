@@ -6,95 +6,101 @@ import { Sidebar } from "../sidebar/Sidebar";
 import { maincontext } from "../../App";
 import { useParams } from "react-router-dom";
 import { Getmyprofile } from "../../function/Getmyprofile";
-import '../profile/Profile.css'
+import '../profile/Profile.css';
 import { Updateprofile } from "../../function/Updateprofile";
-import { Closetoast } from "../../function/Closetoast";
 import { IMAGES_URL } from "../../axios/Imageurl";
 import { Adminauth } from "../../function/Adminauth";
 
 export const Profile = () => {
-    const {
-        userprofile,
-        Setuserprofile
-    } = useContext(maincontext);
+    const { userprofile, Setuserprofile } = useContext(maincontext);
     const { id } = useParams();
+    const [preview, setPreview] = useState(null);
 
     useEffect(() => {
         const loadProfile = async () => {
             const isAdmin = await Adminauth();
-            if (!isAdmin) return; // stop if not admin
+            if (!isAdmin) return;
             await Getmyprofile(id, Setuserprofile);
         };
-
         loadProfile();
     }, [id]);
 
-    // Internal state for image preview in modal
-    const [preview, setPreview] = useState(null);
+    if (!userprofile) return (
+        <div className="profile-loading">
+            <div className="profile-spinner"></div>
+            <p>Loading Profile…</p>
+        </div>
+    );
 
-    // Guard clause to prevent crashing while data is fetching
-    if (!userprofile) return <div className="text-center mt-5 p-5">Loading Profile...</div>;
+    const avatarSrc = preview || `${IMAGES_URL}/${userprofile.profileimage}`;
 
     return (
-        <div className="container-fluid p-0">
-            <div className="d-flex text-dark">
+        <div className="container-fluid p-0 admin-profile-page">
+            <div className="d-flex">
                 <Sidebar />
 
-                <div className="flex-grow-1 bg-light min-vh-100">
-                    {/* Top Navbar */}
-                    <nav className="navbar navbar-white bg-white border-bottom px-4 py-3 sticky-top shadow-sm text-dark">
+                <div className="flex-grow-1">
+
+                    {/* ── Top Navbar ── */}
+                    <nav className="navbar admin-topbar">
                         <div className="container-fluid p-0">
-                            <h5 className="fw-bold m-0"><i className="bi bi-person-circle me-2 text-primary"></i>My Account</h5>
+                            <h5 className="admin-topbar-title">
+                                <i className="bi bi-person-circle"></i> My Account
+                            </h5>
                             <button
-                                className="btn btn-primary btn-sm rounded-pill px-4 shadow-sm fw-bold ms-auto"
+                                className="edit-profile-btn ms-auto"
                                 data-bs-toggle="modal"
                                 data-bs-target="#editProfileModal"
                             >
-                                <i className="bi bi-pencil-square me-2"></i>Edit Profile
+                                <i className="bi bi-pencil-fill"></i> Edit Profile
                             </button>
                         </div>
                     </nav>
 
                     <div className="p-4">
                         <div className="row justify-content-center">
-                            <div className="col-lg-8">
-                                <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
-                                    <div className="bg-primary bg-gradient" style={{ height: '120px' }}></div>
+                            <div className="col-lg-7 col-xl-6">
 
-                                    <div className="card-body p-4 pt-0">
-                                        <div className="text-center" style={{ marginTop: '-60px' }}>
-                                            <img
-                                                src={userprofile.profileimage ? `${IMAGES_URL}/${userprofile.profileimage}` : "https://ui-avatars.com"}
-                                                className="rounded-circle border border-4 border-white shadow mb-3"
-                                                width="120" height="120" alt="Admin"
-                                                style={{ objectFit: 'contain' }}
-                                            />
-                                            <h4 className="fw-bold mb-1 text-dark">{userprofile.name}</h4>
-                                            <p className="text-muted small">Super Administrator</p>
-                                            <span className="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">
-                                                ● <span className="text-capitalize">{userprofile.status}</span> Account
-                                            </span>
+                                <div className="profile-card">
+
+                                    {/* Banner */}
+                                    <div className="profile-banner">
+                                        <div className="banner-orb"></div>
+                                    </div>
+
+                                    {/* Avatar + name */}
+                                    <div className="profile-avatar-section">
+                                        <div className="profile-avatar-ring">
+                                            <img src={avatarSrc} alt={userprofile.name} />
                                         </div>
+                                        <h4 className="profile-name">{userprofile.name}</h4>
+                                        <p className="profile-role">Super Administrator</p>
+                                        <span className="profile-status-badge">
+                                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'currentColor' }}></span>
+                                            {userprofile.status} Account
+                                        </span>
+                                    </div>
 
-                                        <div className="row g-4 mt-4 border-top pt-4 text-dark">
-                                            <div className="col-md-6">
-                                                <label className="text-muted small fw-bold text-uppercase d-block mb-1">Full Name</label>
-                                                <p className="fw-bold fs-6">{userprofile.name}</p>
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="text-muted small fw-bold text-uppercase d-block mb-1">Email Address</label>
-                                                <p className="fw-bold fs-6">{userprofile.email}</p>
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="text-muted small fw-bold text-uppercase d-block mb-1">Mobile Number</label>
-                                                <p className="fw-bold fs-6">{userprofile.mobilenumber || "N/A"}</p>
-                                            </div>
-                                            <div className="col-md-6">
-                                                <label className="text-muted small fw-bold text-uppercase d-block mb-1">Office Address</label>
-                                                <p className="fw-bold fs-6">{userprofile.address || "No address added"}</p>
-                                            </div>
+                                    {/* Info grid */}
+                                    <div className="profile-info-grid">
+                                        <div className="profile-info-item">
+                                            <span className="info-label">Full Name</span>
+                                            <span className="info-value">{userprofile.name}</span>
+                                        </div>
+                                        <div className="profile-info-item">
+                                            <span className="info-label">Email Address</span>
+                                            <span className="info-value">{userprofile.email}</span>
+                                        </div>
+                                        <div className="profile-info-item">
+                                            <span className="info-label">Mobile Number</span>
+                                            <span className="info-value">{userprofile.mobilenumber || '—'}</span>
+                                        </div>
+                                        <div className="profile-info-item">
+                                            <span className="info-label">Office Address</span>
+                                            <span className="info-value">{userprofile.address || '—'}</span>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -102,39 +108,29 @@ export const Profile = () => {
                 </div>
             </div>
 
-            {/* --- Edit Profile Modal --- */}
-            <div className="modal fade text-dark" id="editProfileModal" tabIndex="-1" aria-hidden="true">
+            {/* ══ Edit Profile Modal ══ */}
+            <div className="modal fade admin-modal" id="editProfileModal" tabIndex="-1" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content border-0 shadow rounded-4">
-                        <div className="modal-header border-bottom-0 pt-4 px-4">
-                            <h5 className="modal-title fw-bold">Update Profile</h5>
-                            <button type="button" className="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                    <div className="modal-content">
+
+                        <div className="modal-header">
+                            <h5 className="modal-title">Update Profile</h5>
+                            <button className="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <div className="modal-body px-4 pb-4">
-                            <div className="mb-3">
-                                <label className="form-label small fw-bold text-muted">Full Name</label>
-                                <input type="text" className="form-control bg-light border-0 py-2 shadow-none rounded-3"
-                                    value={userprofile.name} onChange={(e) => Setuserprofile({ ...userprofile, name: e.target.value })} />
-                            </div>
-                            <div className="mb-3">
-                                <label className="form-label small fw-bold text-muted">Email</label>
-                                <input type="text" className="form-control bg-light border-0 py-2 shadow-none rounded-3"
-                                    value={userprofile.email} onChange={(e) => Setuserprofile({ ...userprofile, email: e.target.value })} />
-                            </div>
-                            <div className="mb-3 text-center">
-                                <label className="form-label d-block small fw-bold text-muted text-start">Profile Image</label>
-                                <div className="position-relative d-inline-block">
-                                    <img
-                                        src={preview ? preview : `${IMAGES_URL}/${userprofile.profileimage}`}
-                                        className="rounded-circle border border-2 border-primary p-1 shadow-sm mb-2"
-                                        width="100" height="100" alt="Preview"
-                                        style={{ objectFit: 'contain' }}
-                                    />
-                                    <label htmlFor="fileInput" className="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-1 cursor-pointer shadow">
-                                        <i className="bi bi-camera-fill small"></i>
+
+                        <div className="modal-body">
+
+                            {/* Avatar upload */}
+                            <div className="avatar-upload-wrap mb-4">
+                                <div className="avatar-upload-ring">
+                                    <img src={avatarSrc} alt="Preview" />
+                                    <label htmlFor="fileInput" className="avatar-cam-btn">
+                                        <i className="bi bi-camera-fill"></i>
                                     </label>
                                 </div>
-                                <input type="file" id="fileInput" className="d-none" accept="image/*"
+                                <span className="avatar-upload-hint">Click camera to change photo</span>
+                                <input
+                                    type="file" id="fileInput" className="d-none" accept="image/*"
                                     onChange={(e) => {
                                         const file = e.target.files[0];
                                         Setuserprofile({ ...userprofile, newimage: file });
@@ -142,23 +138,46 @@ export const Profile = () => {
                                     }}
                                 />
                             </div>
+
                             <div className="mb-3">
-                                <label className="form-label small fw-bold text-muted">Mobile Number</label>
-                                <input type="text" className="form-control bg-light border-0 py-2 shadow-none rounded-3"
-                                    value={userprofile.mobilenumber || ""} onChange={(e) => Setuserprofile({ ...userprofile, mobilenumber: e.target.value })} />
+                                <label className="modal-field-label">Full Name</label>
+                                <input
+                                    type="text" className="modal-field-input"
+                                    value={userprofile.name}
+                                    onChange={(e) => Setuserprofile({ ...userprofile, name: e.target.value })}
+                                />
                             </div>
                             <div className="mb-3">
-                                <label className="form-label small fw-bold text-muted">Office Address</label>
-                                <textarea className="form-control bg-light border-0 py-2 shadow-none rounded-3" rows="2"
-                                    value={userprofile.address || ""} onChange={(e) => Setuserprofile({ ...userprofile, address: e.target.value })}></textarea>
+                                <label className="modal-field-label">Email Address</label>
+                                <input
+                                    type="email" className="modal-field-input"
+                                    value={userprofile.email}
+                                    onChange={(e) => Setuserprofile({ ...userprofile, email: e.target.value })}
+                                />
                             </div>
-                            <div className="d-grid mt-4">
-                                <button type="button" className="btn btn-primary py-2 fw-bold rounded-3 shadow-sm" onClick={() => {
-                                    Updateprofile(userprofile);
-                                }}>
-                                    Save Changes
-                                </button>
+                            <div className="mb-3">
+                                <label className="modal-field-label">Mobile Number</label>
+                                <input
+                                    type="text" className="modal-field-input"
+                                    value={userprofile.mobilenumber || ''}
+                                    placeholder="+91 00000 00000"
+                                    onChange={(e) => Setuserprofile({ ...userprofile, mobilenumber: e.target.value })}
+                                />
                             </div>
+                            <div className="mb-4">
+                                <label className="modal-field-label">Office Address</label>
+                                <textarea
+                                    className="modal-field-textarea" rows="3"
+                                    value={userprofile.address || ''}
+                                    placeholder="Your office address…"
+                                    onChange={(e) => Setuserprofile({ ...userprofile, address: e.target.value })}
+                                ></textarea>
+                            </div>
+
+                            <button className="modal-save-btn" onClick={() => Updateprofile(userprofile)}>
+                                <i className="bi bi-check-lg"></i> Save Changes
+                            </button>
+
                         </div>
                     </div>
                 </div>

@@ -1,126 +1,250 @@
+/* ============================================================
+   TROVO — FOOTER
+   Aesthetic: Dark Luxury · Editorial · Modern
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+    --font-d: 'Syne', sans-serif;
+    --font-b: 'DM Sans', sans-serif;
+    --accent: #6c63ff;
+    --accent-2: #9b59f5;
+    --accent-light: rgba(108, 99, 255, 0.15);
+    --accent-glow: rgba(108, 99, 255, 0.3);
+    --cyan: #00d4ff;
+    --border: rgba(255, 255, 255, 0.07);
+    --muted: rgba(255, 255, 255, 0.4);
+    --r-md: 14px;
+    --r-lg: 20px;
+    --r-pill: 999px;
+    --t: 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Footer Wrapper ── */
 .trovo-footer {
-    background: #0f172a;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: #08080f;
+    font-family: var(--font-b);
+    position: relative;
+    overflow: hidden;
 }
 
-.fw-black {
-    font-weight: 900;
-    letter-spacing: -2px;
+/* Subtle top noise / grid overlay */
+.trovo-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--cyan), transparent);
+    opacity: 0.5;
 }
 
-.footer-label {
-    color: #fff;
-    font-size: 0.7rem;
+/* ── Brand Block ── */
+.brand-block {
+    max-width: 340px;
+}
+
+.brand-logo {
+    font-family: var(--font-d);
+    font-size: 2rem;
     font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 2.5px;
-    margin-bottom: 2rem;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin: 0;
+    line-height: 1;
+}
+
+.brand-logo .dot {
+    color: var(--accent);
 }
 
 .footer-text {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    line-height: 1.8;
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.75;
+    font-weight: 300;
+    margin: 0;
 }
 
-/* Links */
-.menu-links li {
-    margin-bottom: 0.8rem;
+/* Social icons */
+.social-stack {
+    display: flex;
+    gap: 10px;
 }
 
-.menu-links a {
-    color: #94a3b8;
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: 0.3s;
-}
-
-.menu-links a:hover {
-    color: #22d3ee;
-    padding-left: 5px;
-}
-
-/* Social */
 .social-link {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    color: #94a3b8;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.04);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: 0.3s;
+    color: var(--muted);
+    font-size: 0.95rem;
     text-decoration: none;
+    transition: all var(--t);
 }
 
 .social-link:hover {
-    background: #22d3ee;
-    color: #0f172a;
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(34, 211, 238, 0.2);
+    color: #fff;
+    background: var(--accent-light);
+    border-color: rgba(108, 99, 255, 0.4);
+    box-shadow: 0 0 14px var(--accent-glow);
+    transform: translateY(-2px);
 }
 
-/* Newsletter */
+/* ── Footer Columns ── */
+.footer-label {
+    font-family: var(--font-d);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+    display: block;
+}
+
+.menu-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.menu-links li {
+    margin-bottom: 10px;
+}
+
+.menu-links a {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color var(--t), padding-left var(--t);
+    display: inline-block;
+}
+
+.menu-links a:hover {
+    color: #fff;
+    padding-left: 5px;
+}
+
+/* ── Newsletter Card ── */
 .newsletter-card {
-    background: rgba(255, 255, 255, 0.02);
-    padding: 2rem;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 28px;
 }
 
 .newsletter-input-group {
     display: flex;
-    background: #1e293b;
-    padding: 5px;
-    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--r-pill);
+    overflow: hidden;
+    transition: border-color var(--t), box-shadow var(--t);
+}
+
+.newsletter-input-group:focus-within {
+    border-color: rgba(108, 99, 255, 0.5);
+    box-shadow: 0 0 0 3px var(--accent-light);
 }
 
 .newsletter-control {
+    flex: 1;
     background: transparent;
     border: none;
-    color: #fff;
-    padding: 10px 15px;
-    flex-grow: 1;
-    font-size: 0.85rem;
     outline: none;
+    padding: 13px 18px;
+    font-family: var(--font-b);
+    font-size: 0.85rem;
+    color: #fff;
+}
+
+.newsletter-control::placeholder {
+    color: rgba(255, 255, 255, 0.25);
 }
 
 .newsletter-btn {
-    background: #22d3ee;
-    color: #0f172a;
+    font-family: var(--font-d);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
     border: none;
-    padding: 0 20px;
-    border-radius: 8px;
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    transition: 0.3s;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 0 var(--r-pill) var(--r-pill) 0;
+    transition: filter var(--t), transform var(--t);
+    white-space: nowrap;
 }
 
 .newsletter-btn:hover {
-    background: #fff;
+    filter: brightness(1.15);
 }
 
-/* Bottom Bar */
+/* ── Bottom Bar ── */
 .footer-sub-bar {
-    background: #0a0f1d;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid var(--border);
 }
 
 .copyright-text {
-    color: #475569;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }
 
+.copyright-text span {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 600;
+}
+
+/* Payment icons */
 .payment-stack {
-    color: #334155;
-    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.payment-stack i {
+    font-size: 1.4rem;
+    color: rgba(255, 255, 255, 0.2);
+    transition: color var(--t);
 }
 
 .payment-stack i:hover {
-    color: #fff;
-    transition: 0.3s;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ── Divider between main and sub ── */
+.footer-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 767px) {
+    .brand-block {
+        max-width: 100%;
+    }
+
+    .newsletter-card {
+        padding: 20px;
+    }
+
+    .brand-logo {
+        font-size: 1.6rem;
+    }
 }

@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Navbar } from '../navbar/Navbar';
 import '../viewproduct/Viewproduct.css';
 
-// Context & Functions
 import { maincontext } from '../../App';
 import { Getparticularproduct } from '../../function/Getparticularproduct';
 import { Getcartdata } from '../../function/Getcartdata';
@@ -15,9 +14,10 @@ import { Removefromwishlist } from '../../function/Removefromwishlist';
 import { Updatecartquantity } from '../../function/Updatecartquantity';
 import { IMAGES_URL } from '../../axios/Imageurl';
 import { Userauth } from '../../function/Userauth';
+import { Opentoast } from '../../function/Opentoast';
+import { Closetoast } from '../../function/Closetoast';
 
 export const Viewproduct = () => {
-
     const { id } = useParams();
     const [quantity, setQuantity] = useState(1);
 
@@ -27,316 +27,264 @@ export const Viewproduct = () => {
         cartids, Setcartids,
         cartdata, Setcartdata,
         wishlistids, Setwishlistids, Setwishlistdata,
-        Settoastmessage, Setshowtoast, Settoastcolor
+        showtoast, Setshowtoast,
+        toastcolor, Settoastcolor,
+        toastmessage, Settoastmessage,
     } = useContext(maincontext);
 
-    // =========================
-    // FETCH DATA
-    // =========================
     useEffect(() => {
         const loadData = async () => {
-            // 1️⃣ Check if user is authenticated
             const isUser = await Userauth();
-            if (!isUser) return; // stop if not logged in
-
-            // 2️⃣ Fetch the particular product
+            if (!isUser) return;
             await Getparticularproduct(id, Setparticularproduct);
-
-            // 3️⃣ If user is logged in, fetch cart and wishlist
             if (loginuser?.user_id) {
                 await Getcartdata(Setcartids, Setcartdata);
                 await Getwishlistdata(Setwishlistids, Setwishlistdata);
             }
         };
-
         loadData();
     }, [id, loginuser?.user_id]);
 
     const prodId = particularproduct?.product_id;
-
     const isInCart = cartids.includes(prodId);
     const isInWishlist = wishlistids.includes(prodId);
 
-    // =========================
-    // AUTO SYNC QUANTITY
-    // =========================
+    /* sync qty from cart */
     useEffect(() => {
         if (!prodId) return;
-
-        const existingItem = cartdata.find(
-            item => item.product_id === prodId
-        );
-
-        if (existingItem) {
-            setQuantity(existingItem.quantity || 1);
-        } else {
-            setQuantity(1);
-        }
-
+        const existing = cartdata.find(i => i.product_id === prodId);
+        setQuantity(existing ? existing.quantity || 1 : 1);
     }, [cartdata, prodId]);
 
-    // =========================
-    // CART TOGGLE
-    // =========================
+    /* stock helpers */
+    const stock = particularproduct?.stock ?? 0;
+    const stockClass = stock === 0 ? 'out' : stock <= 5 ? 'low' : '';
+    const stockLabel = stock === 0 ? 'Out of Stock' : stock <= 5 ? `Only ${stock} left` : 'In Stock';
+
+    /* discount */
+    const origPrice = Number(particularproduct?.original_price || 0);
+    const curPrice = Number(particularproduct?.price || 0);
+    const discount = origPrice > curPrice
+        ? Math.round(((origPrice - curPrice) / origPrice) * 100)
+        : 0;
+
+    /* ── Cart toggle ── */
     const handleCartToggle = () => {
-
         if (!loginuser?.user_id) {
-            Settoastcolor("danger");
-            Settoastmessage("Please login to manage your cart");
-            Setshowtoast(true);
-            return;
+            Settoastcolor("danger"); Settoastmessage("Please login to manage your cart"); Setshowtoast(true); return;
         }
-
         if (!prodId) return;
-
         if (isInCart) {
-
-            // REMOVE
-            Setcartids(prev => prev.filter(id => id !== prodId));
-            Setcartdata(prev => prev.filter(item => item.product_id !== prodId));
-
-            Removefromcart(
-                loginuser.user_id,
-                prodId,
-                Setcartids,
-                Settoastmessage,
-                Setshowtoast,
-                Settoastcolor,
-                Setcartdata
-            );
-
+            Setcartids(prev => prev.filter(i => i !== prodId));
+            Setcartdata(prev => prev.filter(i => i.product_id !== prodId));
+            Removefromcart(loginuser.user_id, prodId, Setcartids, Settoastmessage, Setshowtoast, Settoastcolor, Setcartdata);
         } else {
-
-            // ADD WITH QUANTITY
             Setcartids(prev => [...prev, prodId]);
-
-            Setcartdata(prev => [
-                ...prev,
-                { ...particularproduct, quantity }
-            ]);
-
-            Addtocart(
-                loginuser.user_id,
-                prodId,
-                quantity,
-                Setcartids,
-                Setcartdata,
-                Settoastmessage,
-                Setshowtoast,
-                Settoastcolor
-            );
+            Setcartdata(prev => [...prev, { ...particularproduct, quantity }]);
+            Addtocart(loginuser.user_id, prodId, quantity, Setcartids, Setcartdata, Settoastmessage, Setshowtoast, Settoastcolor);
         }
     };
 
-    // =========================
-    // WISHLIST TOGGLE
-    // =========================
+    /* ── Wishlist toggle ── */
     const handleWishlistToggle = () => {
-
         if (!loginuser?.user_id) {
-            Settoastcolor("danger");
-            Settoastmessage("Please login to manage your wishlist");
-            Setshowtoast(true);
-            return;
+            Settoastcolor("danger"); Settoastmessage("Please login to manage your wishlist"); Setshowtoast(true); return;
         }
-
         if (!prodId) return;
-
         if (isInWishlist) {
-
-            Setwishlistids(prev => prev.filter(id => id !== prodId));
-            Setwishlistdata(prev => prev.filter(item => item.product_id !== prodId));
-
-            Removefromwishlist(
-                loginuser.user_id,
-                prodId,
-                Setwishlistids,
-                Settoastmessage,
-                Setshowtoast,
-                Settoastcolor
-            );
-
+            Setwishlistids(prev => prev.filter(i => i !== prodId));
+            Setwishlistdata(prev => prev.filter(i => i.product_id !== prodId));
+            Removefromwishlist(loginuser.user_id, prodId, Setwishlistids, Settoastmessage, Setshowtoast, Settoastcolor);
         } else {
-
             Setwishlistids(prev => [...prev, prodId]);
+            Addtowishlist(loginuser.user_id, prodId, Setwishlistids, Settoastmessage, Setshowtoast, Settoastcolor);
+        }
+    };
 
-            Addtowishlist(
-                loginuser.user_id,
-                prodId,
-                Setwishlistids,
-                Settoastmessage,
-                Setshowtoast,
-                Settoastcolor
-            );
+    /* ── Qty change ── */
+    const changeQty = (delta) => {
+        const newQty = quantity + delta;
+        if (newQty < 1) return;
+        if (newQty > stock) {
+            Settoastcolor("danger"); Settoastmessage(`Only ${stock} units available`); Opentoast(Setshowtoast); return;
+        }
+        setQuantity(newQty);
+        if (isInCart) {
+            Setcartdata(prev => prev.map(i => i.product_id === prodId ? { ...i, quantity: newQty } : i));
+            Updatecartquantity(loginuser.user_id, prodId, newQty, Settoastmessage, Setshowtoast, Settoastcolor);
         }
     };
 
     return (
-        <div className="bg-light min-vh-100">
+        <div className="viewproduct-page">
             <Navbar />
 
-            <div className="container py-4">
-                <div className="row g-4">
+            <div className="container py-4 mt-2">
+                <div className="row g-4 g-lg-5 align-items-start">
 
-                    {/* LEFT */}
-                    <div className="col-lg-7">
-                        <div className="sticky-top" style={{ top: '100px' }}>
-                            <div className="card border-0 shadow-sm rounded-4">
+                    {/* ══ LEFT — Image ══ */}
+                    <div className="col-lg-6 fade-left">
+                        <div className="product-img-card">
+                            <div className="product-img-wrap">
                                 <img
                                     src={`${IMAGES_URL}/${particularproduct?.image}`}
-                                    className="card-img-top rounded-4"
                                     alt={particularproduct?.product_name}
+                                    loading="lazy"
                                 />
+                            </div>
+                            <div className="img-tag-strip">
+                                <span className="img-tag purple">
+                                    <i className="bi bi-patch-check-fill me-1"></i> Authentic
+                                </span>
+                                <span className="img-tag green">
+                                    <i className="bi bi-truck me-1"></i> Free Delivery
+                                </span>
+                                {discount > 0 && (
+                                    <span className="img-tag gold">
+                                        <i className="bi bi-tag-fill me-1"></i> {discount}% Off
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>
 
-                    {/* RIGHT */}
-                    <div className="col-lg-5">
-                        <div className="ps-lg-3">
+                    {/* ══ RIGHT — Info ══ */}
+                    <div className="col-lg-6 fade-right">
+                        <div className="product-info-panel">
 
-                            <h2 className="fw-bold mb-2">
-                                {particularproduct?.product_name}
-                            </h2>
+                            {/* Breadcrumb */}
+                            <div className="product-breadcrumb">
+                                <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>Home</Link>
+                                <i className="bi bi-chevron-right"></i>
+                                <Link to="/shop" style={{ color: 'inherit', textDecoration: 'none' }}>Shop</Link>
+                                <i className="bi bi-chevron-right"></i>
+                                <span>{particularproduct?.category_name}</span>
+                            </div>
 
-                            <h3 className="text-primary fw-bold mb-3">
-                                ₹{particularproduct?.price}
-                            </h3>
+                            {/* Category */}
+                            <div className="product-cat-pill">
+                                <i className="bi bi-grid-3x3-gap"></i>
+                                {particularproduct?.category_name}
+                            </div>
 
-                            <p className="text-muted mb-4">
-                                {particularproduct?.description}
-                            </p>
+                            {/* Name */}
+                            <h2 className="product-name">{particularproduct?.product_name}</h2>
 
-                            {/* ACTIONS */}
-                            <div className="d-flex gap-2 mb-4">
+                            {/* Rating */}
+                            <div className="product-rating">
+                                <div className="stars">
+                                    {[...Array(4)].map((_, i) => <i key={i} className="bi bi-star-fill"></i>)}
+                                    <i className="bi bi-star-half"></i>
+                                </div>
+                                <span className="rating-text">4.9 · 128 reviews</span>
+                            </div>
 
-                                {/* QUANTITY */}
-                                <div className="input-group" style={{ width: "120px" }}>
+                            {/* Price */}
+                            <div className="product-price-row">
+                                <span className="product-price">₹{particularproduct?.price}</span>
+                                {origPrice > curPrice && (
+                                    <span className="product-original-price">₹{origPrice}</span>
+                                )}
+                                {discount > 0 && (
+                                    <span className="product-discount">{discount}% off</span>
+                                )}
+                            </div>
 
-                                    <button
-                                        className="btn btn-outline-secondary"
-                                        onClick={() => {
-                                            const newQty = Math.max(1, quantity - 1);
-                                            setQuantity(newQty);
+                            {/* Description */}
+                            <p className="product-desc">{particularproduct?.description}</p>
 
-                                            if (isInCart) {
-                                                Setcartdata(prev =>
-                                                    prev.map(item =>
-                                                        item.product_id === prodId
-                                                            ? { ...item, quantity: newQty }
-                                                            : item
-                                                    )
-                                                );
+                            {/* Stock */}
+                            <div className="stock-row">
+                                <div className={`stock-dot ${stockClass}`}></div>
+                                <span className={`stock-label ${stockClass}`}>{stockLabel}</span>
+                            </div>
 
-                                                Updatecartquantity(
-                                                    loginuser.user_id,
-                                                    prodId,
-                                                    newQty,
-                                                    Settoastmessage,
-                                                    Setshowtoast,
-                                                    Settoastcolor
-                                                );
-                                            }
-                                        }}
-                                    >-</button>
-
-                                    <input
-                                        className="form-control text-center"
-                                        value={quantity}
-                                        readOnly
-                                    />
-
-                                    <button
-                                        className="btn btn-outline-secondary"
-                                        onClick={() => {
-                                            const newQty = quantity + 1;
-                                            setQuantity(newQty);
-
-                                            if (isInCart) {
-                                                Setcartdata(prev =>
-                                                    prev.map(item =>
-                                                        item.product_id === prodId
-                                                            ? { ...item, quantity: newQty }
-                                                            : item
-                                                    )
-                                                );
-
-                                                Updatecartquantity(
-                                                    loginuser.user_id,
-                                                    prodId,
-                                                    newQty,
-                                                    Settoastmessage,
-                                                    Setshowtoast,
-                                                    Settoastcolor
-                                                );
-                                            }
-                                        }}
-                                    >+</button>
-
+                            {/* Actions */}
+                            <div className="actions-row">
+                                {/* Quantity */}
+                                <div className="qty-control">
+                                    <button className="qty-btn" onClick={() => changeQty(-1)} disabled={quantity <= 1}>
+                                        <i className="bi bi-dash"></i>
+                                    </button>
+                                    <span className="qty-display">{quantity}</span>
+                                    <button className="qty-btn" onClick={() => changeQty(+1)}>
+                                        <i className="bi bi-plus"></i>
+                                    </button>
                                 </div>
 
-                                {/* CART */}
+                                {/* Cart */}
                                 <button
-                                    className={`btn flex-grow-1 fw-bold ${isInCart ? 'btn-danger' : 'btn-primary'}`}
+                                    className={`cart-btn ${isInCart ? 'remove' : 'add'}`}
                                     onClick={handleCartToggle}
+                                    disabled={stock === 0}
                                 >
-                                    {isInCart ? "Remove From Cart" : "Add to Cart"}
+                                    <i className={`bi ${isInCart ? 'bi-cart-dash' : 'bi-cart-plus'}`}></i>
+                                    {isInCart ? 'Remove from Cart' : 'Add to Cart'}
                                 </button>
 
-                                {/* WISHLIST */}
+                                {/* Wishlist */}
                                 <button
-                                    className={`btn ${isInWishlist ? 'btn-danger' : 'btn-outline-dark'}`}
+                                    className={`wish-btn ${isInWishlist ? 'active' : ''}`}
                                     onClick={handleWishlistToggle}
+                                    title={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
                                 >
                                     <i className={`bi ${isInWishlist ? 'bi-heart-fill' : 'bi-heart'}`}></i>
                                 </button>
-
                             </div>
 
-                            {/* ✅ EXTRA CONTENT SECTION */}
-                            <div className="mt-4">
+                            {/* ── Info Boxes ── */}
 
-                                {/* DELIVERY */}
-                                <div className="border rounded-3 p-3 mb-3 bg-white">
-                                    <h6 className="fw-bold mb-2">
-                                        <i className="bi bi-truck me-2 text-primary"></i>
-                                        Delivery Information
-                                    </h6>
-                                    <p className="text-muted small mb-1">
-                                        Free delivery available
-                                    </p>
-                                    <p className="text-muted small mb-0">
-                                        Delivery in 3-5 days
-                                    </p>
+                            {/* Delivery */}
+                            <div className="info-box">
+                                <div className="info-box-title">
+                                    <i className="bi bi-truck" style={{ color: 'var(--accent)' }}></i>
+                                    Delivery Information
                                 </div>
+                                <div className="info-box-body">
+                                    <p><i className="bi bi-check-circle-fill me-1" style={{ color: 'var(--green)' }}></i> Free delivery on this order</p>
+                                    <p><i className="bi bi-clock me-1" style={{ color: 'var(--muted)' }}></i> Estimated delivery in 3–5 business days</p>
+                                </div>
+                            </div>
 
-                                {/* OFFERS */}
-                                <div className="border rounded-3 p-3 mb-3 bg-white">
-                                    <h6 className="fw-bold mb-2">
-                                        <i className="bi bi-tag-fill me-2 text-success"></i>
-                                        Offers
-                                    </h6>
-                                    <ul className="small text-muted mb-0 ps-3">
+                            {/* Offers */}
+                            <div className="info-box">
+                                <div className="info-box-title">
+                                    <i className="bi bi-tag-fill" style={{ color: 'var(--green)' }}></i>
+                                    Available Offers
+                                </div>
+                                <div className="info-box-body">
+                                    <ul>
                                         <li>10% discount on prepaid orders</li>
                                         <li>Free shipping on all products</li>
+                                        <li>Easy 30-day returns, no questions asked</li>
                                     </ul>
                                 </div>
+                            </div>
 
-                                {/* DETAILS */}
-                                <div className="border rounded-3 p-3 bg-white">
-                                    <h6 className="fw-bold mb-2">
-                                        <i className="bi bi-info-circle me-2"></i>
-                                        Product Details
-                                    </h6>
-
-                                    <p className="small mb-1">
-                                        <strong>Brand:</strong> {particularproduct?.brand_name}
-                                    </p>
-                                    <p className="small mb-1">
-                                        <strong>Category:</strong> {particularproduct?.category_name}
-                                    </p>
+                            {/* Product Details */}
+                            <div className="info-box">
+                                <div className="info-box-title">
+                                    <i className="bi bi-info-circle" style={{ color: 'var(--muted)' }}></i>
+                                    Product Details
                                 </div>
-
+                                <div className="info-box-body">
+                                    <div className="info-detail-row">
+                                        <span>Brand</span>
+                                        <span className="info-detail-val">{particularproduct?.brand_name}</span>
+                                    </div>
+                                    <div className="info-detail-row">
+                                        <span>Category</span>
+                                        <span className="info-detail-val">{particularproduct?.category_name}</span>
+                                    </div>
+                                    <div className="info-detail-row">
+                                        <span>Stock</span>
+                                        <span className="info-detail-val">{stock} units</span>
+                                    </div>
+                                    <div className="info-detail-row">
+                                        <span>SKU</span>
+                                        <span className="info-detail-val">#{particularproduct?.product_id}</span>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -344,6 +292,27 @@ export const Viewproduct = () => {
 
                 </div>
             </div>
+
+            {/* Toast */}
+            {showtoast && (
+                <div className="toast-container position-fixed bottom-0 end-0 p-3" style={{ zIndex: 9999 }}>
+                    <div className={`trovo-toast toast show align-items-center text-white bg-${toastcolor} border-0`}>
+                        <div className="d-flex">
+                            <div className="toast-body fw-bold">
+                                {toastcolor === "success"
+                                    ? <i className="bi bi-check-circle-fill me-2"></i>
+                                    : <i className="bi bi-exclamation-triangle-fill me-2"></i>}
+                                {toastmessage}
+                            </div>
+                            <button
+                                type="button"
+                                className="btn-close btn-close-white me-2 m-auto"
+                                onClick={() => Closetoast(Setshowtoast)}
+                            ></button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

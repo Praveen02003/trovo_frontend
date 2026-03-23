@@ -1,6 +1,5 @@
 import { createContext, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
 import { Forget } from './forget/Forget.js';
 import { Login } from './login/Login.js';
 import { Signup } from './signup/Signup.js';

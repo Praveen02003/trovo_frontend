@@ -5,6 +5,22 @@ import Swal from "sweetalert2";
 import api from "../../axios/Axios";
 import { IMAGES_URL } from "../../axios/Imageurl";
 import { Adminauth } from "../../function/Adminauth";
+import '../vieweachorder/Vieweachorder.css';
+
+/* Status pill class */
+const spClass = (s) => {
+    switch ((s || '').toLowerCase()) {
+        case 'delivered': case 'completed': return 'vsp-delivered';
+        case 'pending': return 'vsp-pending';
+        case 'shipped': return 'vsp-shipped';
+        case 'processed': return 'vsp-processed';
+        case 'cancelled': return 'vsp-cancelled';
+        default: return 'vsp-default';
+    }
+};
+
+const fmt = (n) => parseFloat(n || 0).toLocaleString('en-IN');
+
 export const Vieweachorder = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -12,143 +28,226 @@ export const Vieweachorder = () => {
     const [status, setStatus] = useState("");
 
     useEffect(() => {
-        const loadOrder = async () => {
+        const load = async () => {
             const isAdmin = await Adminauth();
-            if (!isAdmin) return; // stop if not admin
-            await fetchOrder(); // wait for async fetch to complete
+            if (!isAdmin) return;
+            fetchOrder();
         };
-
-        loadOrder();
+        load();
     }, [id]);
-    const fetchOrder = async () => {
+
+    const fetchOrder = () => {
         api.get(`/getorder/${id}`)
-            .then((res) => {
+            .then(res => {
                 setOrderDetails(res.data);
-                setStatus(res.data[0]?.order_status || res.data[0]?.status);
+                setStatus(res.data[0]?.order_status || res.data[0]?.status || '');
             })
-            .catch((err) => console.error(err));
+            .catch(console.error);
     };
 
     const handleStatusUpdate = (newStatus) => {
-        // We pass both ID and Status in the URL string
         api.get(`/updateorderstatus/${id}/${newStatus}`)
             .then(() => {
-                setStatus(newStatus); // Update local state for UI
+                setStatus(newStatus);
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Status Updated',
+                    icon: 'success', title: 'Status Updated',
                     text: `Order is now ${newStatus}`,
-                    timer: 1500,
-                    showConfirmButton: false
+                    timer: 1500, showConfirmButton: false,
                 });
             })
-            .catch(err => {
-                console.error("Update failed:", err);
-                Swal.fire({ icon: 'error', title: 'Error updating status' });
-            });
+            .catch(() => Swal.fire({ icon: 'error', title: 'Error updating status' }));
     };
 
+    if (!orderDetails || orderDetails.length === 0) return (
+        <div className="vieworder-loading">
+            <div className="vo-spinner"></div>
+            <p>Loading Order…</p>
+        </div>
+    );
 
-    if (!orderDetails || orderDetails.length === 0)
-        return <div className="p-5 text-center fw-bold text-primary">Loading...</div>;
-
-    const mainInfo = orderDetails[0];
+    const info = orderDetails[0];
+    const subtotal = orderDetails.reduce((a, i) => a + parseFloat(i.price || 0) * parseInt(i.quantity || 1), 0);
+    const tax = parseFloat(info.tax || 0);
 
     return (
-        <div className="d-flex" style={{ backgroundColor: "#F4F7FE", minHeight: "100vh", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-            <Sidebar />
-            <div className="flex-grow-1 p-4 p-md-5">
+        <div className="container-fluid p-0 vieworder-page">
+            <div className="d-flex">
+                <div className="sidebar-wrap"><Sidebar /></div>
 
-                <div className="d-flex justify-content-between align-items-center mb-4 d-print-none">
-                    <button onClick={() => navigate(-1)} className="btn btn-white shadow-sm border-0 rounded-3 px-3">
-                        <i className="bi bi-arrow-left me-2"></i>Back to List
-                    </button>
-                    <div className="d-flex gap-2">
-                        {/* Status Update Dropdown */}
-                        <div className="dropdown">
-                            <button className="btn btn-white shadow-sm border-0 dropdown-toggle fw-bold" type="button" data-bs-toggle="dropdown">
-                                Update Status: <span className="text-primary ms-1">{status}</span>
-                            </button>
-                            <ul className="dropdown-menu border-0 shadow-lg p-2 rounded-3">
-                                <li><button className="dropdown-item rounded-2" onClick={() => handleStatusUpdate('Processed')}>Processed</button></li>
-                                <li><button className="dropdown-item rounded-2" onClick={() => handleStatusUpdate('Shipped')}>Shipped</button></li>
-                                <li><button className="dropdown-item rounded-2 text-success" onClick={() => handleStatusUpdate('Delivered')}>Delivered</button></li>
-                                <li><button className="dropdown-item rounded-2 text-danger" onClick={() => handleStatusUpdate('Cancelled')}>Cancelled</button></li>
-                            </ul>
-                        </div>
-                        <button className="btn btn-primary shadow-sm rounded-3 px-4" onClick={() => window.print()}>
-                            <i className="bi bi-printer me-2"></i>Print
+                <div className="flex-grow-1">
+
+                    {/* ── Sticky Action Bar ── */}
+                    <div className="vo-action-bar d-print-none">
+                        <button className="vo-back-btn" onClick={() => navigate(-1)}>
+                            <i className="bi bi-arrow-left"></i> Back to Orders
                         </button>
-                    </div>
-                </div>
 
-                <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
-                    <div className="card-body p-5 bg-white">
-                        {/* Header Info */}
-                        <div className="row mb-5 border-bottom pb-4">
-                            <div className="col-md-6">
-                                <h6 className="text-uppercase text-muted small fw-bold tracking-wider mb-2">Customer Info</h6>
-                                <h4 className="fw-bold mb-1">{mainInfo.name || mainInfo.customer_name}</h4>
-                                <p className="text-muted small mb-0">ID: {mainInfo.user_id} | Order: #{mainInfo.order_id}</p>
-                            </div>
-                            <div className="col-md-6 text-md-end mt-4 mt-md-0">
-                                <h6 className="text-uppercase text-muted small fw-bold mb-2">Order Date</h6>
-                                <p className="fw-bold mb-0">{new Date(mainInfo.created_at).toDateString()}</p>
-                                <span className={`badge rounded-pill mt-2 px-3 py-2 ${status === 'Delivered' ? 'bg-success-subtle text-success' : 'bg-primary-subtle text-primary'}`}>
-                                    ● {status}
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Table */}
-                        <div className="table-responsive">
-                            <table className="table table-borderless align-middle">
-                                <thead className="text-muted small text-uppercase">
-                                    <tr className="border-bottom">
-                                        <th className="pb-3 ps-0">Product</th>
-                                        <th className="pb-3 text-center">Price</th>
-                                        <th className="pb-3 text-center">Qty</th>
-                                        <th className="pb-3 text-center">Tax</th>
-                                        <th className="pb-3 text-end pe-0">Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {orderDetails.map((item, idx) => (
-                                        <tr key={idx} className="border-bottom-subtle">
-                                            <td className="py-4 ps-0">
-                                                <div className="d-flex align-items-center">
-                                                    <img src={`${IMAGES_URL}/${item.image}`} className="rounded-3 me-3" style={{ width: "50px", height: "50px", objectFit: "cover" }} alt="" />
-                                                    <span className="fw-bold">{item.product_name}</span>
-                                                </div>
-                                            </td>
-                                            <td className="text-center">${item.price}</td>
-                                            <td className="text-center fw-semibold">{item.quantity}</td>
-                                            <td className="text-center text-muted">${item.tax}</td>
-                                            <td className="text-end pe-0 fw-bold">${parseFloat(mainInfo.total_amount).toLocaleString()}</td>
-                                        </tr>
+                        <div className="vo-actions">
+                            {/* Status dropdown */}
+                            <div className="dropdown">
+                                <button className="vo-status-btn dropdown-toggle" data-bs-toggle="dropdown">
+                                    Status <span className="vo-current-status">{status}</span>
+                                </button>
+                                <ul className="dropdown-menu vo-dropdown-menu">
+                                    {[
+                                        { label: 'Processed', cls: 'processed', si: 'si-processed' },
+                                        { label: 'Shipped', cls: 'shipped', si: 'si-shipped' },
+                                        { label: 'Delivered', cls: 'delivered', si: 'si-delivered' },
+                                        { label: 'Cancelled', cls: 'cancelled', si: 'si-cancelled' },
+                                    ].map(({ label, cls, si }) => (
+                                        <li key={label}>
+                                            <button className={`vo-dropdown-item ${cls}`} onClick={() => handleStatusUpdate(label)}>
+                                                <span className={`si ${si}`}></span> {label}
+                                            </button>
+                                        </li>
                                     ))}
-                                </tbody>
-                            </table>
+                                </ul>
+                            </div>
+
+                            <button className="vo-print-btn" onClick={() => window.print()}>
+                                <i className="bi bi-printer"></i> Print
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* ── Two-column layout ── */}
+                    <div className="vo-layout">
+
+                        {/* ════ LEFT ════ */}
+                        <div className="vo-left">
+
+                            {/* Info Card */}
+                            <div className="vo-info-card">
+
+                                {/* Dark header */}
+                                <div className="vo-info-header">
+                                    <div className="banner-orb"></div>
+                                    <div className="vo-customer-block">
+                                        <span className="vo-customer-label">Customer Info</span>
+                                        <h4 className="vo-customer-name">{info.name || info.customer_name}</h4>
+                                        <span className="vo-customer-sub">
+                                            User ID: {info.user_id} &nbsp;·&nbsp; Order&nbsp;
+                                            <strong style={{ color: 'rgba(255,255,255,.75)' }}>#{info.order_id}</strong>
+                                        </span>
+                                    </div>
+                                    <div className="vo-date-block">
+                                        <span className="vo-date-label">Order Date</span>
+                                        <span className="vo-date-val">
+                                            {new Date(info.created_at).toLocaleDateString('en-GB', {
+                                                day: 'numeric', month: 'long', year: 'numeric'
+                                            })}
+                                        </span>
+                                        <span className={`vo-status-pill ${spClass(status)}`}>
+                                            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'currentColor', display: 'inline-block' }}></span>
+                                            {status}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Table */}
+                                <div className="vo-items-body">
+                                    <div className="vo-table-head">
+                                        <span>Product</span>
+                                        <span>Price</span>
+                                        <span>Qty</span>
+                                        <span>Tax</span>
+                                        <span>Subtotal</span>
+                                    </div>
+
+                                    {orderDetails.map((item, idx) => (
+                                        <div key={idx} className="vo-item-row">
+                                            <div className="vo-item-product">
+                                                <img
+                                                    src={`${IMAGES_URL}/${item.image}`}
+                                                    alt={item.product_name}
+                                                    className="vo-item-img"
+                                                    loading="lazy"
+                                                />
+                                                <p className="vo-item-name">{item.product_name}</p>
+                                            </div>
+                                            <div className="vo-cell price">$ {item.price}</div>
+                                            <div className="vo-cell qty">
+                                                <span className="vo-qty-badge">{item.quantity}</span>
+                                            </div>
+                                            <div className="vo-cell">$ {item.tax}</div>
+                                            <div className="vo-cell total">
+                                                $ {fmt(parseFloat(item.price) * parseInt(item.quantity || 1))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Admin Notes */}
+                            <div className="vo-notes-card">
+                                <p className="vo-notes-title">
+                                    <i className="bi bi-sticky-fill"></i> Admin Notes
+                                </p>
+                                <p className="vo-notes-text">
+                                    Order status was updated to <strong>{status}</strong> on{' '}
+                                    {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}.
+                                    Please ensure tracking details are updated in the shipping log.
+                                </p>
+                            </div>
                         </div>
 
-                        {/* Footer Summary */}
-                        <div className="row mt-5">
-                            <div className="col-md-7">
-                                <div className="p-4 bg-light rounded-4">
-                                    <h6 className="fw-bold mb-2">Admin Notes</h6>
-                                    <p className="small text-muted mb-0">Order status was updated to <b>{status}</b> on {new Date().toLocaleDateString()}. Please ensure tracking details are updated in the shipping log.</p>
+                        {/* ════ RIGHT ════ */}
+                        <div className="vo-right">
+                            <div className="vo-summary-card">
+
+                                {/* Summary dark header */}
+                                <div className="vo-summary-header">
+                                    <h6 className="vo-summary-header-title">Order Summary</h6>
+                                    <span className="vo-summary-header-sub">#{info.order_id}</span>
                                 </div>
-                            </div>
-                            <div className="col-md-5 text-end">
-                                <div className="d-inline-block text-start w-75">
-                                    <div className="d-flex justify-content-between mb-2">
-                                        <span className="text-muted">Grand Total</span>
-                                        <h3 className="fw-bold text-primary mb-0">${parseFloat(mainInfo.total_amount).toLocaleString()}</h3>
+
+                                <div className="vo-summary-body">
+
+                                    {/* Rows */}
+                                    <div className="vo-sum-row">
+                                        <span>Subtotal</span>
+                                        <span className="sv">₹ {fmt(subtotal)}</span>
                                     </div>
-                                    <p className="small text-muted text-end">Inclusive of 3% VAT</p>
+                                    <div className="vo-sum-row">
+                                        <span>Tax (GST 3%)</span>
+                                        <span className="sv">₹ {fmt(tax)}</span>
+                                    </div>
+                                    <div className="vo-sum-row">
+                                        <span>Shipping</span>
+                                        <span className="free"><i className="bi bi-check-circle-fill me-1"></i>Free</span>
+                                    </div>
+
+                                    <hr className="vo-sum-divider" />
+
+                                    {/* Total */}
+                                    <div className="vo-total-box">
+                                        <span className="vo-total-label">Grand Total</span>
+                                        <span className="vo-total-val">₹ {fmt(info.total_amount)}</span>
+                                    </div>
+
+                                    {/* Quick status change */}
+                                    <span className="vo-sum-status-label">Update Status</span>
+                                    <div className="vo-status-grid">
+                                        {[
+                                            { label: 'Processed', cls: 'vsb-processed' },
+                                            { label: 'Shipped', cls: 'vsb-shipped' },
+                                            { label: 'Delivered', cls: 'vsb-delivered' },
+                                            { label: 'Cancelled', cls: 'vsb-cancelled' },
+                                        ].map(({ label, cls }) => (
+                                            <button
+                                                key={label}
+                                                className={`vo-mini-status-btn ${cls}`}
+                                                onClick={() => handleStatusUpdate(label)}
+                                            >
+                                                {label}
+                                            </button>
+                                        ))}
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
