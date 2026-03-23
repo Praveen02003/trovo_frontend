@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import './Customers.css';
+import '../customers/Customers.css';
 import { Sidebar } from "../sidebar/Sidebar";
 import { Getallcustomers } from "../../function/Getallcustomers";
 import { maincontext } from "../../App";

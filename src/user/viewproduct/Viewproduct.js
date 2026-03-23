@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Navbar } from '../navbar/Navbar';
 import '../viewproduct/Viewproduct.css';
-
 import { maincontext } from '../../App';
 import { Getparticularproduct } from '../../function/Getparticularproduct';
 import { Getcartdata } from '../../function/Getcartdata';

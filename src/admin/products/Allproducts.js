@@ -16,6 +16,7 @@ import { Getallbrands } from "../../function/Getallbrands";
 import { Getloginuser } from "../../function/Getloginuser";
 import { IMAGES_URL } from "../../axios/Imageurl";
 import { Adminauth } from "../../function/Adminauth";
+import '../products/Allproducts.css'
 
 export const Allproducts = () => {
   const {
